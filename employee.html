@@ -107,7 +107,7 @@
             border-radius: 6px;
             font-family: var(--sans);
             font-size: .82rem;
-            width: 148px;
+            width: 115px;
         }
 
         .cust-row input::placeholder { color: #7a7065; }
@@ -580,10 +580,79 @@
             text-transform: uppercase;
             margin-left: 4px;
         }
+
+        /* Print Invoice Header Styling */
+        .print-invoice-header {
+            display: none;
+        }
+
+        @media print {
+            .print-invoice-header {
+                display: flex !important;
+                justify-content: space-between;
+                border-bottom: 2px solid var(--accent);
+                padding-bottom: 20px;
+                margin-bottom: 30px;
+                color: #000;
+            }
+            .invoice-left {
+                width: 50%;
+                text-align: left;
+            }
+            .invoice-right {
+                width: 45%;
+                text-align: right;
+            }
+            .invoice-meta-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            .invoice-meta-table td {
+                padding: 4px 0;
+                font-size: 0.85rem;
+                border: none !important;
+                text-align: left;
+                color: #000;
+            }
+            .invoice-meta-table tr td:last-child {
+                text-align: right;
+                font-weight: 600;
+            }
+        }
     </style>
 </head>
 
 <body>
+
+    <!-- Invoice Letterhead (Visible only during print) -->
+    <div class="print-invoice-header">
+        <div class="invoice-left">
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                <img src="logo.png" alt="Pravin's Kitchen Logo" style="height: 55px; border-radius: 6px; object-fit: contain;">
+                <div>
+                    <h2 style="color: var(--accent); margin: 0; font-size: 1.3rem;">Pravin's Kitchen's</h2>
+                    <p style="font-weight: 600; font-size: 0.82rem; margin: 3px 0 0 0; color: #555;">Premium Modular Kitchens & Interiors</p>
+                </div>
+            </div>
+            <p style="font-size: 0.82rem; line-height: 1.4; color: #555; margin-top: 5px;">
+                Address: 123 Designer Street, Industrial Area<br>
+                Mobile: +91 98765 43210
+            </p>
+            <p style="font-size: 0.72rem; margin-top: 15px; color: #777; border-top: 1px dashed #ccc; padding-top: 5px;">
+                Note: 45 Days Storage Validity & Guarantee
+            </p>
+        </div>
+        <div class="invoice-right">
+            <h3 id="printDocTitle" style="margin-top: 0; margin-bottom: 15px; font-size: 1.6rem; color: #2c3e50; border-bottom: 2px solid var(--accent); padding-bottom: 5px; display: inline-block;">QUOTATION</h3>
+            <table class="invoice-meta-table">
+                <tr><td id="printQuoteNoLabel" style="font-weight: bold; width: 45%;">Quotation No:</td><td id="printQuoteNo">—</td></tr>
+                <tr><td style="font-weight: bold;">Date:</td><td id="printQuoteDate">—</td></tr>
+                <tr><td style="font-weight: bold;">Customer:</td><td id="printCustName">—</td></tr>
+                <tr><td style="font-weight: bold;">Phone:</td><td id="printCustPhone">—</td></tr>
+                <tr><td style="font-weight: bold;">Address:</td><td id="printCustAddress">—</td></tr>
+            </table>
+        </div>
+    </div>
 
     <header>
         <div class="header-inner">
@@ -599,8 +668,14 @@
                 </div>
             </div>
             <div class="cust-row" style="align-items: center;">
+                <select id="docType" style="background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); color: #f0ebe2; padding: 7px 11px; border-radius: 6px; font-family: var(--sans); font-size: .82rem; outline: none; cursor: pointer;" onchange="updateDocLabels()">
+                    <option value="Quotation">Quotation</option>
+                    <option value="Invoice">Invoice</option>
+                </select>
+                <input id="quoteNo" placeholder="Quotation No.">
                 <input id="custName" placeholder="Customer name">
                 <input id="custPhone" placeholder="Phone">
+                <input id="custAddress" placeholder="Address / Area">
                 <input id="quoteDate" type="date">
                 <button class="back-btn" style="padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; margin-right: 5px;" onclick="location.href='rooms.html'">Change Division</button>
                 <button class="back-btn" style="padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer;" onclick="location.href='index.html'">Logout</button>
@@ -614,7 +689,27 @@
 
         <!-- Room Selector Tabs -->
         <div class="room-tabs-container">
-            <div class="room-tabs-title">Which room are you working on?</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 12px;">
+                <div class="room-tabs-title" style="margin-bottom: 0;">Which room are you working on?</div>
+                <div id="floorSelectorsWrap" style="display: none; gap: 10px; align-items: center;">
+                    <div style="display: flex; flex-direction: column; gap: 3px;">
+                        <label style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); font-weight:700;">Floor</label>
+                        <select id="floorSelector" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; outline:none;" onchange="updateRoomState(selectedRoom, selectedRoomName)">
+                            <option value="Ground Floor">Ground Floor</option>
+                            <option value="First Floor">First Floor</option>
+                            <option value="Second Floor">Second Floor</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 3px;">
+                        <label style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); font-weight:700;">Room No.</label>
+                        <select id="roomNoSelector" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; outline:none;" onchange="updateRoomState(selectedRoom, selectedRoomName)">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
             <div class="room-tabs" id="roomTabs"></div>
         </div>
 
@@ -634,7 +729,7 @@
                         <th>Material</th>
                         <th>Size</th>
                         <th class="num">Sq.Ft</th>
-                        <th class="num">Rate</th>
+                        <th class="num" id="rateHeader">Rate</th>
                         <th class="num">Amount</th>
                         <th></th>
                     </tr>
@@ -658,7 +753,7 @@
                     <button class="back-btn" onclick="location.href='index.html'">Logout</button>
                 </div>
                 <div style="display:flex; gap:10px;">
-                    <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
+                    <button class="print-btn" onclick="preparePrint()">Print / Save PDF</button>
                     <button class="reset-btn" onclick="resetQuote()">Clear Quote</button>
                 </div>
             </div>
@@ -666,22 +761,52 @@
     </main>
 
     <script>
-        /* ---------- Base Materials ---------- */
+        const selectedDivision = sessionStorage.getItem('pks_selected_division') || 'marketing';
+        const selectedDivisionName = sessionStorage.getItem('pks_selected_division_name') || 'Marketing';
+
+        // Render division badge in header
+        document.getElementById('divisionBadge').textContent = selectedDivisionName;
+
+        const role = sessionStorage.getItem('pks_role');
+        const showRate = (role === 'admin');
+
+        const ROOMS = [
+            { id: 'kitchen',     name: 'Kitchen',      icon: '🍳', active: true  },
+            { id: 'living_room', name: 'Living Room',  icon: '🛋️', active: true },
+            { id: 'bedroom',     name: 'Bedroom',      icon: '🛏️', active: true },
+            { id: 'dining_room', name: 'Dining Room',  icon: '🍽️', active: true },
+            { id: 'sitout',      name: 'Sitout',       icon: '🌿', active: true },
+            { id: 'store_room',  name: 'Store Room',   icon: '📦', active: true },
+            { id: 'toilet_area', name: 'Toilet Area',  icon: '🚿', active: true },
+        ];
+
+        let selectedRoom = sessionStorage.getItem('pks_selected_room') || 'kitchen';
+        let selectedRoomName = sessionStorage.getItem('pks_selected_room_name') || 'Kitchen';
+
+        let FIELD_LABELS = {
+            L: "Length (in)",
+            W: "Width/Breadth (in)",
+            H: "Height (in)",
+            SQFT: "Sq.Ft",
+            QTY: "Quantity"
+        };
+
+        /* ---------- Base Materials & Formulas (Inches, divided by 144) ---------- */
         const STD_CABINET = [
-            { label: "Marine Ply – Lamination", fields: ["L", "W", "H"], formula: v => (v.L + v.W) * v.H, note: "(L+W)×H" },
-            { label: "Marine Ply – Acrylic", fields: ["L", "W", "H"], formula: v => (v.L + v.W) * v.H, note: "(L+W)×H" },
-            { label: "WPC", fields: ["L", "W", "H"], formula: v => (v.L + v.W) * v.H, note: "(L+W)×H" },
+            { label: "Marine Ply – Lamination", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Acrylic", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "WPC", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
         ];
         const WALL_PANEL = [
-            { label: "PVC", fields: ["L", "H"], formula: v => v.L * v.H, note: "L×H" },
-            { label: "Lamination", fields: ["L", "H"], formula: v => v.L * v.H, note: "L×H" },
-            { label: "Charcoal", fields: ["L", "H"], formula: v => v.L * v.H, note: "L×H" },
+            { label: "PVC", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Lamination", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Charcoal", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
         ];
         const BEAM = [
-            { label: "Lamination", fields: ["L", "H"], formula: v => v.L * v.H, note: "L×H" },
-            { label: "Optional 1", fields: ["L", "H"], formula: v => v.L * v.H, note: "L×H" },
-            { label: "Optional 2", fields: ["L", "H"], formula: v => v.L * v.H, note: "L×H" },
-            { label: "Optional 3", fields: ["L", "H"], formula: v => v.L * v.H, note: "L×H" },
+            { label: "Lamination", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Optional 1", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Optional 2", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Optional 3", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
         ];
         const SPICE = [
             { label: "Marine Ply – Lamination", fields: ["SQFT"], formula: v => v.SQFT, note: "direct sq.ft" },
@@ -689,23 +814,18 @@
             { label: "WPC", fields: ["SQFT"], formula: v => v.SQFT, note: "direct sq.ft" },
         ];
         const LEDGE = [
-            { label: "Marine Ply – Lamination", fields: ["L", "W"], formula: v => v.L * v.W, note: "L×W" },
-            { label: "Marine Ply – Acrylic", fields: ["L", "W"], formula: v => v.L * v.W, note: "L×W" },
-            { label: "WPC", fields: ["L", "W"], formula: v => v.L * v.W, note: "L×W" },
+            { label: "Marine Ply – Lamination", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
+            { label: "Marine Ply – Acrylic", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
+            { label: "WPC", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
         ];
         const PARTITION = [
-            { label: "WPC", fields: ["L", "W", "H"], formula: v => (v.L + v.W) * v.H, note: "(L+W)×H" },
-            { label: "Marine Plane", fields: ["L", "W", "H"], formula: v => (v.L + v.W) * v.H, note: "(L+W)×H" },
-            { label: "Engineering Wood", fields: ["L", "W", "H"], formula: v => (v.L + v.W) * v.H, note: "(L+W)×H" },
+            { label: "WPC", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Plane", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Engineering Wood", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
         ];
 
-        /* ---------- Living Room Materials ---------- */
-        const LR_WALL_PANEL = [
-            { label: "PVC", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "Lamination", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "Charcoal", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-        ];
-        const LR_CABINET_BOX_DOOR = [
+        /* ---------- Shared Materials Groups ---------- */
+        const MP_LAM_ACR_WPC_BOX_DOOR = [
             { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "Marine Ply – Lamination (Door Type)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
             { label: "Marine Ply – Acrylic (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
@@ -713,44 +833,63 @@
             { label: "WPC (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "WPC (Door Type)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
         ];
-        const LR_STAIRCASE_BOTTOM = [
-            { label: "Marine Ply (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+
+        const MP_LAM_ACR_WPC_BOX_DOOR_ONLY = [
+            { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Marine Ply – Acrylic (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Acrylic (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
             { label: "WPC (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Marine Ply (Door Type)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "WPC (Door Type)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "WPC (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
         ];
 
-        const selectedDivision = sessionStorage.getItem('pks_selected_division') || 'marketing';
-        const selectedDivisionName = sessionStorage.getItem('pks_selected_division_name') || 'Marketing';
-
-        // Render division badge in header
-        document.getElementById('divisionBadge').textContent = selectedDivisionName;
-
-        const ROOMS = [
-            { id: 'kitchen',     name: 'Kitchen',      icon: '🍳', active: true  },
-            { id: 'living_room', name: 'Living Room',  icon: '🛋️', active: true },
-            { id: 'bedroom',     name: 'Bedroom',      icon: '🛏️', active: false },
-            { id: 'dining_room', name: 'Dining Room',  icon: '🍽️', active: false },
-            { id: 'sitout',      name: 'Sitout',       icon: '🌿', active: false },
-            { id: 'store_room',  name: 'Store Room',   icon: '📦', active: false },
-            { id: 'toilet_area', name: 'Toilet Area',  icon: '🚿', active: false },
+        const KITCHEN_BOTTOM_OPTS = [
+            { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Lamination (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Marine Ply – Acrylic (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Acrylic (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Acrylic (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "WPC (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "WPC (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "WPC (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
         ];
 
-        let selectedRoom = sessionStorage.getItem('pks_selected_room') || 'kitchen';
-        let selectedRoomName = sessionStorage.getItem('pks_selected_room_name') || 'Kitchen';
-        let isLivingRoom = (selectedRoom === 'living_room');
+        const KITCHEN_LOFT_OPTS = [
+            { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Lamination (Framed)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Marine Ply – Acrylic (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Acrylic (Framed)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Acrylic (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "WPC (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "WPC (Framed)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "WPC (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+        ];
 
-        let FIELD_LABELS = isLivingRoom ? {
-            L: "Length (in)",
-            W: "Width (in)",
-            H: "Height (in)",
-            SQFT: "Sq.Ft"
-        } : {
-            L: "Length (ft)",
-            W: "Width (ft)",
-            H: "Height (ft)",
-            SQFT: "Sq.Ft"
-        };
+        const BED_OPTS = [
+            { label: "King Size Bed (Direct Price)", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Queen Size Bed (Direct Price)", fields: ["QTY"], formula: v => v.QTY, note: "qty" }
+        ];
+
+        const DRESSING_BOTTOM_OPTS = [
+            { label: "Marine Ply – Lamination (Box)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Acrylic (Box)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "WPC (Box)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" }
+        ];
+
+        const GLASS_PARTITION_OPTS = [
+            { label: "Glass", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
+        ];
+
+        const SITOUT_CEILING_OPTS = [
+            { label: "PVC", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
+            { label: "Lamination", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
+            { label: "Charcoal", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
+            { label: "Wood finishing", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
+            { label: "Veneer finishing", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
+            { label: "PU Paint", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
+        ];
 
         // Default Rates lookup (fallback if not in localStorage)
         const DEFAULT_RATES = {
@@ -766,17 +905,39 @@
             "Marine Plane": 350,
             "Engineering Wood": 280,
             
-            // Living Room rates
+            // Shared rates
             "Marine Ply – Lamination (Box Type)": 450,
             "Marine Ply – Lamination (Door Type)": 450,
+            "Marine Ply – Lamination (Door Only)": 450,
+            "Marine Ply – Lamination (Partition Type)": 450,
+            "Marine Ply – Lamination (Framed)": 450,
+            "Marine Ply – Lamination (Box)": 450,
+            
             "Marine Ply – Acrylic (Box Type)": 650,
             "Marine Ply – Acrylic (Door Type)": 650,
+            "Marine Ply – Acrylic (Door Only)": 650,
+            "Marine Ply – Acrylic (Partition Type)": 650,
+            "Marine Ply – Acrylic (Framed)": 650,
+            "Marine Ply – Acrylic (Box)": 650,
+            
             "WPC (Box Type)": 550,
             "WPC (Door Type)": 550,
+            "WPC (Door Only)": 550,
+            "WPC (Partition Type)": 550,
+            "WPC (Framed)": 550,
+            "WPC (Box)": 550,
+
             "Marine Ply (Box Type)": 450,
             "WPC (Box Type)": 550,
             "Marine Ply (Door Type)": 450,
-            "WPC (Door Type)": 550
+            "WPC (Door Type)": 550,
+
+            "King Size Bed (Direct Price)": 35000,
+            "Queen Size Bed (Direct Price)": 28000,
+            "Glass": 350,
+            "Wood finishing": 500,
+            "Veneer finishing": 700,
+            "PU Paint": 600
         };
 
         // Load rates from localStorage or use defaults
@@ -815,32 +976,66 @@
         // Setup base items list per room
         const ROOM_ITEMS = {
             kitchen: [
-                { id: 1, name: "Kitchen Bottom", options: STD_CABINET },
-                { id: 2, name: "Kitchen Top Box", options: STD_CABINET },
-                { id: 3, name: "Kitchen Loft", options: STD_CABINET },
-                { id: 4, name: "Kitchen – Island Cabin", options: STD_CABINET },
-                { id: 5, name: "Kitchen – Breakfast Table", options: STD_CABINET },
+                { id: 1, name: "Kitchen Bottom", options: KITCHEN_BOTTOM_OPTS },
+                { id: 2, name: "Kitchen Top Box", options: MP_LAM_ACR_WPC_BOX_DOOR_ONLY },
+                { id: 3, name: "Kitchen Loft", options: KITCHEN_LOFT_OPTS },
+                { id: 4, name: "Kitchen – Island Cabin", options: MP_LAM_ACR_WPC_BOX_DOOR_ONLY },
+                { id: 5, name: "Kitchen – Breakfast Table", options: MP_LAM_ACR_WPC_BOX_DOOR_ONLY },
                 { id: 6, name: "Breakfast Table – Wall Panelling", options: WALL_PANEL },
                 { id: 7, name: "Breakfast Table – Beam Covering", options: BEAM },
                 { id: 8, name: "Breakfast Table – Open Box", options: STD_CABINET },
                 { id: 9, name: "Spice Rack", options: SPICE },
                 { id: 10, name: "Ledge", options: LEDGE },
-                { id: 11, name: "Kitchen Side Storage Cabinet", options: STD_CABINET },
+                { id: 11, name: "Kitchen Side Storage Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 12, name: "Kitchen & Dining Partition", options: PARTITION },
                 { id: 13, name: "Additional Item", custom: true },
                 { id: 14, name: "Additional Item", custom: true },
                 { id: 15, name: "Additional Item", custom: true },
             ],
             living_room: [
-                { id: 16, name: "Tv Unit – Wall Panelling", options: LR_WALL_PANEL },
-                { id: 17, name: "Tv Unit – Bottom Cabinet", options: LR_CABINET_BOX_DOOR },
-                { id: 18, name: "Tv Unit – Side Showal Cabinet", options: LR_CABINET_BOX_DOOR },
-                { id: 19, name: "Living & Dining Room Partition", options: LR_CABINET_BOX_DOOR },
-                { id: 20, name: "Living Room Wall Panelling", options: LR_WALL_PANEL },
-                { id: 21, name: "Staircase Bottom", options: LR_STAIRCASE_BOTTOM },
+                { id: 16, name: "Tv Unit – Wall Panelling", options: WALL_PANEL },
+                { id: 17, name: "Tv Unit – Bottom Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 18, name: "Tv Unit – Side Showal Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 19, name: "Living & Dining Room Partition", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 20, name: "Living Room Wall Panelling", options: WALL_PANEL },
+                { id: 21, name: "Staircase Bottom", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 22, name: "Additional Item", custom: true },
                 { id: 23, name: "Additional Item", custom: true },
                 { id: 24, name: "Additional Item", custom: true },
+            ],
+            bedroom: [
+                { id: 25, name: "Coboard", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 26, name: "Loft", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 27, name: "Bed back wall paneling", options: WALL_PANEL },
+                { id: 28, name: "Bed", options: BED_OPTS },
+                { id: 29, name: "Bay window", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 30, name: "Dressing unit wall paneling", options: WALL_PANEL },
+                { id: 31, name: "Dressing unit bottom cabinet", options: DRESSING_BOTTOM_OPTS },
+                { id: 32, name: "Tv unit-wall paneling", options: WALL_PANEL },
+                { id: 33, name: "Tv unit-bottom cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 34, name: "Tv unit-SIDE SHOWAL CABINET", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 35, name: "Additional Item", custom: true },
+                { id: 36, name: "Additional Item", custom: true },
+            ],
+            dining_room: [
+                { id: 37, name: "Washpasing unit bottom cabin", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 38, name: "Washbasen unit wall paneling", options: WALL_PANEL },
+                { id: 39, name: "Dining room cracker unit", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 40, name: "Additional Item", custom: true },
+            ],
+            toilet_area: [
+                { id: 41, name: "Toilet area washbasin cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 42, name: "Glass partition", options: GLASS_PARTITION_OPTS },
+                { id: 43, name: "Additional Item", custom: true },
+            ],
+            store_room: [
+                { id: 44, name: "Store room cobaord", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 45, name: "Additional Item", custom: true },
+            ],
+            sitout: [
+                { id: 46, name: "Chappal stand", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 47, name: "Sit out area seeling", options: SITOUT_CEILING_OPTS },
+                { id: 48, name: "Additional Item", custom: true },
             ]
         };
 
@@ -863,17 +1058,10 @@
                 if (!item.custom && customMats[item.id]) {
                     customMats[item.id].forEach(m => {
                         let formula;
-                        if (isLivingRoom) {
-                            if (m.formulaType === "L*H") formula = v => (v.L * v.H) / 144;
-                            else if (m.formulaType === "L*W") formula = v => (v.L * v.W) / 144;
-                            else if (m.formulaType === "SQFT") formula = v => v.SQFT;
-                            else formula = v => ((v.L + v.W) * v.H) / 144;
-                        } else {
-                            if (m.formulaType === "L*H") formula = v => v.L * v.H;
-                            else if (m.formulaType === "L*W") formula = v => v.L * v.W;
-                            else if (m.formulaType === "SQFT") formula = v => v.SQFT;
-                            else formula = v => (v.L + v.W) * v.H; // default (L+W)*H
-                        }
+                        if (m.formulaType === "L*H") formula = v => (v.L * v.H) / 144;
+                        else if (m.formulaType === "L*W") formula = v => (v.L * v.W) / 144;
+                        else if (m.formulaType === "SQFT") formula = v => v.SQFT;
+                        else formula = v => ((v.L + v.W) * v.H) / 144;
                         
                         item.options.push({
                             label: m.label,
@@ -890,17 +1078,10 @@
             customItems.forEach(item => {
                 const processedOptions = item.options.map(opt => {
                     let formula;
-                    if (isLivingRoom) {
-                        if (opt.formulaType === "L*H") formula = v => (v.L * v.H) / 144;
-                        else if (opt.formulaType === "L*W") formula = v => (v.L * v.W) / 144;
-                        else if (opt.formulaType === "SQFT") formula = v => v.SQFT;
-                        else formula = v => ((v.L + v.W) * v.H) / 144;
-                    } else {
-                        if (opt.formulaType === "L*H") formula = v => v.L * v.H;
-                        else if (opt.formulaType === "L*W") formula = v => v.L * v.W;
-                        else if (opt.formulaType === "SQFT") formula = v => v.SQFT;
-                        else formula = v => (v.L + v.W) * v.H;
-                    }
+                    if (opt.formulaType === "L*H") formula = v => (v.L * v.H) / 144;
+                    else if (opt.formulaType === "L*W") formula = v => (v.L * v.W) / 144;
+                    else if (opt.formulaType === "SQFT") formula = v => v.SQFT;
+                    else formula = v => ((v.L + v.W) * v.H) / 144;
 
                     return {
                         label: opt.label,
@@ -920,9 +1101,41 @@
             return list;
         }
 
-        let ITEMS = getFullItemsList();
+        let ITEMS = [];
         let quoteLines = [];
         let lineIdCounter = 1;
+
+        function getFullRoomLabel() {
+            if (selectedRoom === 'bedroom') {
+                const floor = document.getElementById('floorSelector').value;
+                const roomNo = document.getElementById('roomNoSelector').value;
+                return `${floor} - ${selectedRoomName} ${roomNo}`;
+            } else {
+                return selectedRoomName;
+            }
+        }
+
+        function updateRoomState(roomId, roomName) {
+            selectedRoom = roomId;
+            selectedRoomName = roomName;
+            sessionStorage.setItem('pks_selected_room', roomId);
+            sessionStorage.setItem('pks_selected_room_name', roomName);
+
+            BASE_ITEMS = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+            ITEMS = getFullItemsList();
+
+            // Update badge in header
+            document.getElementById('roomBadge').textContent = selectedRoomName;
+
+            // Toggle Floor and Room selectors ONLY for bedroom
+            const selectorsWrap = document.getElementById('floorSelectorsWrap');
+            if (selectorsWrap) {
+                selectorsWrap.style.display = (roomId === 'bedroom') ? 'flex' : 'none';
+            }
+
+            renderRoomTabs();
+            renderItemsGrid();
+        }
 
         /* ---------- render item cards ---------- */
         const grid = document.getElementById('itemsGrid');
@@ -973,37 +1186,6 @@
             });
         }
 
-        function updateRoomState(roomId, roomName) {
-            selectedRoom = roomId;
-            selectedRoomName = roomName;
-            sessionStorage.setItem('pks_selected_room', roomId);
-            sessionStorage.setItem('pks_selected_room_name', roomName);
-
-            isLivingRoom = (selectedRoom === 'living_room');
-
-            FIELD_LABELS = isLivingRoom ? {
-                L: "Length (in)",
-                W: "Width (in)",
-                H: "Height (in)",
-                SQFT: "Sq.Ft"
-            } : {
-                L: "Length (ft)",
-                W: "Width (ft)",
-                H: "Height (ft)",
-                SQFT: "Sq.Ft"
-            };
-
-            BASE_ITEMS = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
-            ITEMS = getFullItemsList();
-
-            // Update badge and tag in header
-            document.getElementById('roomBadge').textContent = selectedRoomName;
-            document.getElementById('roomTitle').textContent = `${selectedRoomName} - Modular Quote System`;
-
-            renderRoomTabs();
-            renderItemsGrid();
-        }
-
         // Initialize dynamic tabs and list
         updateRoomState(selectedRoom, selectedRoomName);
 
@@ -1033,23 +1215,33 @@
                         </div>
                         <div class="field">
                             <label>Sq.Ft / Qty</label>
-                            <input type="number" id="${buildId}-sqft" placeholder="0">
+                            <input type="number" id="${buildId}-sqft" placeholder="0" value="1">
                         </div>
-                        <div class="field">
+                        <div class="field" ${showRate ? '' : 'style="display:none;"'}>
                             <label>Rate (₹)</label>
-                            <input type="number" id="${buildId}-rate" placeholder="0">
+                            <input type="number" id="${buildId}-rate" placeholder="0" value="0">
+                        </div>
+                        <div class="field" ${showRate ? 'style="display:none;"' : ''}>
+                            <label>Total Amount (₹)</label>
+                            <input type="number" id="${buildId}-amount" placeholder="0" value="0">
                         </div>
                     </div>
-                    <div class="calc-line" id="${buildId}-calc">Amount: <b>₹0</b></div>
+                    <div class="calc-line" id="${buildId}-calc" ${showRate ? '' : 'style="display:none;"'}>Amount: <b>₹0</b></div>
                     <div class="row-actions">
                         <button class="confirm-btn" onclick="confirmCustom('${buildId}', ${itemId})">Add to Quote</button>
                         <button class="cancel-btn" onclick="closeBuilder('${buildId}')">Cancel</button>
                     </div>
                 `;
                 container.appendChild(wrap);
-                ['sqft', 'rate'].forEach(f => {
-                    document.getElementById(`${buildId}-${f}`).addEventListener('input', () => updateCustomCalc(buildId));
-                });
+                if (showRate) {
+                    ['sqft', 'rate'].forEach(f => {
+                        document.getElementById(`${buildId}-${f}`).addEventListener('input', () => updateCustomCalc(buildId));
+                    });
+                } else {
+                    ['sqft', 'amount'].forEach(f => {
+                        document.getElementById(`${buildId}-${f}`).addEventListener('input', () => updateCustomCalc(buildId));
+                    });
+                }
                 return;
             }
 
@@ -1096,17 +1288,12 @@
                   <div class="step-label">Size &amp; rate — ${opt.label} <span style="text-transform:none;color:var(--muted)">(${opt.note})</span></div>
                   <div class="field-row">
                     ${fieldsHtml}
-                    ${!opt.fields.includes('SQFT') ? `
-                    <div class="field">
-                      <label>Total Sq.Ft</label>
-                      <input type="number" step="0.01" id="${buildId}-SQFT_val" placeholder="0">
-                    </div>` : ''}
-                    <div class="field">
+                    <div class="field" ${showRate ? '' : 'style="display:none;"'}>
                       <label>Rate (₹/sq.ft) [Locked]</label>
                       <input type="number" step="0.01" id="${buildId}-rate" value="${defaultRate}" disabled>
                     </div>
                   </div>
-                  <div class="calc-line" id="${buildId}-calc">Sq.Ft: <b>0</b> &nbsp;|&nbsp; Amount: <b>₹0</b></div>
+                  <div class="calc-line" id="${buildId}-calc">Sq.Ft: <b>0</b>${showRate ? ' &nbsp;|&nbsp; Amount: <b>₹0</b>' : ''}</div>
                   <div class="row-actions">
                     <button class="confirm-btn" onclick="confirmMaterial('${buildId}', ${itemId}, ${optIdx})">Add to Quote</button>
                     <button class="cancel-btn" onclick="closeBuilder('${buildId}')">Cancel</button>
@@ -1116,67 +1303,91 @@
 
             const allInputs = [...opt.fields];
             allInputs.forEach(f => {
-                document.getElementById(`${buildId}-${f}`).addEventListener('input', () => updateCalc(buildId, itemId, optIdx, false));
+                document.getElementById(`${buildId}-${f}`).addEventListener('input', () => updateCalc(buildId, itemId, optIdx));
             });
-            if (!opt.fields.includes('SQFT')) {
-                document.getElementById(`${buildId}-SQFT_val`).addEventListener('input', () => updateCalc(buildId, itemId, optIdx, true));
-            }
-            updateCalc(buildId, itemId, optIdx, false);
+            updateCalc(buildId, itemId, optIdx);
         }
 
         function readValues(buildId, fields) {
             const v = {};
             fields.forEach(f => {
                 const el = document.getElementById(`${buildId}-${f}`);
-                v[f] = parseFloat(el.value) || 0;
+                if (el) v[f] = parseFloat(el.value) || 0;
             });
             return v;
         }
 
-        function updateCalc(buildId, itemId, optIdx, isManualSqft = false) {
+        function updateCalc(buildId, itemId, optIdx) {
             const item = ITEMS.find(i => i.id === itemId);
             const opt = item.options[optIdx];
-            const rate = parseFloat(document.getElementById(`${buildId}-rate`).value) || 0;
+            
+            // Get rate
+            let rate = 0;
+            const rateEl = document.getElementById(`${buildId}-rate`);
+            if (rateEl) {
+                rate = parseFloat(rateEl.value) || 0;
+            } else {
+                const rates = getRates();
+                rate = rates[opt.label] || 0;
+            }
             
             let sqft = 0;
-            const sqftInput = document.getElementById(`${buildId}-SQFT_val`);
-            
             if (opt.fields.includes('SQFT')) {
                 const el = document.getElementById(`${buildId}-SQFT`);
                 sqft = parseFloat(el.value) || 0;
+            } else if (opt.fields.includes('QTY')) {
+                const el = document.getElementById(`${buildId}-QTY`);
+                sqft = parseFloat(el.value) || 0;
             } else {
-                if (isManualSqft) {
-                    sqft = parseFloat(sqftInput.value) || 0;
-                } else {
-                    const v = readValues(buildId, opt.fields);
-                    sqft = opt.formula(v);
-                    if (sqftInput) {
-                        sqftInput.value = sqft > 0 ? sqft.toFixed(2) : '';
-                    }
-                }
+                const v = readValues(buildId, opt.fields);
+                sqft = opt.formula(v);
             }
             
             const amount = sqft * rate;
-            document.getElementById(`${buildId}-calc`).innerHTML =
-                `Sq.Ft: <b>${sqft.toFixed(2)}</b> &nbsp;|&nbsp; Amount: <b>₹${amount.toFixed(2)}</b>`;
+            const labelStr = opt.fields.includes('QTY') ? 'Qty' : 'Sq.Ft';
+            document.getElementById(`${buildId}-calc`).innerHTML = showRate
+                ? `${labelStr}: <b>${sqft.toFixed(2)}</b> &nbsp;|&nbsp; Amount: <b>₹${amount.toFixed(2)}</b>`
+                : `${labelStr}: <b>${sqft.toFixed(2)}</b>`;
         }
 
         function updateCustomCalc(buildId) {
             const sqft = parseFloat(document.getElementById(`${buildId}-sqft`).value) || 0;
-            const rate = parseFloat(document.getElementById(`${buildId}-rate`).value) || 0;
-            document.getElementById(`${buildId}-calc`).innerHTML = `Amount: <b>₹${(sqft * rate).toFixed(2)}</b>`;
+            let rate = 0;
+            let amount = 0;
+            if (showRate) {
+                rate = parseFloat(document.getElementById(`${buildId}-rate`).value) || 0;
+                amount = sqft * rate;
+            } else {
+                amount = parseFloat(document.getElementById(`${buildId}-amount`).value) || 0;
+                rate = sqft > 0 ? amount / sqft : 0;
+            }
+            if (showRate) {
+                document.getElementById(`${buildId}-calc`).innerHTML = `Amount: <b>₹${amount.toFixed(2)}</b>`;
+            }
         }
 
         function confirmMaterial(buildId, itemId, optIdx) {
             const item = ITEMS.find(i => i.id === itemId);
             const opt = item.options[optIdx];
-            const rate = parseFloat(document.getElementById(`${buildId}-rate`).value) || 0;
+            
+            // Get rate
+            let rate = 0;
+            const rateEl = document.getElementById(`${buildId}-rate`);
+            if (rateEl) {
+                rate = parseFloat(rateEl.value) || 0;
+            } else {
+                const rates = getRates();
+                rate = rates[opt.label] || 0;
+            }
             
             let sqft = 0;
             if (opt.fields.includes('SQFT')) {
                 sqft = parseFloat(document.getElementById(`${buildId}-SQFT`).value) || 0;
+            } else if (opt.fields.includes('QTY')) {
+                sqft = parseFloat(document.getElementById(`${buildId}-QTY`).value) || 0;
             } else {
-                sqft = parseFloat(document.getElementById(`${buildId}-SQFT_val`).value) || 0;
+                const v = readValues(buildId, opt.fields);
+                sqft = opt.formula(v);
             }
             
             const amount = sqft * rate;
@@ -1184,14 +1395,16 @@
             
             let sizeDesc = opt.fields.map(f => `${f}:${v[f]}`).join(' × ');
             if (!sizeDesc) {
-                sizeDesc = `${sqft.toFixed(2)} sqft`;
+                const labelStr = opt.fields.includes('QTY') ? 'qty' : 'sqft';
+                sizeDesc = `${sqft.toFixed(2)} ${labelStr}`;
             } else {
-                sizeDesc += ` (${sqft.toFixed(2)} sqft)`;
+                const labelStr = opt.fields.includes('QTY') ? 'qty' : 'sqft';
+                sizeDesc += ` (${sqft.toFixed(2)} ${labelStr})`;
             }
 
             quoteLines.push({
                 id: lineIdCounter++,
-                roomName: selectedRoomName,
+                roomName: getFullRoomLabel(),
                 itemName: item.name,
                 material: opt.label,
                 size: sizeDesc,
@@ -1205,12 +1418,20 @@
             const item = ITEMS.find(i => i.id === itemId);
             const desc = document.getElementById(`${buildId}-desc`).value || 'Custom item';
             const sqft = parseFloat(document.getElementById(`${buildId}-sqft`).value) || 0;
-            const rate = parseFloat(document.getElementById(`${buildId}-rate`).value) || 0;
-            const amount = sqft * rate;
+            
+            let rate = 0;
+            let amount = 0;
+            if (showRate) {
+                rate = parseFloat(document.getElementById(`${buildId}-rate`).value) || 0;
+                amount = sqft * rate;
+            } else {
+                amount = parseFloat(document.getElementById(`${buildId}-amount`).value) || 0;
+                rate = sqft > 0 ? amount / sqft : 0;
+            }
 
             quoteLines.push({
                 id: lineIdCounter++,
-                roomName: selectedRoomName,
+                roomName: getFullRoomLabel(),
                 itemName: item.name,
                 material: desc,
                 size: '—',
@@ -1228,8 +1449,13 @@
 
         function renderQuote() {
             const body = document.getElementById('quoteBody');
+            const showRate = (role === 'admin');
+            
+            // Toggle header visibility
+            document.getElementById('rateHeader').style.display = showRate ? '' : 'none';
+
             if (quoteLines.length === 0) {
-                body.innerHTML = `<tr class="empty-row"><td colspan="9">No items added yet — start with any card above.</td></tr>`;
+                body.innerHTML = `<tr class="empty-row"><td colspan="${showRate ? 9 : 8}">No items added yet — start with any card above.</td></tr>`;
                 document.getElementById('grandTotal').textContent = '₹0';
                 return;
             }
@@ -1241,13 +1467,19 @@
                   <td>${l.material}</td>
                   <td>${l.size}</td>
                   <td class="num">${l.sqft.toFixed(2)}</td>
-                  <td class="num">₹${l.rate.toFixed(2)}</td>
+                  ${showRate ? `<td class="num">₹${l.rate.toFixed(2)}</td>` : ''}
                   <td class="num">₹${l.amount.toFixed(2)}</td>
                   <td><button class="del-btn" onclick="deleteLine(${l.id})" title="Remove">✕</button></td>
                 </tr>
             `).join('');
-            const total = quoteLines.reduce((s, l) => s + l.amount, 0);
-            document.getElementById('grandTotal').textContent = `₹${total.toFixed(2)}`;
+            
+            // Render tfoot colspan based on role
+            const totalRow = document.querySelector('tfoot tr');
+            totalRow.innerHTML = `
+                <td colspan="${showRate ? 7 : 6}" style="text-align:right;">Total</td>
+                <td class="num" id="grandTotal">₹${quoteLines.reduce((s, l) => s + l.amount, 0).toFixed(2)}</td>
+                <td></td>
+            `;
         }
 
         function deleteLine(id) {
@@ -1262,9 +1494,28 @@
             }
         }
 
+        function updateDocLabels() {
+            const docType = document.getElementById('docType').value;
+            const quoteNoInput = document.getElementById('quoteNo');
+            if (docType === 'Invoice') {
+                quoteNoInput.placeholder = 'Invoice No.';
+            } else {
+                quoteNoInput.placeholder = 'Quotation No.';
+            }
+        }
+
+        function preparePrint() {
+            const docType = document.getElementById('docType').value;
+            document.getElementById('printDocTitle').textContent = docType.toUpperCase();
+            document.getElementById('printQuoteNoLabel').textContent = docType + ' No:';
+            document.getElementById('printQuoteNo').textContent = document.getElementById('quoteNo').value || '—';
+            document.getElementById('printQuoteDate').textContent = document.getElementById('quoteDate').value || '—';
+            document.getElementById('printCustName').textContent = document.getElementById('custName').value || '—';
+            document.getElementById('printCustPhone').textContent = document.getElementById('custPhone').value || '—';
+            document.getElementById('printCustAddress').textContent = document.getElementById('custAddress').value || '—';
+            window.print();
+        }
+
         // default today's date
         document.getElementById('quoteDate').valueAsDate = new Date();
     </script>
-</body>
-
-</html>
