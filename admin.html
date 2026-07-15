@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pravin's Kitchen — Admin Panel</title>
+    <style>
+        :root {
+            --bg: #0b1a10;
+            --surface: #122417;
+            --surface2: #1b3523;
+            --border: #23452e;
+            --accent: #3dbb6e;
+            --accent-dark: #2a9055;
+            --text: #d4edd9;
+            --muted: #7aaa87;
+            --danger: #e05c5c;
+            --good: #2ecc71;
+            --radius: 10px;
+            --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--sans);
+            color: var(--text);
+            background: var(--bg);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: var(--surface);
+            padding: 20px;
+            border-bottom: 5px solid var(--accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, .3);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.4rem;
+        }
+
+        header h1 span {
+            color: var(--accent);
+        }
+
+        .role-badge {
+            background: var(--border);
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid var(--accent);
+            margin-left: 10px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .layout {
+            display: flex;
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 25px auto;
+            padding: 0 20px;
+            gap: 25px;
+        }
+
+        .sidebar {
+            width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .tab-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px 16px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            background: var(--surface2);
+            border-color: var(--accent);
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            color: var(--bg);
+            border-color: var(--accent);
+        }
+
+        .content {
+            flex: 1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 1.25rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .rates-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .rates-table th,
+        .rates-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+
+        .rates-table th {
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            font-weight: 600;
+            background: var(--surface2);
+        }
+
+        .rates-table td input {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 6px 10px;
+            border-radius: 6px;
+            width: 100px;
+            font-family: var(--mono);
+        }
+
+        .action-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-dark);
+        }
+
+        .btn-danger {
+            background: transparent;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-danger:hover {
+            background: rgba(224, 92, 92, 0.1);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--good);
+            color: var(--bg);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 100;
+        }
+
+        .item-list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .item-manage-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        .item-manage-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .item-manage-card-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .tag-pill {
+            background: var(--border);
+            color: var(--text);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-family: var(--mono);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tag-pill button {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            padding: 0;
+            font-size: 0.75rem;
+        }
+
+        .tags-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .sub-form {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Room Selector Tabs */
+        .room-tabs-container {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 18px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 0px;
+        }
+        .room-tabs-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .room-tabs {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: thin;
+        }
+        .room-tab {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .room-tab:hover:not(.disabled) {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(61, 187, 110, 0.1);
+        }
+        .room-tab.active {
+            background: var(--accent);
+            color: var(--bg);
+            border-color: var(--accent);
+        }
+        .room-tab.disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            background: rgba(255, 255, 255, 0.05);
+            border-style: dashed;
+        }
+        .room-tab .tab-icon {
+            font-size: 1.1rem;
+        }
+        .room-tab .coming-soon-badge {
+            font-size: 0.6rem;
+            font-weight: 700;
+            background: var(--border);
+            color: var(--muted);
+            padding: 1px 4px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            margin-left: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="logo.png" alt="Pravin's Kitchen Logo" style="height: 50px; border-radius: 6px; object-fit: contain;">
+            <div>
+                <h1>Pravin<span>'s</span> Kitchen 
+                    <span class="role-badge">Admin Panel</span> 
+                    <span class="role-badge" id="divisionBadge" style="background:var(--surface2);color:var(--accent);border-color:var(--accent);">Marketing</span>
+                    <span class="role-badge" id="roomBadge" style="background:var(--accent);color:#fff;border-color:var(--accent);">Kitchen</span>
+                </h1>
+            </div>
+        </div>
+        <div class="nav-actions">
+            <button class="nav-btn" onclick="location.href='rooms.html'">Change Division</button>
+            <button class="nav-btn" onclick="location.href='employee.html'">Go to Employee Panel</button>
+            <button class="nav-btn" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- Room Selector Tabs -->
+    <div class="room-tabs-container-wrapper" style="max-width: 1200px; width: 100%; margin: 20px auto 0; padding: 0 20px;">
+        <div class="room-tabs-container">
+            <div class="room-tabs-title">Which room's items/rates are you managing?</div>
+            <div class="room-tabs" id="roomTabs"></div>
+        </div>
+    </div>
+
+    <div class="layout">
+        <div class="sidebar">
+            <button class="tab-btn active" onclick="switchTab('rates', this)">Rates Management</button>
+            <button class="tab-btn" onclick="switchTab('add-opt', this)">Manage Materials</button>
+            <button class="tab-btn" onclick="switchTab('add-item', this)">Manage Items</button>
+        </div>
+
+        <div class="content">
+            <!-- Rates Management Tab -->
+            <div id="rates" class="tab-panel active">
+                <h2>Default &amp; Custom Rates</h2>
+                <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 15px;">
+                    Set standard pricing per square foot for all materials. These rates will automatically lock on the employee screen.
+                </p>
+                <div style="max-height: 400px; overflow-y: auto;">
+                    <table class="rates-table">
+                        <thead>
+                            <tr>
+                                <th>Material Name</th>
+                                <th>Rate (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ratesTableBody">
+                            <!-- populated by js -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="action-row">
+                    <button class="btn-danger" onclick="resetAllDefaults()">Reset to Defaults</button>
+                    <button class="btn-primary" onclick="saveRates()">Save Rates</button>
+                </div>
+            </div>
+
+            <!-- Manage Materials Options Tab -->
+            <div id="add-opt" class="tab-panel">
+                <h2>Add Material Option to Item Card</h2>
+                <div class="sub-form" style="background: none; border: none; padding: 0;">
+                    <div class="form-group">
+                        <label for="matTargetItem">Select Target Item</label>
+                        <select id="matTargetItem">
+                            <!-- populated by js -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="matLabel">Material Label / Name</label>
+                        <input type="text" id="matLabel" placeholder="e.g. Green Premium Lamination">
+                    </div>
+                    <div class="form-group">
+                        <label for="matFormula">Formula / Dimensions Required</label>
+                        <select id="matFormula">
+                            <option value="(L+W)*H">(L + W) * H [Cabinet Standard]</option>
+                            <option value="L*H">L * H [Wall Panel / Beam]</option>
+                            <option value="L*W">L * W [Ledge]</option>
+                            <option value="SQFT">SQFT [Direct input]</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="matInitialRate">Initial Rate (₹)</label>
+                        <input type="number" id="matInitialRate" placeholder="e.g. 500">
+                    </div>
+                    <div class="action-row">
+                        <button class="btn-primary" onclick="addMaterialToItem()">Add Material Option</button>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 30px; font-size: 1rem; color: var(--accent);">Current Items &amp; Materials</h3>
+                <div class="item-list-container" id="currentItemsList">
+                    <!-- populated by JS -->
+                </div>
+            </div>
+
+            <!-- Manage Custom Items Tab -->
+            <div id="add-item" class="tab-panel">
+                <h2>Add Completely New Item Card</h2>
+                <div class="sub-form" style="background: none; border: none; padding: 0;">
+                    <div class="form-group">
+                        <label for="newItemName">New Item Name</label>
+                        <input type="text" id="newItemName" placeholder="e.g. Designer Wardrobe">
+                    </div>
+                    <div class="action-row">
+                        <button class="btn-primary" onclick="addCustomItem()">Create Item Card</button>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 30px; font-size: 1rem; color: var(--accent);">Custom Created Items</h3>
+                <div class="item-list-container" id="customCreatedItemsList">
+                    <!-- populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Saved successfully!</div>
+
+    <script>
+        // Check admin session
+        if (sessionStorage.getItem('pks_admin_auth') !== 'true') {
+            location.href = 'index.html';
+        }
+
+        const selectedDivision = sessionStorage.getItem('pks_selected_division') || 'marketing';
+        const selectedDivisionName = sessionStorage.getItem('pks_selected_division_name') || 'Marketing';
+        document.getElementById('divisionBadge').textContent = selectedDivisionName;
+
+        const ROOMS = [
+            { id: 'kitchen',     name: 'Kitchen',      icon: '🍳', active: true  },
+            { id: 'living_room', name: 'Living Room',  icon: '🛋️', active: true },
+            { id: 'bedroom',     name: 'Bedroom',      icon: '🛏️', active: false },
+            { id: 'dining_room', name: 'Dining Room',  icon: '🍽️', active: false },
+            { id: 'sitout',      name: 'Sitout',       icon: '🌿', active: false },
+            { id: 'store_room',  name: 'Store Room',   icon: '📦', active: false },
+            { id: 'toilet_area', name: 'Toilet Area',  icon: '🚿', active: false },
+        ];
+
+        let selectedRoom = sessionStorage.getItem('pks_selected_room') || 'kitchen';
+        let selectedRoomName = sessionStorage.getItem('pks_selected_room_name') || 'Kitchen';
+
+        function logout() {
+            sessionStorage.removeItem('pks_admin_auth');
+            location.href = 'index.html';
+        }
+
+        /* ---------- Base Materials & Defaults ---------- */
+        const DEFAULT_RATES = {
+            "Marine Ply – Lamination": 450,
+            "Marine Ply – Acrylic": 650,
+            "WPC": 550,
+            "PVC": 300,
+            "Lamination": 250,
+            "Charcoal": 400,
+            "Optional 1": 200,
+            "Optional 2": 220,
+            "Optional 3": 250,
+            "Marine Plane": 350,
+            "Engineering Wood": 280,
+            
+            // Living Room rates
+            "Marine Ply – Lamination (Box Type)": 450,
+            "Marine Ply – Lamination (Door Type)": 450,
+            "Marine Ply – Acrylic (Box Type)": 650,
+            "Marine Ply – Acrylic (Door Type)": 650,
+            "WPC (Box Type)": 550,
+            "WPC (Door Type)": 550,
+            "Marine Ply (Box Type)": 450,
+            "WPC (Box Type)": 550,
+            "Marine Ply (Door Type)": 450,
+            "WPC (Door Type)": 550
+        };
+
+        const ROOM_ITEMS = {
+            kitchen: [
+                { id: 1, name: "Kitchen Bottom", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
+                { id: 2, name: "Kitchen Top Box", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
+                { id: 3, name: "Kitchen Loft", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
+                { id: 4, name: "Kitchen – Island Cabin", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
+                { id: 5, name: "Kitchen – Breakfast Table", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
+                { id: 6, name: "Breakfast Table – Wall Panelling", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 7, name: "Breakfast Table – Beam Covering", options: ["Lamination", "Optional 1", "Optional 2", "Optional 3"] },
+                { id: 8, name: "Breakfast Table – Open Box", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
+                { id: 9, name: "Spice Rack", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
+                { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
+                { id: 11, name: "Kitchen Side Storage Cabinet", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
+                { id: 12, name: "Kitchen & Dining Partition", options: ["WPC", "Marine Plane", "Engineering Wood"] },
+            ],
+            living_room: [
+                { id: 16, name: "Tv Unit – Wall Panelling", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 17, name: "Tv Unit – Bottom Cabinet", options: [
+                    "Marine Ply – Lamination (Box Type)",
+                    "Marine Ply – Lamination (Door Type)",
+                    "Marine Ply – Acrylic (Box Type)",
+                    "Marine Ply – Acrylic (Door Type)",
+                    "WPC (Box Type)",
+                    "WPC (Door Type)"
+                ] },
+                { id: 18, name: "Tv Unit – Side Showal Cabinet", options: [
+                    "Marine Ply – Lamination (Box Type)",
+                    "Marine Ply – Lamination (Door Type)",
+                    "Marine Ply – Acrylic (Box Type)",
+                    "Marine Ply – Acrylic (Door Type)",
+                    "WPC (Box Type)",
+                    "WPC (Door Type)"
+                ] },
+                { id: 19, name: "Living & Dining Room Partition", options: [
+                    "Marine Ply – Lamination (Box Type)",
+                    "Marine Ply – Lamination (Door Type)",
+                    "Marine Ply – Acrylic (Box Type)",
+                    "Marine Ply – Acrylic (Door Type)",
+                    "WPC (Box Type)",
+                    "WPC (Door Type)"
+                ] },
+                { id: 20, name: "Living Room Wall Panelling", options: ["PVC", "Lamination", "Charcoal"] },
+                { id: 21, name: "Staircase Bottom", options: [
+                    "Marine Ply (Box Type)",
+                    "WPC (Box Type)",
+                    "Marine Ply (Door Type)",
+                    "WPC (Door Type)"
+                ] },
+            ]
+        };
+
+        let BASE_ITEMS = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+
+        /* ---------- Data Loaders ---------- */
+        function getRates() {
+            const stored = localStorage.getItem('pks_rates');
+            if (stored) {
+                try {
+                    return JSON.parse(stored);
+                } catch(e) {}
+            }
+            return {...DEFAULT_RATES};
+        }
+
+        function getCustomMaterials() {
+            const stored = localStorage.getItem('pks_custom_materials');
+            if (stored) {
+                try {
+                    return JSON.parse(stored);
+                } catch(e) {}
+            }
+            return {};
+        }
+
+        function getCustomItems() {
+            const stored = localStorage.getItem('pks_custom_items');
+            if (stored) {
+                try {
+                    return JSON.parse(stored);
+                } catch(e) {}
+            }
+            return [];
+        }
+
+        /* ---------- State Management ---------- */
+        let currentRates = getRates();
+        let customMaterials = getCustomMaterials();
+        let customItems = getCustomItems();
+
+        /* ---------- UI Actions ---------- */
+        function switchTab(tabId, btnEl) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btnEl.classList.add('active');
+            renderTabContent(tabId);
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.display = 'block';
+            setTimeout(() => {
+                t.style.display = 'none';
+            }, 2000);
+        }
+
+        /* ---------- Renderers ---------- */
+        function renderRatesTable() {
+            const body = document.getElementById('ratesTableBody');
+            body.innerHTML = '';
+
+            // Get all unique material labels used anywhere
+            const allMaterials = new Set();
+            // Default ones
+            Object.keys(DEFAULT_RATES).forEach(k => allMaterials.add(k));
+            // Custom ones from customMaterials
+            Object.values(customMaterials).forEach(mats => {
+                mats.forEach(m => allMaterials.add(m.label));
+            });
+            // Custom ones from customItems
+            customItems.forEach(item => {
+                item.options.forEach(opt => allMaterials.add(opt.label));
+            });
+
+            Array.from(allMaterials).sort().forEach(mat => {
+                const tr = document.createElement('tr');
+                const rateVal = currentRates[mat] !== undefined ? currentRates[mat] : 0;
+                tr.innerHTML = `
+                    <td>${mat}</td>
+                    <td><input type="number" data-material="${mat}" value="${rateVal}"></td>
+                `;
+                body.appendChild(tr);
+            });
+        }
+
+        function saveRates() {
+            const inputs = document.querySelectorAll('#ratesTableBody input');
+            const ratesObj = {};
+            inputs.forEach(input => {
+                const mat = input.dataset.material;
+                const val = parseFloat(input.value) || 0;
+                ratesObj[mat] = val;
+            });
+            localStorage.setItem('pks_rates', JSON.stringify(ratesObj));
+            currentRates = ratesObj;
+            showToast("Rates saved successfully!");
+        }
+
+        function resetAllDefaults() {
+            if (confirm("Are you sure you want to reset all rates and clear all custom items and materials?")) {
+                localStorage.removeItem('pks_rates');
+                localStorage.removeItem('pks_custom_materials');
+                localStorage.removeItem('pks_custom_items');
+                currentRates = {...DEFAULT_RATES};
+                customMaterials = {};
+                customItems = [];
+                renderRatesTable();
+                renderItemsDropdown();
+                renderCurrentItemsList();
+                renderCustomItemsList();
+                showToast("All settings reset to default values.");
+            }
+        }
+
+        // dropdown options for target items
+        function renderItemsDropdown() {
+            const select = document.getElementById('matTargetItem');
+            select.innerHTML = '';
+            
+            // Standard Items
+            BASE_ITEMS.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = `std-${item.id}`;
+                opt.textContent = `${item.id}. ${item.name} [Standard]`;
+                select.appendChild(opt);
+            });
+
+            // Custom Items
+            customItems.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = `custom-${item.id}`;
+                opt.textContent = `${item.id}. ${item.name} [Custom]`;
+                select.appendChild(opt);
+            });
+        }
+
+        function renderCurrentItemsList() {
+            const container = document.getElementById('currentItemsList');
+            container.innerHTML = '';
+
+            // Render Standard items with custom modifications
+            BASE_ITEMS.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'item-manage-card';
+                
+                // Get standard list
+                let matTags = item.options.map(opt => `<span class="tag-pill">${opt}</span>`).join('');
+                
+                // Check if any custom materials added
+                const customList = customMaterials[item.id] || [];
+                let customTags = customList.map((m, index) => `
+                    <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
+                        ${m.label} (${m.note})
+                        <button onclick="removeCustomMaterial(${item.id}, ${index})">✕</button>
+                    </span>
+                `).join('');
+
+                div.innerHTML = `
+                    <div class="item-manage-card-header">
+                        <div class="item-manage-card-title">${item.id}. ${item.name}</div>
+                    </div>
+                    <div class="tags-row">
+                        ${matTags}
+                        ${customTags}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderCustomItemsList() {
+            const container = document.getElementById('customCreatedItemsList');
+            container.innerHTML = '';
+
+            if (customItems.length === 0) {
+                container.innerHTML = `<p style="font-size: 0.85rem; color: var(--muted); font-style: italic;">No custom item cards created yet.</p>`;
+                return;
+            }
+
+            customItems.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'item-manage-card';
+                
+                let optTags = item.options.map((opt, optIdx) => `
+                    <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
+                        ${opt.label} (${opt.note})
+                        <button onclick="removeCustomItemMaterial(${index}, ${optIdx})">✕</button>
+                    </span>
+                `).join('');
+
+                div.innerHTML = `
+                    <div class="item-manage-card-header">
+                        <div class="item-manage-card-title">${item.id}. ${item.name}</div>
+                        <button class="btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteCustomItem(${index})">Delete Card</button>
+                    </div>
+                    <div class="tags-row" style="margin-bottom: 10px;">
+                        ${optTags || '<span style="font-size: 0.8rem; color: var(--muted); font-style: italic;">No materials added yet</span>'}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        /* ---------- Custom material option actions ---------- */
+        function addMaterialToItem() {
+            const targetSelect = document.getElementById('matTargetItem').value;
+            const label = document.getElementById('matLabel').value.trim();
+            const formulaType = document.getElementById('matFormula').value;
+            const initialRate = parseFloat(document.getElementById('matInitialRate').value) || 0;
+
+            if (!label) {
+                alert("Please specify a material label.");
+                return;
+            }
+
+            // Determine dimensions and note based on formula choice
+            let fields, note;
+            if (formulaType === "L*H") { fields = ["L", "H"]; note = "L×H"; }
+            else if (formulaType === "L*W") { fields = ["L", "W"]; note = "L×W"; }
+            else if (formulaType === "SQFT") { fields = ["SQFT"]; note = "direct sq.ft"; }
+            else { fields = ["L", "W", "H"]; note = "(L+W)×H"; }
+
+            // Check target type
+            if (targetSelect.startsWith('std-')) {
+                const itemId = parseInt(targetSelect.substring(4));
+                if (!customMaterials[itemId]) {
+                    customMaterials[itemId] = [];
+                }
+                customMaterials[itemId].push({ label, fields, formulaType, note });
+                localStorage.setItem('pks_custom_materials', JSON.stringify(customMaterials));
+            } else if (targetSelect.startsWith('custom-')) {
+                const itemId = parseInt(targetSelect.substring(7));
+                const item = customItems.find(i => i.id === itemId);
+                if (item) {
+                    item.options.push({ label, fields, formulaType, note });
+                    localStorage.setItem('pks_custom_items', JSON.stringify(customItems));
+                }
+            }
+
+            // Also save rate
+            currentRates[label] = initialRate;
+            localStorage.setItem('pks_rates', JSON.stringify(currentRates));
+
+            // Clean inputs & redraw
+            document.getElementById('matLabel').value = '';
+            document.getElementById('matInitialRate').value = '';
+            
+            renderCurrentItemsList();
+            renderCustomItemsList();
+            renderRatesTable();
+            showToast("Material option added successfully!");
+        }
+
+        function removeCustomMaterial(itemId, index) {
+            if (confirm("Remove this custom material option?")) {
+                customMaterials[itemId].splice(index, 1);
+                if (customMaterials[itemId].length === 0) {
+                    delete customMaterials[itemId];
+                }
+                localStorage.setItem('pks_custom_materials', JSON.stringify(customMaterials));
+                renderCurrentItemsList();
+                renderRatesTable();
+                showToast("Material option removed.");
+            }
+        }
+
+        /* ---------- Custom Item Actions ---------- */
+        function addCustomItem() {
+            const name = document.getElementById('newItemName').value.trim();
+            if (!name) {
+                alert("Please specify a name for the custom item.");
+                return;
+            }
+
+            // Determine next ID (highest current standard/custom ID + 1)
+            let maxId = 0;
+            BASE_ITEMS.forEach(item => {
+                if (item.id > maxId) maxId = item.id;
+            });
+            customItems.forEach(item => {
+                if (item.id > maxId) maxId = item.id;
+            });
+            const nextId = maxId + 1;
+
+            customItems.push({
+                id: nextId,
+                name: name,
+                options: []
+            });
+
+            localStorage.setItem('pks_custom_items', JSON.stringify(customItems));
+            document.getElementById('newItemName').value = '';
+
+            renderItemsDropdown();
+            renderCustomItemsList();
+            showToast("New Item Card created!");
+        }
+
+        function deleteCustomItem(index) {
+            if (confirm("Delete this custom item card entirely?")) {
+                customItems.splice(index, 1);
+                localStorage.setItem('pks_custom_items', JSON.stringify(customItems));
+                renderItemsDropdown();
+                renderCustomItemsList();
+                renderRatesTable();
+                showToast("Item card deleted.");
+            }
+        }
+
+        function removeCustomItemMaterial(itemIndex, optIdx) {
+            if (confirm("Remove this material option from this custom item?")) {
+                customItems[itemIndex].options.splice(optIdx, 1);
+                localStorage.setItem('pks_custom_items', JSON.stringify(customItems));
+                renderCustomItemsList();
+                renderRatesTable();
+                showToast("Material option removed.");
+            }
+        }
+
+        function renderRoomTabs() {
+            const tabsEl = document.getElementById('roomTabs');
+            tabsEl.innerHTML = '';
+            
+            ROOMS.forEach(room => {
+                const tab = document.createElement('div');
+                tab.className = `room-tab ${room.id === selectedRoom ? 'active' : ''} ${room.active ? '' : 'disabled'}`;
+                
+                let badge = '';
+                if (!room.active) {
+                    badge = `<span class="coming-soon-badge">Soon</span>`;
+                }
+                
+                tab.innerHTML = `
+                    <span class="tab-icon">${room.icon}</span>
+                    <span class="tab-name">${room.name}</span>
+                    ${badge}
+                `;
+                
+                if (room.active) {
+                    tab.onclick = () => {
+                        updateRoomState(room.id, room.name);
+                    };
+                }
+                tabsEl.appendChild(tab);
+            });
+        }
+
+        function updateRoomState(roomId, roomName) {
+            selectedRoom = roomId;
+            selectedRoomName = roomName;
+            sessionStorage.setItem('pks_selected_room', roomId);
+            sessionStorage.setItem('pks_selected_room_name', roomName);
+
+            BASE_ITEMS = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+            currentRates = getRates();
+            customMaterials = getCustomMaterials();
+            customItems = getCustomItems();
+
+            document.getElementById('roomBadge').textContent = selectedRoomName;
+
+            renderRoomTabs();
+            
+            const activePanel = document.querySelector('.tab-panel.active');
+            if (activePanel) {
+                renderTabContent(activePanel.id);
+            }
+        }
+
+        /* ---------- Initialize View ---------- */
+        function renderTabContent(tabId) {
+            if (tabId === 'rates') renderRatesTable();
+            else if (tabId === 'add-opt') {
+                renderItemsDropdown();
+                renderCurrentItemsList();
+            } else if (tabId === 'add-item') {
+                renderCustomItemsList();
+            }
+        }
+
+        // Setup dynamic tabs and panels
+        updateRoomState(selectedRoom, selectedRoomName);
+    </script>
+</body>
+
+</html>

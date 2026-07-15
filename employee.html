@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pravin's Kitchen — Employee Quote System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f2ede6;
+            --surface: #ffffff;
+            --surface2: #faf7f3;
+            --border: #e0d6c8;
+            --header: #1c2820;
+            --accent: #b07d2e;
+            --accent-dark: #8f6320;
+            --accent-light: #f5e9d4;
+            --text: #1a1714;
+            --muted: #7a6e61;
+            --danger: #c0392b;
+            --good: #276749;
+            --line: #e0d6c8;
+            --radius: 8px;
+            --shadow: 0 1px 4px rgba(0,0,0,.07), 0 4px 12px rgba(0,0,0,.04);
+            --mono: 'JetBrains Mono', 'Courier New', monospace;
+            --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--sans);
+            color: var(--text);
+            background: var(--bg);
+            margin: 0;
+            padding: 0 0 60px 0;
+            min-height: 100vh;
+        }
+
+        header {
+            background: var(--header);
+            padding: 14px 24px;
+            border-bottom: 3px solid var(--accent);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 2px 12px rgba(0,0,0,.18);
+        }
+
+        .header-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: .2px;
+            color: #f0ebe2;
+        }
+
+        header h1 span { color: var(--accent); }
+
+        header .tag {
+            font-size: .7rem;
+            color: #9a9186;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .role-badge {
+            background: rgba(176,125,46,.15);
+            color: var(--accent);
+            padding: 3px 9px;
+            border-radius: 4px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            border: 1px solid rgba(176,125,46,.4);
+            margin-left: 10px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .cust-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .cust-row input {
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(255,255,255,.15);
+            color: #f0ebe2;
+            padding: 7px 11px;
+            border-radius: 6px;
+            font-family: var(--sans);
+            font-size: .82rem;
+            width: 148px;
+        }
+
+        .cust-row input::placeholder { color: #7a7065; }
+        .cust-row input:focus { outline: none; border-color: var(--accent); }
+
+        main {
+            max-width: 1100px;
+            margin: 26px auto 0;
+            padding: 0 20px;
+        }
+
+        .intro {
+            font-size: .9rem;
+            color: var(--muted);
+            margin-bottom: 18px;
+            border-left: 3px solid var(--accent);
+            padding-left: 12px;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .item-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: box-shadow 0.2s;
+        }
+        .item-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,.1); }
+
+        .item-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .item-num {
+            font-family: var(--mono);
+            font-size: .72rem;
+            color: var(--accent);
+            background: var(--accent-light);
+            border-radius: 4px;
+            padding: 2px 7px;
+            flex-shrink: 0;
+            font-weight: 700;
+        }
+
+        .item-name {
+            font-weight: 600;
+            font-size: .93rem;
+            color: var(--text);
+            line-height: 1.3;
+        }
+
+        .add-btn {
+            align-self: flex-start;
+            background: var(--header);
+            color: #f0ebe2;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: .79rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .15s;
+            font-family: var(--sans);
+        }
+
+        .add-btn:hover { background: #2c3e34; }
+
+        .builder {
+            border-top: 1px dashed var(--border);
+            padding-top: 10px;
+            margin-top: 2px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .step-label {
+            font-size: .72rem;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .opt-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .opt-btn {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: .78rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.15s;
+            font-family: var(--sans);
+        }
+
+        .opt-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        .opt-btn.selected {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+
+        .size-btn {
+            background: var(--good);
+            color: #fff;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: .8rem;
+            font-weight: 700;
+            cursor: pointer;
+            align-self: flex-start;
+            font-family: var(--sans);
+        }
+        .size-btn:hover { background: #1e5236; }
+
+        .size-panel {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .field-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            flex: 1;
+            min-width: 80px;
+        }
+
+        .field label {
+            font-size: .68rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        .field input {
+            font-family: var(--mono);
+            font-size: .88rem;
+            padding: 6px 8px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            background: var(--surface);
+            color: var(--text);
+            width: 100%;
+        }
+
+        .field input:focus { outline: none; border-color: var(--accent); }
+
+        .field input:disabled {
+            opacity: 0.6;
+            background: #f0ece6;
+            cursor: not-allowed;
+        }
+
+        .calc-line {
+            font-family: var(--mono);
+            font-size: .8rem;
+            color: var(--muted);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            padding: 8px 10px;
+        }
+
+        .calc-line b { color: var(--accent); font-weight: 700; }
+
+        .row-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .confirm-btn {
+            background: var(--good);
+            color: #fff;
+            border: none;
+            padding: 7px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: .8rem;
+            cursor: pointer;
+            font-family: var(--sans);
+        }
+
+        .confirm-btn:hover { background: #1e5236; }
+
+        .cancel-btn {
+            background: transparent;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: .8rem;
+            cursor: pointer;
+            font-family: var(--sans);
+        }
+
+        /* Quote section */
+        .quote-wrap {
+            margin-top: 40px;
+        }
+
+        .quote-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .quote-title h2 {
+            font-size: 1.15rem;
+            margin: 0;
+            color: var(--text);
+        }
+
+        .quote-title .line {
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        table.quote-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--surface);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        table.quote-table th,
+        table.quote-table td {
+            padding: 10px 14px;
+            text-align: left;
+            font-size: .82rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        table.quote-table th {
+            background: var(--header);
+            color: #c9bba8;
+            font-weight: 600;
+            font-size: .7rem;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+        }
+
+        table.quote-table td.num,
+        table.quote-table th.num {
+            font-family: var(--mono);
+            text-align: right;
+        }
+
+        table.quote-table tbody tr:hover { background: var(--surface2); }
+        table.quote-table tr:last-child td { border-bottom: none; }
+
+        .del-btn {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: .9rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .del-btn:hover { background: #fde8e8; }
+
+        .empty-row td {
+            text-align: center;
+            color: var(--muted);
+            padding: 24px;
+            font-style: italic;
+        }
+
+        tfoot td {
+            font-weight: 700;
+            font-family: var(--mono);
+            background: var(--accent-light);
+            color: var(--accent-dark);
+            border-top: 2px solid var(--accent);
+        }
+
+        .quote-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 14px;
+        }
+
+        .print-btn,
+        .reset-btn,
+        .back-btn {
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: .85rem;
+            cursor: pointer;
+            border: none;
+        }
+
+        .print-btn {
+            background: var(--header);
+            color: #f0ebe2;
+        }
+
+        .print-btn:hover { background: #2c3e34; }
+
+        .reset-btn {
+            background: transparent;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+
+        .back-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+        }
+
+        .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        @media print {
+            header,
+            .room-tabs-container,
+            .items-grid,
+            .intro,
+            .quote-actions,
+            .del-btn,
+            th:last-child,
+            td:last-child {
+                display: none !important;
+            }
+
+            body {
+                background: #fff;
+                color: #000;
+            }
+
+            table.quote-table {
+                background: #fff;
+                box-shadow: none;
+                color: #000;
+            }
+
+            table.quote-table th {
+                background: #f0f0f0;
+                color: #000;
+                border-bottom: 2px solid #000;
+            }
+
+            table.quote-table td {
+                border-bottom: 1px solid #ddd;
+            }
+
+            tfoot td {
+                background: #f0f0f0;
+                color: #000;
+            }
+
+            .quote-wrap {
+                margin-top: 0;
+            }
+        }
+
+        @media (max-width:600px) {
+            .header-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* Room Selector Tabs */
+        .room-tabs-container {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 18px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+        .room-tabs-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .room-tabs {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: thin;
+        }
+        .room-tab {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .room-tab:hover:not(.disabled) {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-light);
+        }
+        .room-tab.active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+        .room-tab.disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            background: #eee;
+            border-style: dashed;
+        }
+        .room-tab .tab-icon {
+            font-size: 1.1rem;
+        }
+        .room-tab .coming-soon-badge {
+            font-size: 0.6rem;
+            font-weight: 700;
+            background: var(--border);
+            color: var(--muted);
+            padding: 1px 4px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            margin-left: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="header-inner">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <img src="logo.png" alt="Pravin's Kitchen Logo" style="height: 50px; border-radius: 6px; object-fit: contain;">
+                <div>
+                    <h1>Pravin<span>'s</span> Kitchen 
+                        <span class="role-badge">Employee</span> 
+                        <span class="role-badge" id="divisionBadge" style="background:var(--accent-light);color:var(--accent-dark);border-color:var(--accent);">Marketing</span> 
+                        <span class="role-badge" id="roomBadge" style="background:var(--accent);color:#fff;border-color:var(--accent);">Kitchen</span>
+                    </h1>
+                    <div class="tag" id="roomTitle">Modular Quote System</div>
+                </div>
+            </div>
+            <div class="cust-row" style="align-items: center;">
+                <input id="custName" placeholder="Customer name">
+                <input id="custPhone" placeholder="Phone">
+                <input id="quoteDate" type="date">
+                <button class="back-btn" style="padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; margin-right: 5px;" onclick="location.href='rooms.html'">Change Division</button>
+                <button class="back-btn" style="padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer;" onclick="location.href='index.html'">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <p class="intro">Pick an item below, choose the material, then click <b>Add Size</b> to enter measurements.
+            Rates are managed by the admin and locked for safety.</p>
+
+        <!-- Room Selector Tabs -->
+        <div class="room-tabs-container">
+            <div class="room-tabs-title">Which room are you working on?</div>
+            <div class="room-tabs" id="roomTabs"></div>
+        </div>
+
+        <div class="items-grid" id="itemsGrid"></div>
+
+        <div class="quote-wrap">
+            <div class="quote-title">
+                <h2>Quote Summary</h2>
+                <div class="line"></div>
+            </div>
+            <table class="quote-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Room</th>
+                        <th>Item</th>
+                        <th>Material</th>
+                        <th>Size</th>
+                        <th class="num">Sq.Ft</th>
+                        <th class="num">Rate</th>
+                        <th class="num">Amount</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="quoteBody">
+                    <tr class="empty-row">
+                        <td colspan="9">No items added yet — start with any card above.</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="7" style="text-align:right;">Total</td>
+                        <td class="num" id="grandTotal">₹0</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div class="quote-actions">
+                <div>
+                    <button class="back-btn" onclick="location.href='rooms.html'" style="margin-right: 8px;">Change Division</button>
+                    <button class="back-btn" onclick="location.href='index.html'">Logout</button>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
+                    <button class="reset-btn" onclick="resetQuote()">Clear Quote</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        /* ---------- Base Materials ---------- */
+        const STD_CABINET = [
+            { label: "Marine Ply – Lamination", fields: ["L", "W", "H"], formula: v => (v.L + v.W) * v.H, note: "(L+W)×H" },
+            { label: "Marine Ply – Acrylic", fields: ["L", "W", "H"], formula: v => (v.L + v.W) * v.H, note: "(L+W)×H" },
+            { label: "WPC", fields: ["L", "W", "H"], formula: v => (v.L + v.W) * v.H, note: "(L+W)×H" },
+        ];
+        const WALL_PANEL = [
+            { label: "PVC", fields: ["L", "H"], formula: v => v.L * v.H, note: "L×H" },
+            { label: "Lamination", fields: ["L", "H"], formula: v => v.L * v.H, note: "L×H" },
+            { label: "Charcoal", fields: ["L", "H"], formula: v => v.L * v.H, note: "L×H" },
+        ];
+        const BEAM = [
+            { label: "Lamination", fields: ["L", "H"], formula: v => v.L * v.H, note: "L×H" },
+            { label: "Optional 1", fields: ["L", "H"], formula: v => v.L * v.H, note: "L×H" },
+            { label: "Optional 2", fields: ["L", "H"], formula: v => v.L * v.H, note: "L×H" },
+            { label: "Optional 3", fields: ["L", "H"], formula: v => v.L * v.H, note: "L×H" },
+        ];
+        const SPICE = [
+            { label: "Marine Ply – Lamination", fields: ["SQFT"], formula: v => v.SQFT, note: "direct sq.ft" },
+            { label: "Marine Ply – Acrylic", fields: ["SQFT"], formula: v => v.SQFT, note: "direct sq.ft" },
+            { label: "WPC", fields: ["SQFT"], formula: v => v.SQFT, note: "direct sq.ft" },
+        ];
+        const LEDGE = [
+            { label: "Marine Ply – Lamination", fields: ["L", "W"], formula: v => v.L * v.W, note: "L×W" },
+            { label: "Marine Ply – Acrylic", fields: ["L", "W"], formula: v => v.L * v.W, note: "L×W" },
+            { label: "WPC", fields: ["L", "W"], formula: v => v.L * v.W, note: "L×W" },
+        ];
+        const PARTITION = [
+            { label: "WPC", fields: ["L", "W", "H"], formula: v => (v.L + v.W) * v.H, note: "(L+W)×H" },
+            { label: "Marine Plane", fields: ["L", "W", "H"], formula: v => (v.L + v.W) * v.H, note: "(L+W)×H" },
+            { label: "Engineering Wood", fields: ["L", "W", "H"], formula: v => (v.L + v.W) * v.H, note: "(L+W)×H" },
+        ];
+
+        /* ---------- Living Room Materials ---------- */
+        const LR_WALL_PANEL = [
+            { label: "PVC", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Lamination", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Charcoal", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+        ];
+        const LR_CABINET_BOX_DOOR = [
+            { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Lamination (Door Type)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Marine Ply – Acrylic (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Acrylic (Door Type)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "WPC (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "WPC (Door Type)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+        ];
+        const LR_STAIRCASE_BOTTOM = [
+            { label: "Marine Ply (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "WPC (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply (Door Type)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "WPC (Door Type)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+        ];
+
+        const selectedDivision = sessionStorage.getItem('pks_selected_division') || 'marketing';
+        const selectedDivisionName = sessionStorage.getItem('pks_selected_division_name') || 'Marketing';
+
+        // Render division badge in header
+        document.getElementById('divisionBadge').textContent = selectedDivisionName;
+
+        const ROOMS = [
+            { id: 'kitchen',     name: 'Kitchen',      icon: '🍳', active: true  },
+            { id: 'living_room', name: 'Living Room',  icon: '🛋️', active: true },
+            { id: 'bedroom',     name: 'Bedroom',      icon: '🛏️', active: false },
+            { id: 'dining_room', name: 'Dining Room',  icon: '🍽️', active: false },
+            { id: 'sitout',      name: 'Sitout',       icon: '🌿', active: false },
+            { id: 'store_room',  name: 'Store Room',   icon: '📦', active: false },
+            { id: 'toilet_area', name: 'Toilet Area',  icon: '🚿', active: false },
+        ];
+
+        let selectedRoom = sessionStorage.getItem('pks_selected_room') || 'kitchen';
+        let selectedRoomName = sessionStorage.getItem('pks_selected_room_name') || 'Kitchen';
+        let isLivingRoom = (selectedRoom === 'living_room');
+
+        let FIELD_LABELS = isLivingRoom ? {
+            L: "Length (in)",
+            W: "Width (in)",
+            H: "Height (in)",
+            SQFT: "Sq.Ft"
+        } : {
+            L: "Length (ft)",
+            W: "Width (ft)",
+            H: "Height (ft)",
+            SQFT: "Sq.Ft"
+        };
+
+        // Default Rates lookup (fallback if not in localStorage)
+        const DEFAULT_RATES = {
+            "Marine Ply – Lamination": 450,
+            "Marine Ply – Acrylic": 650,
+            "WPC": 550,
+            "PVC": 300,
+            "Lamination": 250,
+            "Charcoal": 400,
+            "Optional 1": 200,
+            "Optional 2": 220,
+            "Optional 3": 250,
+            "Marine Plane": 350,
+            "Engineering Wood": 280,
+            
+            // Living Room rates
+            "Marine Ply – Lamination (Box Type)": 450,
+            "Marine Ply – Lamination (Door Type)": 450,
+            "Marine Ply – Acrylic (Box Type)": 650,
+            "Marine Ply – Acrylic (Door Type)": 650,
+            "WPC (Box Type)": 550,
+            "WPC (Door Type)": 550,
+            "Marine Ply (Box Type)": 450,
+            "WPC (Box Type)": 550,
+            "Marine Ply (Door Type)": 450,
+            "WPC (Door Type)": 550
+        };
+
+        // Load rates from localStorage or use defaults
+        function getRates() {
+            const stored = localStorage.getItem('pks_rates');
+            if (stored) {
+                try {
+                    return JSON.parse(stored);
+                } catch(e) {}
+            }
+            return DEFAULT_RATES;
+        }
+
+        // Load custom materials added to standard groups
+        function getCustomMaterials() {
+            const stored = localStorage.getItem('pks_custom_materials');
+            if (stored) {
+                try {
+                    return JSON.parse(stored);
+                } catch(e) {}
+            }
+            return {};
+        }
+
+        // Load custom item cards
+        function getCustomItems() {
+            const stored = localStorage.getItem('pks_custom_items');
+            if (stored) {
+                try {
+                    return JSON.parse(stored);
+                } catch(e) {}
+            }
+            return [];
+        }
+
+        // Setup base items list per room
+        const ROOM_ITEMS = {
+            kitchen: [
+                { id: 1, name: "Kitchen Bottom", options: STD_CABINET },
+                { id: 2, name: "Kitchen Top Box", options: STD_CABINET },
+                { id: 3, name: "Kitchen Loft", options: STD_CABINET },
+                { id: 4, name: "Kitchen – Island Cabin", options: STD_CABINET },
+                { id: 5, name: "Kitchen – Breakfast Table", options: STD_CABINET },
+                { id: 6, name: "Breakfast Table – Wall Panelling", options: WALL_PANEL },
+                { id: 7, name: "Breakfast Table – Beam Covering", options: BEAM },
+                { id: 8, name: "Breakfast Table – Open Box", options: STD_CABINET },
+                { id: 9, name: "Spice Rack", options: SPICE },
+                { id: 10, name: "Ledge", options: LEDGE },
+                { id: 11, name: "Kitchen Side Storage Cabinet", options: STD_CABINET },
+                { id: 12, name: "Kitchen & Dining Partition", options: PARTITION },
+                { id: 13, name: "Additional Item", custom: true },
+                { id: 14, name: "Additional Item", custom: true },
+                { id: 15, name: "Additional Item", custom: true },
+            ],
+            living_room: [
+                { id: 16, name: "Tv Unit – Wall Panelling", options: LR_WALL_PANEL },
+                { id: 17, name: "Tv Unit – Bottom Cabinet", options: LR_CABINET_BOX_DOOR },
+                { id: 18, name: "Tv Unit – Side Showal Cabinet", options: LR_CABINET_BOX_DOOR },
+                { id: 19, name: "Living & Dining Room Partition", options: LR_CABINET_BOX_DOOR },
+                { id: 20, name: "Living Room Wall Panelling", options: LR_WALL_PANEL },
+                { id: 21, name: "Staircase Bottom", options: LR_STAIRCASE_BOTTOM },
+                { id: 22, name: "Additional Item", custom: true },
+                { id: 23, name: "Additional Item", custom: true },
+                { id: 24, name: "Additional Item", custom: true },
+            ]
+        };
+
+        let BASE_ITEMS = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+
+        // Combine base items with admin customizations
+        function getFullItemsList() {
+            const list = BASE_ITEMS.map(item => {
+                return {
+                    id: item.id,
+                    name: item.name,
+                    options: item.options ? [...item.options] : [],
+                    custom: item.custom
+                };
+            });
+            const customMats = getCustomMaterials();
+            
+            // Append custom materials to standard items
+            list.forEach(item => {
+                if (!item.custom && customMats[item.id]) {
+                    customMats[item.id].forEach(m => {
+                        let formula;
+                        if (isLivingRoom) {
+                            if (m.formulaType === "L*H") formula = v => (v.L * v.H) / 144;
+                            else if (m.formulaType === "L*W") formula = v => (v.L * v.W) / 144;
+                            else if (m.formulaType === "SQFT") formula = v => v.SQFT;
+                            else formula = v => ((v.L + v.W) * v.H) / 144;
+                        } else {
+                            if (m.formulaType === "L*H") formula = v => v.L * v.H;
+                            else if (m.formulaType === "L*W") formula = v => v.L * v.W;
+                            else if (m.formulaType === "SQFT") formula = v => v.SQFT;
+                            else formula = v => (v.L + v.W) * v.H; // default (L+W)*H
+                        }
+                        
+                        item.options.push({
+                            label: m.label,
+                            fields: m.fields,
+                            formula: formula,
+                            note: m.note
+                        });
+                    });
+                }
+            });
+
+            // Append admin created completely custom items
+            const customItems = getCustomItems();
+            customItems.forEach(item => {
+                const processedOptions = item.options.map(opt => {
+                    let formula;
+                    if (isLivingRoom) {
+                        if (opt.formulaType === "L*H") formula = v => (v.L * v.H) / 144;
+                        else if (opt.formulaType === "L*W") formula = v => (v.L * v.W) / 144;
+                        else if (opt.formulaType === "SQFT") formula = v => v.SQFT;
+                        else formula = v => ((v.L + v.W) * v.H) / 144;
+                    } else {
+                        if (opt.formulaType === "L*H") formula = v => v.L * v.H;
+                        else if (opt.formulaType === "L*W") formula = v => v.L * v.W;
+                        else if (opt.formulaType === "SQFT") formula = v => v.SQFT;
+                        else formula = v => (v.L + v.W) * v.H;
+                    }
+
+                    return {
+                        label: opt.label,
+                        fields: opt.fields,
+                        formula: formula,
+                        note: opt.note
+                    };
+                });
+
+                list.push({
+                    id: item.id,
+                    name: item.name,
+                    options: processedOptions
+                });
+            });
+
+            return list;
+        }
+
+        let ITEMS = getFullItemsList();
+        let quoteLines = [];
+        let lineIdCounter = 1;
+
+        /* ---------- render item cards ---------- */
+        const grid = document.getElementById('itemsGrid');
+
+        function renderItemsGrid() {
+            grid.innerHTML = '';
+            ITEMS.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                card.id = `card-${item.id}`;
+                card.innerHTML = `
+                    <div class="item-head">
+                      <span class="item-num">${item.id}</span>
+                      <span class="item-name">${item.name}</span>
+                    </div>
+                    <button class="add-btn" onclick="openBuilder(${item.id})">Click ${item.custom ? 'Custom Line' : 'Me'}</button>
+                    <div class="builders" id="builders-${item.id}"></div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderRoomTabs() {
+            const tabsEl = document.getElementById('roomTabs');
+            tabsEl.innerHTML = '';
+            
+            ROOMS.forEach(room => {
+                const tab = document.createElement('div');
+                tab.className = `room-tab ${room.id === selectedRoom ? 'active' : ''} ${room.active ? '' : 'disabled'}`;
+                
+                let badge = '';
+                if (!room.active) {
+                    badge = `<span class="coming-soon-badge">Soon</span>`;
+                }
+                
+                tab.innerHTML = `
+                    <span class="tab-icon">${room.icon}</span>
+                    <span class="tab-name">${room.name}</span>
+                    ${badge}
+                `;
+                
+                if (room.active) {
+                    tab.onclick = () => {
+                        updateRoomState(room.id, room.name);
+                    };
+                }
+                tabsEl.appendChild(tab);
+            });
+        }
+
+        function updateRoomState(roomId, roomName) {
+            selectedRoom = roomId;
+            selectedRoomName = roomName;
+            sessionStorage.setItem('pks_selected_room', roomId);
+            sessionStorage.setItem('pks_selected_room_name', roomName);
+
+            isLivingRoom = (selectedRoom === 'living_room');
+
+            FIELD_LABELS = isLivingRoom ? {
+                L: "Length (in)",
+                W: "Width (in)",
+                H: "Height (in)",
+                SQFT: "Sq.Ft"
+            } : {
+                L: "Length (ft)",
+                W: "Width (ft)",
+                H: "Height (ft)",
+                SQFT: "Sq.Ft"
+            };
+
+            BASE_ITEMS = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+            ITEMS = getFullItemsList();
+
+            // Update badge and tag in header
+            document.getElementById('roomBadge').textContent = selectedRoomName;
+            document.getElementById('roomTitle').textContent = `${selectedRoomName} - Modular Quote System`;
+
+            renderRoomTabs();
+            renderItemsGrid();
+        }
+
+        // Initialize dynamic tabs and list
+        updateRoomState(selectedRoom, selectedRoomName);
+
+        // Listen for admin changes in other tabs/windows
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'pks_rates' || e.key === 'pks_custom_materials' || e.key === 'pks_custom_items') {
+                ITEMS = getFullItemsList();
+                renderItemsGrid();
+            }
+        });
+
+        function openBuilder(itemId) {
+            const item = ITEMS.find(i => i.id === itemId);
+            const container = document.getElementById(`builders-${itemId}`);
+            const buildId = `b${itemId}-${Date.now()}`;
+            const wrap = document.createElement('div');
+            wrap.className = 'builder';
+            wrap.id = buildId;
+
+            if (item.custom) {
+                wrap.innerHTML = `
+                    <div class="step-label">Custom line details</div>
+                    <div class="custom-fields field-row">
+                        <div class="field" style="flex:2">
+                            <label>Description</label>
+                            <input type="text" id="${buildId}-desc" placeholder="e.g. Handle upgrade">
+                        </div>
+                        <div class="field">
+                            <label>Sq.Ft / Qty</label>
+                            <input type="number" id="${buildId}-sqft" placeholder="0">
+                        </div>
+                        <div class="field">
+                            <label>Rate (₹)</label>
+                            <input type="number" id="${buildId}-rate" placeholder="0">
+                        </div>
+                    </div>
+                    <div class="calc-line" id="${buildId}-calc">Amount: <b>₹0</b></div>
+                    <div class="row-actions">
+                        <button class="confirm-btn" onclick="confirmCustom('${buildId}', ${itemId})">Add to Quote</button>
+                        <button class="cancel-btn" onclick="closeBuilder('${buildId}')">Cancel</button>
+                    </div>
+                `;
+                container.appendChild(wrap);
+                ['sqft', 'rate'].forEach(f => {
+                    document.getElementById(`${buildId}-${f}`).addEventListener('input', () => updateCustomCalc(buildId));
+                });
+                return;
+            }
+
+            wrap.innerHTML = `
+                <div class="step-label">Choose material</div>
+                <div class="opt-row" id="${buildId}-opts"></div>
+                <div id="${buildId}-sizeArea"></div>
+            `;
+            container.appendChild(wrap);
+
+            const optRow = document.getElementById(`${buildId}-opts`);
+            item.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.textContent = opt.label;
+                btn.onclick = () => selectMaterial(buildId, itemId, idx, btn, optRow);
+                optRow.appendChild(btn);
+            });
+        }
+
+        function selectMaterial(buildId, itemId, optIdx, btnEl, optRow) {
+            [...optRow.children].forEach(b => b.classList.remove('selected'));
+            btnEl.classList.add('selected');
+            openSizePanel(buildId, itemId, optIdx);
+        }
+
+        function openSizePanel(buildId, itemId, optIdx) {
+            const item = ITEMS.find(i => i.id === itemId);
+            const opt = item.options[optIdx];
+            const sizeArea = document.getElementById(`${buildId}-sizeArea`);
+
+            const rates = getRates();
+            const defaultRate = rates[opt.label] || 0;
+
+            const fieldsHtml = opt.fields.map(f => `
+                <div class="field">
+                  <label>${FIELD_LABELS[f]}</label>
+                  <input type="number" step="0.01" id="${buildId}-${f}" placeholder="0">
+                </div>
+            `).join('');
+
+            sizeArea.innerHTML = `
+                <div class="size-panel">
+                  <div class="step-label">Size &amp; rate — ${opt.label} <span style="text-transform:none;color:var(--muted)">(${opt.note})</span></div>
+                  <div class="field-row">
+                    ${fieldsHtml}
+                    ${!opt.fields.includes('SQFT') ? `
+                    <div class="field">
+                      <label>Total Sq.Ft</label>
+                      <input type="number" step="0.01" id="${buildId}-SQFT_val" placeholder="0">
+                    </div>` : ''}
+                    <div class="field">
+                      <label>Rate (₹/sq.ft) [Locked]</label>
+                      <input type="number" step="0.01" id="${buildId}-rate" value="${defaultRate}" disabled>
+                    </div>
+                  </div>
+                  <div class="calc-line" id="${buildId}-calc">Sq.Ft: <b>0</b> &nbsp;|&nbsp; Amount: <b>₹0</b></div>
+                  <div class="row-actions">
+                    <button class="confirm-btn" onclick="confirmMaterial('${buildId}', ${itemId}, ${optIdx})">Add to Quote</button>
+                    <button class="cancel-btn" onclick="closeBuilder('${buildId}')">Cancel</button>
+                  </div>
+                </div>
+            `;
+
+            const allInputs = [...opt.fields];
+            allInputs.forEach(f => {
+                document.getElementById(`${buildId}-${f}`).addEventListener('input', () => updateCalc(buildId, itemId, optIdx, false));
+            });
+            if (!opt.fields.includes('SQFT')) {
+                document.getElementById(`${buildId}-SQFT_val`).addEventListener('input', () => updateCalc(buildId, itemId, optIdx, true));
+            }
+            updateCalc(buildId, itemId, optIdx, false);
+        }
+
+        function readValues(buildId, fields) {
+            const v = {};
+            fields.forEach(f => {
+                const el = document.getElementById(`${buildId}-${f}`);
+                v[f] = parseFloat(el.value) || 0;
+            });
+            return v;
+        }
+
+        function updateCalc(buildId, itemId, optIdx, isManualSqft = false) {
+            const item = ITEMS.find(i => i.id === itemId);
+            const opt = item.options[optIdx];
+            const rate = parseFloat(document.getElementById(`${buildId}-rate`).value) || 0;
+            
+            let sqft = 0;
+            const sqftInput = document.getElementById(`${buildId}-SQFT_val`);
+            
+            if (opt.fields.includes('SQFT')) {
+                const el = document.getElementById(`${buildId}-SQFT`);
+                sqft = parseFloat(el.value) || 0;
+            } else {
+                if (isManualSqft) {
+                    sqft = parseFloat(sqftInput.value) || 0;
+                } else {
+                    const v = readValues(buildId, opt.fields);
+                    sqft = opt.formula(v);
+                    if (sqftInput) {
+                        sqftInput.value = sqft > 0 ? sqft.toFixed(2) : '';
+                    }
+                }
+            }
+            
+            const amount = sqft * rate;
+            document.getElementById(`${buildId}-calc`).innerHTML =
+                `Sq.Ft: <b>${sqft.toFixed(2)}</b> &nbsp;|&nbsp; Amount: <b>₹${amount.toFixed(2)}</b>`;
+        }
+
+        function updateCustomCalc(buildId) {
+            const sqft = parseFloat(document.getElementById(`${buildId}-sqft`).value) || 0;
+            const rate = parseFloat(document.getElementById(`${buildId}-rate`).value) || 0;
+            document.getElementById(`${buildId}-calc`).innerHTML = `Amount: <b>₹${(sqft * rate).toFixed(2)}</b>`;
+        }
+
+        function confirmMaterial(buildId, itemId, optIdx) {
+            const item = ITEMS.find(i => i.id === itemId);
+            const opt = item.options[optIdx];
+            const rate = parseFloat(document.getElementById(`${buildId}-rate`).value) || 0;
+            
+            let sqft = 0;
+            if (opt.fields.includes('SQFT')) {
+                sqft = parseFloat(document.getElementById(`${buildId}-SQFT`).value) || 0;
+            } else {
+                sqft = parseFloat(document.getElementById(`${buildId}-SQFT_val`).value) || 0;
+            }
+            
+            const amount = sqft * rate;
+            const v = readValues(buildId, opt.fields);
+            
+            let sizeDesc = opt.fields.map(f => `${f}:${v[f]}`).join(' × ');
+            if (!sizeDesc) {
+                sizeDesc = `${sqft.toFixed(2)} sqft`;
+            } else {
+                sizeDesc += ` (${sqft.toFixed(2)} sqft)`;
+            }
+
+            quoteLines.push({
+                id: lineIdCounter++,
+                roomName: selectedRoomName,
+                itemName: item.name,
+                material: opt.label,
+                size: sizeDesc,
+                sqft, rate, amount
+            });
+            renderQuote();
+            closeBuilder(buildId);
+        }
+
+        function confirmCustom(buildId, itemId) {
+            const item = ITEMS.find(i => i.id === itemId);
+            const desc = document.getElementById(`${buildId}-desc`).value || 'Custom item';
+            const sqft = parseFloat(document.getElementById(`${buildId}-sqft`).value) || 0;
+            const rate = parseFloat(document.getElementById(`${buildId}-rate`).value) || 0;
+            const amount = sqft * rate;
+
+            quoteLines.push({
+                id: lineIdCounter++,
+                roomName: selectedRoomName,
+                itemName: item.name,
+                material: desc,
+                size: '—',
+                sqft, rate, amount
+            });
+            renderQuote();
+            closeBuilder(buildId);
+        }
+
+        // remove builder
+        function closeBuilder(buildId) {
+            const el = document.getElementById(buildId);
+            if (el) el.remove();
+        }
+
+        function renderQuote() {
+            const body = document.getElementById('quoteBody');
+            if (quoteLines.length === 0) {
+                body.innerHTML = `<tr class="empty-row"><td colspan="9">No items added yet — start with any card above.</td></tr>`;
+                document.getElementById('grandTotal').textContent = '₹0';
+                return;
+            }
+            body.innerHTML = quoteLines.map((l, idx) => `
+                <tr>
+                  <td>${idx + 1}</td>
+                  <td><span class="role-badge" style="margin-left:0; background:var(--accent-light); color:var(--accent-dark); border-color:rgba(176,125,46,.4); font-size:0.65rem;">${l.roomName}</span></td>
+                  <td>${l.itemName}</td>
+                  <td>${l.material}</td>
+                  <td>${l.size}</td>
+                  <td class="num">${l.sqft.toFixed(2)}</td>
+                  <td class="num">₹${l.rate.toFixed(2)}</td>
+                  <td class="num">₹${l.amount.toFixed(2)}</td>
+                  <td><button class="del-btn" onclick="deleteLine(${l.id})" title="Remove">✕</button></td>
+                </tr>
+            `).join('');
+            const total = quoteLines.reduce((s, l) => s + l.amount, 0);
+            document.getElementById('grandTotal').textContent = `₹${total.toFixed(2)}`;
+        }
+
+        function deleteLine(id) {
+            quoteLines = quoteLines.filter(l => l.id !== id);
+            renderQuote();
+        }
+
+        function resetQuote() {
+            if (confirm('Clear the entire quote? This cannot be undone.')) {
+                quoteLines = [];
+                renderQuote();
+            }
+        }
+
+        // default today's date
+        document.getElementById('quoteDate').valueAsDate = new Date();
+    </script>
+</body>
+
+</html>
