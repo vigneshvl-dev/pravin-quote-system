@@ -646,6 +646,7 @@
             <h3 id="printDocTitle" style="margin-top: 0; margin-bottom: 15px; font-size: 1.6rem; color: #2c3e50; border-bottom: 2px solid var(--accent); padding-bottom: 5px; display: inline-block;">QUOTATION</h3>
             <table class="invoice-meta-table">
                 <tr><td id="printQuoteNoLabel" style="font-weight: bold; width: 45%;">Quotation No:</td><td id="printQuoteNo">—</td></tr>
+                <tr id="printQuoteRefRow" style="display: none;"><td style="font-weight: bold;">Quotation No:</td><td id="printQuoteRefNo">—</td></tr>
                 <tr><td style="font-weight: bold;">Division:</td><td id="printDivisionName">—</td></tr>
                 <tr><td style="font-weight: bold;">Date:</td><td id="printQuoteDate">—</td></tr>
                 <tr><td style="font-weight: bold;">Customer:</td><td id="printCustName">—</td></tr>
@@ -674,6 +675,7 @@
                     <option value="Invoice">Invoice</option>
                 </select>
                 <input id="quoteNo" placeholder="Quotation No.">
+                <input id="quoteRefNo" placeholder="Quotation Ref No." style="display: none;">
                 <input id="custName" placeholder="Customer name">
                 <input id="custPhone" placeholder="Phone">
                 <input id="custAddress" placeholder="Address / Area">
@@ -1510,10 +1512,21 @@
         function updateDocLabels() {
             const docType = document.getElementById('docType').value;
             const quoteNoInput = document.getElementById('quoteNo');
+            const quoteRefInput = document.getElementById('quoteRefNo');
             if (docType === 'Invoice') {
+                if (quoteNoInput.value && !quoteRefInput.value) {
+                    quoteRefInput.value = quoteNoInput.value;
+                    quoteNoInput.value = '';
+                }
                 quoteNoInput.placeholder = 'Invoice No.';
+                quoteRefInput.style.display = 'inline-block';
             } else {
+                if (quoteRefInput.value && !quoteNoInput.value) {
+                    quoteNoInput.value = quoteRefInput.value;
+                }
                 quoteNoInput.placeholder = 'Quotation No.';
+                quoteRefInput.style.display = 'none';
+                quoteRefInput.value = '';
             }
         }
 
@@ -1522,6 +1535,16 @@
             document.getElementById('printDocTitle').textContent = (selectedDivisionName + ' ' + docType).toUpperCase();
             document.getElementById('printQuoteNoLabel').textContent = docType + ' No:';
             document.getElementById('printQuoteNo').textContent = document.getElementById('quoteNo').value || '—';
+            
+            // Handle quotation reference row
+            const printQuoteRefRow = document.getElementById('printQuoteRefRow');
+            if (docType === 'Invoice') {
+                printQuoteRefRow.style.display = 'table-row';
+                document.getElementById('printQuoteRefNo').textContent = document.getElementById('quoteRefNo').value || '—';
+            } else {
+                printQuoteRefRow.style.display = 'none';
+            }
+
             document.getElementById('printDivisionName').textContent = selectedDivisionName || '—';
             document.getElementById('printQuoteDate').textContent = document.getElementById('quoteDate').value || '—';
             document.getElementById('printCustName').textContent = document.getElementById('custName').value || '—';
