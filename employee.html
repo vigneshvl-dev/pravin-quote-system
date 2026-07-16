@@ -1044,13 +1044,27 @@
         const initialDeleted = getDeletedStandardItems();
         let BASE_ITEMS = initialRawItems.filter(item => !initialDeleted.includes(item.id));
 
+        function getDeletedStandardMaterials() {
+            const stored = localStorage.getItem('pks_deleted_standard_materials');
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed)) return parsed;
+                } catch(e) {}
+            }
+            return [];
+        }
+
         // Combine base items with admin customizations
         function getFullItemsList() {
+            const deletedMats = getDeletedStandardMaterials();
             const list = BASE_ITEMS.map(item => {
+                const rawOptions = item.options ? [...item.options] : [];
+                const filteredOptions = rawOptions.filter(opt => !deletedMats.includes(`${item.id}-${opt}`));
                 return {
                     id: item.id,
                     name: item.name,
-                    options: item.options ? [...item.options] : [],
+                    options: filteredOptions,
                     custom: item.custom
                 };
             });

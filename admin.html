@@ -1014,6 +1014,8 @@
                 localStorage.removeItem('pks_divisions');
                 localStorage.removeItem('pks_deleted_standard_items');
                 deletedStandardItems = [];
+                localStorage.removeItem('pks_deleted_standard_materials');
+                deletedStandardMaterials = [];
                 
                 // Set all rates in currentRates to 0
                 currentRates = {};
@@ -1069,7 +1071,13 @@
                 div.className = 'item-manage-card';
                 
                 // Get standard list
-                let matTags = item.options.map(opt => `<span class="tag-pill">${opt}</span>`).join('');
+                let filteredOptions = item.options.filter(opt => !deletedStandardMaterials.includes(`${item.id}-${opt}`));
+                let matTags = filteredOptions.map(opt => `
+                    <span class="tag-pill">
+                        ${opt}
+                        <button onclick="removeStandardMaterial(${item.id}, '${opt}')">✕</button>
+                    </span>
+                `).join('');
                 
                 // Check if any custom materials added
                 const customList = customMaterials[item.id] || [];
@@ -1229,6 +1237,16 @@
                 localStorage.setItem('pks_custom_materials', JSON.stringify(customMaterials));
                 renderCurrentItemsList();
                 renderRatesTable();
+                showToast("Material option removed.");
+            }
+        }
+
+        function removeStandardMaterial(itemId, optionName) {
+            if (confirm(`Are you sure you want to remove the standard material option "${optionName}" from this item?`)) {
+                deletedStandardMaterials.push(`${itemId}-${optionName}`);
+                localStorage.setItem('pks_deleted_standard_materials', JSON.stringify(deletedStandardMaterials));
+                renderCurrentItemsList();
+                renderCustomItemsList();
                 showToast("Material option removed.");
             }
         }
