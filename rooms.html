@@ -258,7 +258,8 @@
             const stored = localStorage.getItem('pks_divisions');
             if (stored) {
                 try {
-                    return JSON.parse(stored);
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed)) return parsed;
                 } catch(e) {
                     console.error("Error parsing divisions, using defaults", e);
                 }

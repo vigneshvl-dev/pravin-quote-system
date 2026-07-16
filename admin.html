@@ -435,22 +435,30 @@
         <div class="room-tabs-container">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 12px;">
                 <div class="room-tabs-title" style="margin-bottom: 0;">Which room's items/rates are you managing?</div>
-                <div id="floorSelectorsWrap" style="display: none; gap: 10px; align-items: center;">
+                <div style="display: flex; gap: 14px; align-items: center;">
                     <div style="display: flex; flex-direction: column; gap: 3px;">
-                        <label style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); font-weight:700;">Floor</label>
-                        <select id="floorSelector" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; outline:none;" onchange="updateRoomState(selectedRoom, selectedRoomName)">
-                            <option value="Ground Floor">Ground Floor</option>
-                            <option value="First Floor">First Floor</option>
-                            <option value="Second Floor">Second Floor</option>
+                        <label style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); font-weight:700;">Division</label>
+                        <select id="divisionSelector" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; outline:none; cursor:pointer;" onchange="onDivisionChange(this.value)">
+                            <!-- populated by JS -->
                         </select>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 3px;">
-                        <label style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); font-weight:700;">Room No.</label>
-                        <select id="roomNoSelector" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; outline:none;" onchange="updateRoomState(selectedRoom, selectedRoomName)">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                        </select>
+                    <div id="floorSelectorsWrap" style="display: none; gap: 10px; align-items: center;">
+                        <div style="display: flex; flex-direction: column; gap: 3px;">
+                            <label style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); font-weight:700;">Floor</label>
+                            <select id="floorSelector" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; outline:none;" onchange="updateRoomState(selectedRoom, selectedRoomName)">
+                                <option value="Ground Floor">Ground Floor</option>
+                                <option value="First Floor">First Floor</option>
+                                <option value="Second Floor">Second Floor</option>
+                            </select>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 3px;">
+                            <label style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); font-weight:700;">Room No.</label>
+                            <select id="roomNoSelector" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; outline:none;" onchange="updateRoomState(selectedRoom, selectedRoomName)">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -603,7 +611,8 @@
             const stored = localStorage.getItem('pks_divisions');
             if (stored) {
                 try {
-                    return JSON.parse(stored);
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed)) return parsed;
                 } catch(e) {}
             }
             localStorage.setItem('pks_divisions', JSON.stringify(DEFAULT_DIVISIONS));
@@ -1160,6 +1169,7 @@
             document.getElementById('newDivSub').value = '';
 
             renderDivisionsList();
+            renderDivisionSelector();
             showToast("New division added successfully!");
         }
 
@@ -1173,8 +1183,41 @@
             if (confirm(`Are you sure you want to delete the division "${div.name}"?`)) {
                 divisionsList.splice(index, 1);
                 localStorage.setItem('pks_divisions', JSON.stringify(divisionsList));
+                
+                if (div.id === selectedDivision) {
+                    sessionStorage.setItem('pks_selected_division', 'marketing');
+                    sessionStorage.setItem('pks_selected_division_name', 'Marketing');
+                    location.reload();
+                    return;
+                }
+                
                 renderDivisionsList();
+                renderDivisionSelector();
                 showToast("Division deleted.");
+            }
+        }
+
+        function renderDivisionSelector() {
+            const select = document.getElementById('divisionSelector');
+            select.innerHTML = '';
+            divisionsList.forEach(div => {
+                const opt = document.createElement('option');
+                opt.value = div.id;
+                opt.textContent = div.name;
+                if (div.id === selectedDivision) {
+                    opt.selected = true;
+                }
+                select.appendChild(opt);
+            });
+        }
+
+        function onDivisionChange(divId) {
+            const div = divisionsList.find(d => d.id === divId);
+            if (div) {
+                sessionStorage.setItem('pks_selected_division', div.id);
+                sessionStorage.setItem('pks_selected_division_name', div.name);
+                document.getElementById('divisionBadge').textContent = div.name;
+                location.reload();
             }
         }
 
@@ -1192,6 +1235,7 @@
         }
 
         // Setup dynamic tabs and panels
+        renderDivisionSelector();
         updateRoomState(selectedRoom, selectedRoomName);
     </script>
 </body>
