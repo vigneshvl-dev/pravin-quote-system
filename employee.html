@@ -807,9 +807,6 @@
         ];
         const BEAM = [
             { label: "Lamination", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "Optional 1", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "Optional 2", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "Optional 3", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
         ];
         const SPICE = [
             { label: "Marine Ply – Lamination", fields: ["SQFT"], formula: v => v.SQFT, note: "direct sq.ft" },
@@ -902,39 +899,8 @@
             "PVC": 300,
             "Lamination": 250,
             "Charcoal": 400,
-            "Optional 1": 200,
-            "Optional 2": 220,
-            "Optional 3": 250,
             "Marine Plane": 350,
             "Engineering Wood": 280,
-            
-            // Shared rates
-            "Marine Ply – Lamination (Box Type)": 450,
-            "Marine Ply – Lamination (Door Type)": 450,
-            "Marine Ply – Lamination (Door Only)": 450,
-            "Marine Ply – Lamination (Partition Type)": 450,
-            "Marine Ply – Lamination (Framed)": 450,
-            "Marine Ply – Lamination (Box)": 450,
-            
-            "Marine Ply – Acrylic (Box Type)": 650,
-            "Marine Ply – Acrylic (Door Type)": 650,
-            "Marine Ply – Acrylic (Door Only)": 650,
-            "Marine Ply – Acrylic (Partition Type)": 650,
-            "Marine Ply – Acrylic (Framed)": 650,
-            "Marine Ply – Acrylic (Box)": 650,
-            
-            "WPC (Box Type)": 550,
-            "WPC (Door Type)": 550,
-            "WPC (Door Only)": 550,
-            "WPC (Partition Type)": 550,
-            "WPC (Framed)": 550,
-            "WPC (Box)": 550,
-
-            "Marine Ply (Box Type)": 450,
-            "WPC (Box Type)": 550,
-            "Marine Ply (Door Type)": 450,
-            "WPC (Door Type)": 550,
-
             "King Size Bed (Direct Price)": 35000,
             "Queen Size Bed (Direct Price)": 28000,
             "Glass": 350,
@@ -1054,6 +1020,8 @@
             }
             return [];
         }
+
+
 
         // Combine base items with admin customizations
         function getFullItemsList() {
