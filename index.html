@@ -281,6 +281,12 @@
             margin-top: 8px;
             display: none;
         }
+
+        /* Hide default browser password reveal eye icon */
+        input::-ms-reveal,
+        input::-ms-clear {
+            display: none !important;
+        }
     </style>
 </head>
 
@@ -319,7 +325,15 @@
             <h3 class="modal-title">Admin Access Required</h3>
             <div class="modal-body">
                 <label for="adminPass">Enter Passcode</label>
-                <input type="password" id="adminPass" placeholder="••••••••" onkeydown="handleKeyDown(event)">
+                <div style="position: relative; display: flex; align-items: center;">
+                    <input type="password" id="adminPass" placeholder="••••••••" onkeydown="handleKeyDown(event)" style="padding-right: 40px; width: 100%;">
+                    <button type="button" onclick="togglePassVisibility()" style="position: absolute; right: 12px; background: none; border: none; cursor: pointer; color: #ffffff; padding: 0; display: flex; align-items: center; justify-content: center; outline: none;" title="Toggle Password Visibility">
+                        <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
                 <div class="error-msg" id="errorMsg">Incorrect passcode. Try again.</div>
             </div>
             <div class="modal-actions">
@@ -343,6 +357,29 @@
         function closeAdminModal() {
             document.getElementById('adminModal').classList.remove('active');
             document.getElementById('adminPass').value = '';
+            document.getElementById('adminPass').type = 'password';
+            document.getElementById('eyeIcon').innerHTML = `
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+            `;
+        }
+
+        function togglePassVisibility() {
+            const input = document.getElementById('adminPass');
+            const icon = document.getElementById('eyeIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerHTML = `
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                `;
+            } else {
+                input.type = 'password';
+                icon.innerHTML = `
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                `;
+            }
         }
 
         function goEmployee() {

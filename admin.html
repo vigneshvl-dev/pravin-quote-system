@@ -610,6 +610,7 @@
             <button class="tab-btn" onclick="switchTab('add-opt', this)">Manage Materials</button>
             <button class="tab-btn" onclick="switchTab('add-item', this)">Manage Items</button>
             <button class="tab-btn" onclick="switchTab('add-div', this)">Manage Divisions</button>
+            <button class="tab-btn" onclick="switchTab('quotes-folder', this)">Saved Quotes</button>
         </div>
 
         <div class="content">
@@ -723,6 +724,33 @@
                 <h3 style="margin-top: 30px; font-size: 1rem; color: var(--accent);">Current Divisions</h3>
                 <div class="item-list-container" id="currentDivisionsList">
                     <!-- populated by JS -->
+                </div>
+            </div>
+
+            <!-- Saved Quotes Folder Tab -->
+            <div id="quotes-folder" class="tab-panel">
+                <h2>Saved Quotes Folder</h2>
+                <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 20px;">
+                    All modular interior quotes saved by employees and administrators are listed below. Quotes older than 45 days are deleted automatically.
+                </p>
+                <div style="max-height: 500px; overflow-y: auto;">
+                    <table class="rates-table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Quote No</th>
+                                <th>Type</th>
+                                <th>Customer Name</th>
+                                <th>Phone</th>
+                                <th>Division</th>
+                                <th>Amount</th>
+                                <th style="text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminQuotesTableBody">
+                            <!-- Populated dynamically by JS -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -942,7 +970,7 @@
             // Hide room tabs when managing divisions (it's a global action, not room-specific)
             const roomTabsEl = document.getElementById('roomTabs');
             const roomBadgeEl = document.getElementById('roomBadge');
-            if (tabId === 'add-div') {
+            if (tabId === 'add-div' || tabId === 'quotes-folder') {
                 if (roomTabsEl) roomTabsEl.style.display = 'none';
                 if (roomBadgeEl) roomBadgeEl.style.display = 'none';
             } else {
@@ -1453,6 +1481,93 @@
             }
         }
 
+        function cleanupExpiredQuotes() {
+            const stored = localStorage.getItem('pks_saved_quotes');
+            if (stored) {
+                try {
+                    const quotes = JSON.parse(stored);
+                    if (Array.isArray(quotes)) {
+                        const now = Date.now();
+                        const maxAge = 45 * 24 * 60 * 60 * 1000;
+                        const validQuotes = quotes.filter(q => (now - q.timestamp) < maxAge);
+                        if (validQuotes.length !== quotes.length) {
+                            localStorage.setItem('pks_saved_quotes', JSON.stringify(validQuotes));
+                        }
+                    }
+                } catch(e) {}
+            }
+        }
+        cleanupExpiredQuotes();
+
+        function renderAdminQuotes() {
+            const body = document.getElementById('adminQuotesTableBody');
+            body.innerHTML = '';
+
+            const stored = localStorage.getItem('pks_saved_quotes');
+            let savedQuotes = [];
+            if (stored) {
+                try {
+                    savedQuotes = JSON.parse(stored);
+                } catch(e) {}
+            }
+
+            if (!Array.isArray(savedQuotes) || savedQuotes.length === 0) {
+                body.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--muted); font-style: italic; padding: 20px;">No quotes saved in the folder yet.</td></tr>`;
+                return;
+            }
+
+            savedQuotes.sort((a, b) => b.timestamp - a.timestamp);
+
+            savedQuotes.forEach(q => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${q.quoteDate || '—'}</td>
+                    <td>${q.quoteNo}</td>
+                    <td>${q.docType}</td>
+                    <td>${q.custName || '—'}</td>
+                    <td>${q.custPhone || '—'}</td>
+                    <td>${q.divisionName}</td>
+                    <td>₹${q.totalAmount.toFixed(2)}</td>
+                    <td style="text-align: center; white-space: nowrap; gap: 8px;">
+                        <button class="btn-primary" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; background: var(--accent); color: var(--bg); border: none;" onclick="loadAdminQuote('${q.id}')">Load</button>
+                        <button class="btn-danger" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; background: transparent; border: 1px solid var(--danger); color: var(--danger);" onclick="deleteAdminQuote('${q.id}')">Delete</button>
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+        }
+
+        function loadAdminQuote(quoteId) {
+            const stored = localStorage.getItem('pks_saved_quotes');
+            if (!stored) return;
+            try {
+                const savedQuotes = JSON.parse(stored);
+                const quote = savedQuotes.find(q => q.id === quoteId);
+                if (quote) {
+                    if (confirm("Load this quote to the Quote Builder?")) {
+                        sessionStorage.setItem('pks_selected_division', quote.divisionId);
+                        sessionStorage.setItem('pks_selected_division_name', quote.divisionName);
+                        sessionStorage.setItem('pks_restore_quote_data', JSON.stringify(quote));
+                        sessionStorage.setItem('pks_role', 'admin');
+                        location.href = 'employee.html';
+                    }
+                }
+            } catch(e) {}
+        }
+
+        function deleteAdminQuote(quoteId) {
+            if (confirm("Are you sure you want to permanently delete this quote from the folder?")) {
+                const stored = localStorage.getItem('pks_saved_quotes');
+                if (!stored) return;
+                try {
+                    const savedQuotes = JSON.parse(stored);
+                    const filtered = savedQuotes.filter(q => q.id !== quoteId);
+                    localStorage.setItem('pks_saved_quotes', JSON.stringify(filtered));
+                    renderAdminQuotes();
+                } catch(e) {}
+            }
+        }
+
         /* ---------- Initialize View ---------- */
         function renderTabContent(tabId) {
             if (tabId === 'rates') renderRatesTable();
@@ -1463,6 +1578,8 @@
                 renderCustomItemsList();
             } else if (tabId === 'add-div') {
                 renderDivisionsList();
+            } else if (tabId === 'quotes-folder') {
+                renderAdminQuotes();
             }
         }
 

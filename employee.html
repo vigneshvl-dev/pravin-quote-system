@@ -680,6 +680,7 @@
                 <input id="custPhone" placeholder="Phone">
                 <input id="custAddress" placeholder="Address / Area">
                 <input id="quoteDate" type="date">
+                <button class="back-btn" style="padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; margin-right: 5px; background: var(--accent); color: var(--bg);" onclick="openSavedQuotesModal()">Saved Quotes</button>
                 <button class="back-btn" style="padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; margin-right: 5px;" onclick="location.href='rooms.html'">Change Division</button>
                 <button class="back-btn" style="padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer;" onclick="location.href='index.html'">Logout</button>
             </div>
@@ -756,12 +757,43 @@
                     <button class="back-btn" onclick="location.href='index.html'">Logout</button>
                 </div>
                 <div style="display:flex; gap:10px;">
+                    <button class="print-btn" style="background: var(--accent); color: var(--bg);" onclick="saveCurrentQuote()">Save Quote</button>
                     <button class="print-btn" onclick="preparePrint()">Print / Save PDF</button>
                     <button class="reset-btn" onclick="resetQuote()">Clear Quote</button>
                 </div>
             </div>
         </div>
     </main>
+
+    <!-- Saved Quotes Modal -->
+    <div class="modal-overlay" id="quotesFolderModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 30px; width: 90%; max-width: 900px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                <h2 style="color: var(--accent); margin: 0; font-size: 1.5rem; font-family: var(--sans);">Saved Quotes (45-Day Auto-Cleanup)</h2>
+                <button onclick="closeSavedQuotesModal()" style="background: transparent; border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-family: var(--sans);">Close</button>
+            </div>
+            
+            <div style="flex: 1; min-height: 250px; overflow-x: auto;">
+                <table class="quote-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>No.</th>
+                            <th>Type</th>
+                            <th>Customer</th>
+                            <th>Phone</th>
+                            <th>Division</th>
+                            <th>Amount</th>
+                            <th style="text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="quotesFolderTableBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
     <script>
         const selectedDivision = sessionStorage.getItem('pks_selected_division') || 'marketing';
@@ -1547,6 +1579,197 @@
             document.getElementById('printCustPhone').textContent = document.getElementById('custPhone').value || '—';
             document.getElementById('printCustAddress').textContent = document.getElementById('custAddress').value || '—';
             window.print();
+        }
+
+        function cleanupExpiredQuotes() {
+            const stored = localStorage.getItem('pks_saved_quotes');
+            if (stored) {
+                try {
+                    const quotes = JSON.parse(stored);
+                    if (Array.isArray(quotes)) {
+                        const now = Date.now();
+                        const maxAge = 45 * 24 * 60 * 60 * 1000;
+                        const validQuotes = quotes.filter(q => (now - q.timestamp) < maxAge);
+                        if (validQuotes.length !== quotes.length) {
+                            localStorage.setItem('pks_saved_quotes', JSON.stringify(validQuotes));
+                        }
+                    }
+                } catch(e) {}
+            }
+        }
+        cleanupExpiredQuotes();
+
+        function saveCurrentQuote() {
+            const docType = document.getElementById('docType').value;
+            const quoteNo = document.getElementById('quoteNo').value.trim();
+            const quoteRefNo = document.getElementById('quoteRefNo').value.trim();
+            const custName = document.getElementById('custName').value.trim();
+            const custPhone = document.getElementById('custPhone').value.trim();
+            const custAddress = document.getElementById('custAddress').value.trim();
+            const quoteDate = document.getElementById('quoteDate').value;
+
+            if (!quoteNo) {
+                alert("Please enter a Quotation/Invoice number before saving.");
+                return;
+            }
+
+            let totalAmount = quoteLines.reduce((sum, line) => sum + line.amount, 0);
+
+            const newQuote = {
+                id: 'quote_' + Date.now(),
+                quoteNo,
+                quoteRefNo,
+                docType,
+                custName,
+                custPhone,
+                custAddress,
+                quoteDate,
+                divisionId: selectedDivision,
+                divisionName: selectedDivisionName,
+                totalAmount,
+                quoteLines: [...quoteLines],
+                lineIdCounter,
+                timestamp: Date.now()
+            };
+
+            const stored = localStorage.getItem('pks_saved_quotes');
+            let savedQuotes = [];
+            if (stored) {
+                try {
+                    savedQuotes = JSON.parse(stored);
+                    if (!Array.isArray(savedQuotes)) savedQuotes = [];
+                } catch(e) {
+                    savedQuotes = [];
+                }
+            }
+
+            const existingIdx = savedQuotes.findIndex(q => q.quoteNo === quoteNo && q.docType === docType);
+            if (existingIdx >= 0) {
+                if (confirm(`A quote with number "${quoteNo}" already exists. Overwrite?`)) {
+                    savedQuotes[existingIdx] = newQuote;
+                    localStorage.setItem('pks_saved_quotes', JSON.stringify(savedQuotes));
+                    alert("Quote updated successfully!");
+                }
+            } else {
+                savedQuotes.push(newQuote);
+                localStorage.setItem('pks_saved_quotes', JSON.stringify(savedQuotes));
+                alert("Quote saved successfully to folder!");
+            }
+        }
+
+        function openSavedQuotesModal() {
+            cleanupExpiredQuotes();
+            document.getElementById('quotesFolderModal').style.display = 'flex';
+            renderSavedQuotes();
+        }
+
+        function closeSavedQuotesModal() {
+            document.getElementById('quotesFolderModal').style.display = 'none';
+        }
+
+        function renderSavedQuotes() {
+            const body = document.getElementById('quotesFolderTableBody');
+            body.innerHTML = '';
+
+            const stored = localStorage.getItem('pks_saved_quotes');
+            let savedQuotes = [];
+            if (stored) {
+                try {
+                    savedQuotes = JSON.parse(stored);
+                } catch(e) {}
+            }
+
+            if (!Array.isArray(savedQuotes) || savedQuotes.length === 0) {
+                body.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--muted); font-style: italic; padding: 20px;">No quotes saved in the folder yet.</td></tr>`;
+                return;
+            }
+
+            savedQuotes.sort((a, b) => b.timestamp - a.timestamp);
+
+            savedQuotes.forEach(q => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${q.quoteDate || '—'}</td>
+                    <td>${q.quoteNo}</td>
+                    <td>${q.docType}</td>
+                    <td>${q.custName || '—'}</td>
+                    <td>${q.custPhone || '—'}</td>
+                    <td>${q.divisionName}</td>
+                    <td>₹${q.totalAmount.toFixed(2)}</td>
+                    <td style="text-align: center; white-space: nowrap; gap: 8px;">
+                        <button class="confirm-btn" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; background: var(--accent); color: var(--bg);" onclick="loadSavedQuote('${q.id}')">Load</button>
+                        <button class="cancel-btn" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; background: transparent; border: 1px solid var(--danger); color: var(--danger);" onclick="deleteSavedQuote('${q.id}')">Delete</button>
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+        }
+
+        function loadSavedQuote(quoteId) {
+            const stored = localStorage.getItem('pks_saved_quotes');
+            if (!stored) return;
+            try {
+                const savedQuotes = JSON.parse(stored);
+                const quote = savedQuotes.find(q => q.id === quoteId);
+                if (quote) {
+                    if (confirm("Load this quote? This will replace your current workspace modifications.")) {
+                        if (quote.divisionId && quote.divisionId !== selectedDivision) {
+                            sessionStorage.setItem('pks_selected_division', quote.divisionId);
+                            sessionStorage.setItem('pks_selected_division_name', quote.divisionName);
+                            sessionStorage.setItem('pks_restore_quote_data', JSON.stringify(quote));
+                            location.reload();
+                            return;
+                        }
+
+                        restoreQuoteState(quote);
+                        closeSavedQuotesModal();
+                        alert("Quote loaded successfully!");
+                    }
+                }
+            } catch(e) {
+                alert("Failed to load quote.");
+            }
+        }
+
+        function restoreQuoteState(quote) {
+            document.getElementById('docType').value = quote.docType;
+            document.getElementById('quoteNo').value = quote.quoteNo;
+            document.getElementById('quoteRefNo').value = quote.quoteRefNo || '';
+            document.getElementById('custName').value = quote.custName || '';
+            document.getElementById('custPhone').value = quote.custPhone || '';
+            document.getElementById('custAddress').value = quote.custAddress || '';
+            document.getElementById('quoteDate').value = quote.quoteDate || '';
+            
+            quoteLines = [...quote.quoteLines];
+            lineIdCounter = quote.lineIdCounter || (quoteLines.length > 0 ? Math.max(...quoteLines.map(l => l.id)) + 1 : 1);
+            
+            renderQuote();
+            updateDocLabels();
+        }
+
+        function deleteSavedQuote(quoteId) {
+            if (confirm("Are you sure you want to permanently delete this quote from the folder?")) {
+                const stored = localStorage.getItem('pks_saved_quotes');
+                if (!stored) return;
+                try {
+                    const savedQuotes = JSON.parse(stored);
+                    const filtered = savedQuotes.filter(q => q.id !== quoteId);
+                    localStorage.setItem('pks_saved_quotes', JSON.stringify(filtered));
+                    renderSavedQuotes();
+                } catch(e) {}
+            }
+        }
+
+        // Check if there is a pending quote restore from a division change reload
+        const restoreDataStr = sessionStorage.getItem('pks_restore_quote_data');
+        if (restoreDataStr) {
+            try {
+                const quoteToRestore = JSON.parse(restoreDataStr);
+                setTimeout(() => {
+                    restoreQuoteState(quoteToRestore);
+                }, 100);
+                sessionStorage.removeItem('pks_restore_quote_data');
+            } catch(e) {}
         }
 
         // default today's date
