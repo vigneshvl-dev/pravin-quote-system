@@ -1030,7 +1030,19 @@
             ]
         };
 
-        let BASE_ITEMS = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+        function getDeletedStandardItems() {
+            const stored = localStorage.getItem('pks_deleted_standard_items');
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed)) return parsed;
+                } catch(e) {}
+            }
+            return [];
+        }
+        const initialRawItems = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+        const initialDeleted = getDeletedStandardItems();
+        let BASE_ITEMS = initialRawItems.filter(item => !initialDeleted.includes(item.id));
 
         // Combine base items with admin customizations
         function getFullItemsList() {
@@ -1112,7 +1124,9 @@
             sessionStorage.setItem('pks_selected_room', roomId);
             sessionStorage.setItem('pks_selected_room_name', roomName);
 
-            BASE_ITEMS = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+            const rawItems = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+            const deleted = getDeletedStandardItems();
+            BASE_ITEMS = rawItems.filter(item => !deleted.includes(item.id));
             ITEMS = getFullItemsList();
 
             // Update badge in header

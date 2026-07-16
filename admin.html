@@ -695,7 +695,7 @@
                     </div>
                 </div>
 
-                <h3 style="margin-top: 30px; font-size: 1rem; color: var(--accent);">Custom Created Items</h3>
+                <h3 style="margin-top: 30px; font-size: 1rem; color: var(--accent);">All Items</h3>
                 <div class="item-list-container" id="customCreatedItemsList">
                     <!-- populated by JS -->
                 </div>
@@ -764,6 +764,18 @@
         }
 
         let divisionsList = getDivisions();
+
+        function getDeletedStandardItems() {
+            const stored = localStorage.getItem('pks_deleted_standard_items');
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed)) return parsed;
+                } catch(e) {}
+            }
+            return [];
+        }
+        let deletedStandardItems = getDeletedStandardItems();
 
         const ROOMS = [
             { id: 'kitchen',     name: 'Kitchen',      icon: '🍳', active: true  },
@@ -984,12 +996,21 @@
         }
 
         function resetAllDefaults() {
-            if (confirm("Are you sure you want to reset all rates and clear all custom items, materials, and divisions?")) {
-                localStorage.removeItem('pks_rates');
+            if (confirm("Are you sure you want to reset all rates to zero and clear all custom items, materials, and divisions?")) {
                 localStorage.removeItem('pks_custom_materials');
                 localStorage.removeItem('pks_custom_items');
                 localStorage.removeItem('pks_divisions');
-                currentRates = {...DEFAULT_RATES};
+                localStorage.removeItem('pks_deleted_standard_items');
+                deletedStandardItems = [];
+                
+                // Set all rates in currentRates to 0
+                currentRates = {};
+                Object.keys(DEFAULT_RATES).forEach(k => {
+                    currentRates[k] = 0;
+                });
+                localStorage.setItem('pks_rates', JSON.stringify(currentRates));
+                
+                BASE_ITEMS = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
                 customMaterials = {};
                 customItems = [];
                 divisionsList = getDivisions();
@@ -1000,7 +1021,7 @@
                 if (document.getElementById('add-div').classList.contains('active')) {
                     renderDivisionsList();
                 }
-                showToast("All settings reset to default values.");
+                showToast("All settings reset. Rates set to zero.");
             }
         }
 
@@ -1049,7 +1070,7 @@
 
                 div.innerHTML = `
                     <div class="item-manage-card-header">
-                        <div class="item-manage-card-title">${item.id}. ${item.name}</div>
+                        <div class="item-manage-card-title">${item.id}. ${item.name} <span class="role-badge" style="font-size:0.68rem; padding: 2px 8px; margin-left: 8px;">Standard</span></div>
                     </div>
                     <div class="tags-row">
                         ${matTags}
@@ -1058,17 +1079,8 @@
                 `;
                 container.appendChild(div);
             });
-        }
 
-        function renderCustomItemsList() {
-            const container = document.getElementById('customCreatedItemsList');
-            container.innerHTML = '';
-
-            if (customItems.length === 0) {
-                container.innerHTML = `<p style="font-size: 0.85rem; color: var(--muted); font-style: italic;">No custom item cards created yet.</p>`;
-                return;
-            }
-
+            // Render Custom items under the same list
             customItems.forEach((item, index) => {
                 const div = document.createElement('div');
                 div.className = 'item-manage-card';
@@ -1082,7 +1094,60 @@
 
                 div.innerHTML = `
                     <div class="item-manage-card-header">
-                        <div class="item-manage-card-title">${item.id}. ${item.name}</div>
+                        <div class="item-manage-card-title">${item.id}. ${item.name} <span class="role-badge" style="font-size:0.68rem; padding: 2px 8px; margin-left: 8px; background: rgba(61, 187, 110, 0.15);">Custom</span></div>
+                    </div>
+                    <div class="tags-row">
+                        ${optTags.length > 0 ? optTags : '<span style="font-size:0.8rem; color:var(--muted); font-style:italic;">No materials added — choose target item above to add.</span>'}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderCustomItemsList() {
+            const container = document.getElementById('customCreatedItemsList');
+            container.innerHTML = '';
+
+            // 1. Render Standard items that are NOT deleted
+            BASE_ITEMS.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'item-manage-card';
+                
+                let matTags = item.options.map(opt => `<span class="tag-pill">${opt}</span>`).join('');
+                const customList = customMaterials[item.id] || [];
+                let customTags = customList.map((m, index) => `
+                    <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
+                        ${m.label} (${m.note})
+                    </span>
+                `).join('');
+
+                div.innerHTML = `
+                    <div class="item-manage-card-header">
+                        <div class="item-manage-card-title">${item.id}. ${item.name} <span class="role-badge" style="font-size:0.68rem; padding: 2px 8px; margin-left: 8px;">Standard</span></div>
+                        <button class="btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteStandardItem(${item.id})">Delete Card</button>
+                    </div>
+                    <div class="tags-row" style="margin-bottom: 10px;">
+                        ${matTags}
+                        ${customTags}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            // 2. Render Custom items
+            customItems.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'item-manage-card';
+                
+                let optTags = item.options.map((opt, optIdx) => `
+                    <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
+                        ${opt.label} (${opt.note})
+                    </span>
+                `).join('');
+
+                div.innerHTML = `
+                    <div class="item-manage-card-header">
+                        <div class="item-manage-card-title">${item.id}. ${item.name} <span class="role-badge" style="font-size:0.68rem; padding: 2px 8px; margin-left: 8px; background: rgba(61, 187, 110, 0.15);">Custom</span></div>
                         <button class="btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteCustomItem(${index})">Delete Card</button>
                     </div>
                     <div class="tags-row" style="margin-bottom: 10px;">
@@ -1184,6 +1249,7 @@
             document.getElementById('newItemName').value = '';
 
             renderItemsDropdown();
+            renderCurrentItemsList();
             renderCustomItemsList();
             showToast("New Item Card created!");
         }
@@ -1193,9 +1259,27 @@
                 customItems.splice(index, 1);
                 localStorage.setItem('pks_custom_items', JSON.stringify(customItems));
                 renderItemsDropdown();
+                renderCurrentItemsList();
                 renderCustomItemsList();
                 renderRatesTable();
                 showToast("Item card deleted.");
+            }
+        }
+
+        function deleteStandardItem(itemId) {
+            if (confirm("Are you sure you want to delete this standard item card? (You can restore it later by resetting defaults).")) {
+                deletedStandardItems.push(itemId);
+                localStorage.setItem('pks_deleted_standard_items', JSON.stringify(deletedStandardItems));
+                
+                // Refresh base items
+                const rawItems = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+                BASE_ITEMS = rawItems.filter(item => !deletedStandardItems.includes(item.id));
+                
+                renderItemsDropdown();
+                renderCurrentItemsList();
+                renderCustomItemsList();
+                renderRatesTable();
+                showToast("Standard item card deleted.");
             }
         }
 
@@ -1203,6 +1287,7 @@
             if (confirm("Remove this material option from this custom item?")) {
                 customItems[itemIndex].options.splice(optIdx, 1);
                 localStorage.setItem('pks_custom_items', JSON.stringify(customItems));
+                renderCurrentItemsList();
                 renderCustomItemsList();
                 renderRatesTable();
                 showToast("Material option removed.");
@@ -1243,7 +1328,8 @@
             sessionStorage.setItem('pks_selected_room', roomId);
             sessionStorage.setItem('pks_selected_room_name', roomName);
 
-            BASE_ITEMS = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+            const rawItems = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+            BASE_ITEMS = rawItems.filter(item => !deletedStandardItems.includes(item.id));
             currentRates = getRates();
             customMaterials = getCustomMaterials();
             customItems = getCustomItems();
