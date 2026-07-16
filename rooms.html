@@ -304,7 +304,10 @@
                     Select Division</div>
             </div>
         </div>
-        <button class="logout-btn" onclick="logout()">Logout</button>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <button class="logout-btn" style="background: var(--accent); border-color: var(--accent); padding: 0; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; width: 40px; height: 40px; min-width: 40px;" onclick="openSavedQuotesModal()" title="Saved Quotes Folder">📂</button>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
     </header>
 
     <main>
@@ -315,6 +318,52 @@
 
         <div class="rooms-grid" id="roomsGrid"></div>
     </main>
+
+    <!-- Saved Quotes Modal -->
+    <div class="modal-overlay" id="quotesFolderModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);">
+        <div style="background: rgba(18, 36, 23, 0.95); border: 1px solid var(--border); border-radius: var(--radius); padding: 30px; width: 90%; max-width: 900px; box-shadow: var(--shadow); max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; backdrop-filter: var(--blur);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                <h2 style="color: var(--accent); margin: 0; font-size: 1.5rem; font-family: var(--sans);">Saved Quotes (45-Day Auto-Cleanup)</h2>
+                <button onclick="closeSavedQuotesModal()" style="background: transparent; border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-family: var(--sans);">Close</button>
+            </div>
+            
+            <div style="flex: 1; min-height: 250px; overflow-x: auto;">
+                <style>
+                    .quote-table-custom {
+                        width: 100%;
+                        border-collapse: collapse;
+                        font-size: 0.9rem;
+                    }
+                    .quote-table-custom th, .quote-table-custom td {
+                        padding: 10px;
+                        text-align: left;
+                        border-bottom: 1px solid var(--border);
+                    }
+                    .quote-table-custom th {
+                        color: var(--accent);
+                        font-weight: 600;
+                    }
+                </style>
+                <table class="quote-table-custom">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>No.</th>
+                            <th>Type</th>
+                            <th>Customer</th>
+                            <th>Phone</th>
+                            <th>Division</th>
+                            <th>Amount</th>
+                            <th style="text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="quotesFolderTableBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
     <script>
         const DEFAULT_DIVISIONS = [
@@ -385,6 +434,103 @@
                 location.href = 'admin.html';
             } else {
                 location.href = 'employee.html';
+            }
+        }
+
+        function cleanupExpiredQuotes() {
+            const stored = localStorage.getItem('pks_saved_quotes');
+            if (stored) {
+                try {
+                    const quotes = JSON.parse(stored);
+                    if (Array.isArray(quotes)) {
+                        const now = Date.now();
+                        const maxAge = 45 * 24 * 60 * 60 * 1000;
+                        const validQuotes = quotes.filter(q => (now - q.timestamp) < maxAge);
+                        if (validQuotes.length !== quotes.length) {
+                            localStorage.setItem('pks_saved_quotes', JSON.stringify(validQuotes));
+                        }
+                    }
+                } catch(e) {}
+            }
+        }
+
+        function openSavedQuotesModal() {
+            cleanupExpiredQuotes();
+            document.getElementById('quotesFolderModal').style.display = 'flex';
+            renderSavedQuotes();
+        }
+
+        function closeSavedQuotesModal() {
+            document.getElementById('quotesFolderModal').style.display = 'none';
+        }
+
+        function renderSavedQuotes() {
+            const body = document.getElementById('quotesFolderTableBody');
+            body.innerHTML = '';
+
+            const stored = localStorage.getItem('pks_saved_quotes');
+            let savedQuotes = [];
+            if (stored) {
+                try {
+                    savedQuotes = JSON.parse(stored);
+                } catch(e) {}
+            }
+
+            if (!Array.isArray(savedQuotes) || savedQuotes.length === 0) {
+                body.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--muted); font-style: italic; padding: 20px;">No quotes saved in the folder yet.</td></tr>`;
+                return;
+            }
+
+            savedQuotes.sort((a, b) => b.timestamp - a.timestamp);
+
+            savedQuotes.forEach(q => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${q.quoteDate || '—'}</td>
+                    <td>${q.quoteNo}</td>
+                    <td>${q.docType}</td>
+                    <td>${q.custName || '—'}</td>
+                    <td>${q.custPhone || '—'}</td>
+                    <td>${q.divisionName}</td>
+                    <td>₹${q.totalAmount.toFixed(2)}</td>
+                    <td style="text-align: center; white-space: nowrap; gap: 8px;">
+                        <button class="logout-btn" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; background: var(--accent); color: var(--bg); border: none;" onclick="loadSavedQuote('${q.id}')">Load</button>
+                        <button class="logout-btn" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; background: transparent; border: 1px solid var(--danger); color: var(--danger);" onclick="deleteSavedQuote('${q.id}')">Delete</button>
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+        }
+
+        function loadSavedQuote(quoteId) {
+            const stored = localStorage.getItem('pks_saved_quotes');
+            if (!stored) return;
+            try {
+                const savedQuotes = JSON.parse(stored);
+                const quote = savedQuotes.find(q => q.id === quoteId);
+                if (quote) {
+                    if (confirm("Load this quote? This will redirect you to the quote editor screen.")) {
+                        sessionStorage.setItem('pks_selected_division', quote.divisionId);
+                        sessionStorage.setItem('pks_selected_division_name', quote.divisionName);
+                        sessionStorage.setItem('pks_restore_quote_data', JSON.stringify(quote));
+                        location.href = 'employee.html';
+                    }
+                }
+            } catch(e) {
+                alert("Failed to load quote.");
+            }
+        }
+
+        function deleteSavedQuote(quoteId) {
+            if (confirm("Are you sure you want to permanently delete this quote from the folder?")) {
+                const stored = localStorage.getItem('pks_saved_quotes');
+                if (!stored) return;
+                try {
+                    const savedQuotes = JSON.parse(stored);
+                    const filtered = savedQuotes.filter(q => q.id !== quoteId);
+                    localStorage.setItem('pks_saved_quotes', JSON.stringify(filtered));
+                    renderSavedQuotes();
+                } catch(e) {}
             }
         }
 
