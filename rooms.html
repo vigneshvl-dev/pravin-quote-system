@@ -249,10 +249,25 @@
     </main>
 
     <script>
-        const DIVISIONS = [
+        const DEFAULT_DIVISIONS = [
             { id: 'marketing', name: 'Marketing', icon: '📈', sub: 'Marketing division quotes', active: true },
             { id: 'showroom', name: 'Showroom', icon: '🏢', sub: 'Showroom display & walk-in quotes', active: true }
         ];
+
+        function getDivisions() {
+            const stored = localStorage.getItem('pks_divisions');
+            if (stored) {
+                try {
+                    return JSON.parse(stored);
+                } catch(e) {
+                    console.error("Error parsing divisions, using defaults", e);
+                }
+            }
+            localStorage.setItem('pks_divisions', JSON.stringify(DEFAULT_DIVISIONS));
+            return DEFAULT_DIVISIONS;
+        }
+
+        const DIVISIONS = getDivisions();
 
         // Determine role from sessionStorage
         const role = sessionStorage.getItem('pks_role');

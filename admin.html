@@ -463,6 +463,7 @@
             <button class="tab-btn active" onclick="switchTab('rates', this)">Rates Management</button>
             <button class="tab-btn" onclick="switchTab('add-opt', this)">Manage Materials</button>
             <button class="tab-btn" onclick="switchTab('add-item', this)">Manage Items</button>
+            <button class="tab-btn" onclick="switchTab('add-div', this)">Manage Divisions</button>
         </div>
 
         <div class="content">
@@ -547,6 +548,37 @@
                     <!-- populated by JS -->
                 </div>
             </div>
+
+            <!-- Manage Divisions Tab -->
+            <div id="add-div" class="tab-panel">
+                <h2>Manage Divisions</h2>
+                <div class="sub-form" style="background: none; border: none; padding: 0;">
+                    <div class="form-group">
+                        <label for="newDivId">Division ID (lowercase, alphanumeric, e.g. 'commercial')</label>
+                        <input type="text" id="newDivId" placeholder="e.g. commercial">
+                    </div>
+                    <div class="form-group">
+                        <label for="newDivName">Division Name</label>
+                        <input type="text" id="newDivName" placeholder="e.g. Commercial">
+                    </div>
+                    <div class="form-group">
+                        <label for="newDivIcon">Division Icon (Emoji)</label>
+                        <input type="text" id="newDivIcon" placeholder="e.g. 🏢">
+                    </div>
+                    <div class="form-group">
+                        <label for="newDivSub">Description</label>
+                        <input type="text" id="newDivSub" placeholder="e.g. Office and commercial interior quotes">
+                    </div>
+                    <div class="action-row">
+                        <button class="btn-primary" onclick="addDivision()">Create Division</button>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 30px; font-size: 1rem; color: var(--accent);">Current Divisions</h3>
+                <div class="item-list-container" id="currentDivisionsList">
+                    <!-- populated by JS -->
+                </div>
+            </div>
         </div>
     </div>
 
@@ -561,6 +593,24 @@
         const selectedDivision = sessionStorage.getItem('pks_selected_division') || 'marketing';
         const selectedDivisionName = sessionStorage.getItem('pks_selected_division_name') || 'Marketing';
         document.getElementById('divisionBadge').textContent = selectedDivisionName;
+
+        const DEFAULT_DIVISIONS = [
+            { id: 'marketing', name: 'Marketing', icon: '📈', sub: 'Marketing division quotes', active: true },
+            { id: 'showroom', name: 'Showroom', icon: '🏢', sub: 'Showroom display & walk-in quotes', active: true }
+        ];
+
+        function getDivisions() {
+            const stored = localStorage.getItem('pks_divisions');
+            if (stored) {
+                try {
+                    return JSON.parse(stored);
+                } catch(e) {}
+            }
+            localStorage.setItem('pks_divisions', JSON.stringify(DEFAULT_DIVISIONS));
+            return DEFAULT_DIVISIONS;
+        }
+
+        let divisionsList = getDivisions();
 
         const ROOMS = [
             { id: 'kitchen',     name: 'Kitchen',      icon: '🍳', active: true  },
@@ -781,17 +831,22 @@
         }
 
         function resetAllDefaults() {
-            if (confirm("Are you sure you want to reset all rates and clear all custom items and materials?")) {
+            if (confirm("Are you sure you want to reset all rates and clear all custom items, materials, and divisions?")) {
                 localStorage.removeItem('pks_rates');
                 localStorage.removeItem('pks_custom_materials');
                 localStorage.removeItem('pks_custom_items');
+                localStorage.removeItem('pks_divisions');
                 currentRates = {...DEFAULT_RATES};
                 customMaterials = {};
                 customItems = [];
+                divisionsList = getDivisions();
                 renderRatesTable();
                 renderItemsDropdown();
                 renderCurrentItemsList();
                 renderCustomItemsList();
+                if (document.getElementById('add-div').classList.contains('active')) {
+                    renderDivisionsList();
+                }
                 showToast("All settings reset to default values.");
             }
         }
@@ -1056,6 +1111,73 @@
             }
         }
 
+        /* ---------- Manage Divisions Actions ---------- */
+        function renderDivisionsList() {
+            const container = document.getElementById('currentDivisionsList');
+            container.innerHTML = '';
+
+            divisionsList.forEach((div, index) => {
+                const card = document.createElement('div');
+                card.className = 'item-manage-card';
+                card.innerHTML = `
+                    <div class="item-manage-card-header">
+                        <div class="item-manage-card-title">${div.icon} ${div.name} <span style="font-size:0.75rem; color:var(--muted); font-weight:normal;">(ID: ${div.id})</span></div>
+                        ${['marketing', 'showroom'].includes(div.id) ? '' : `<button class="btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteDivision(${index})">Delete</button>`}
+                    </div>
+                    <div style="font-size: 0.82rem; color: var(--muted); margin-top: 5px;">${div.sub}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function addDivision() {
+            const id = document.getElementById('newDivId').value.trim().toLowerCase();
+            const name = document.getElementById('newDivName').value.trim();
+            const icon = document.getElementById('newDivIcon').value.trim() || '🏢';
+            const sub = document.getElementById('newDivSub').value.trim();
+
+            if (!id || !name || !sub) {
+                alert("Please fill in the ID, Name, and Description.");
+                return;
+            }
+
+            if (!/^[a-z0-9_]+$/.test(id)) {
+                alert("Division ID must be lowercase alphanumeric and underscores only.");
+                return;
+            }
+
+            if (divisionsList.some(d => d.id === id)) {
+                alert("A division with this ID already exists.");
+                return;
+            }
+
+            divisionsList.push({ id, name, icon, sub, active: true });
+            localStorage.setItem('pks_divisions', JSON.stringify(divisionsList));
+
+            document.getElementById('newDivId').value = '';
+            document.getElementById('newDivName').value = '';
+            document.getElementById('newDivIcon').value = '';
+            document.getElementById('newDivSub').value = '';
+
+            renderDivisionsList();
+            showToast("New division added successfully!");
+        }
+
+        function deleteDivision(index) {
+            const div = divisionsList[index];
+            if (['marketing', 'showroom'].includes(div.id)) {
+                alert("Default divisions cannot be deleted.");
+                return;
+            }
+
+            if (confirm(`Are you sure you want to delete the division "${div.name}"?`)) {
+                divisionsList.splice(index, 1);
+                localStorage.setItem('pks_divisions', JSON.stringify(divisionsList));
+                renderDivisionsList();
+                showToast("Division deleted.");
+            }
+        }
+
         /* ---------- Initialize View ---------- */
         function renderTabContent(tabId) {
             if (tabId === 'rates') renderRatesTable();
@@ -1064,6 +1186,8 @@
                 renderCurrentItemsList();
             } else if (tabId === 'add-item') {
                 renderCustomItemsList();
+            } else if (tabId === 'add-div') {
+                renderDivisionsList();
             }
         }
 
