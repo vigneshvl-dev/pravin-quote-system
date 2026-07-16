@@ -777,6 +777,18 @@
         }
         let deletedStandardItems = getDeletedStandardItems();
 
+        function getDeletedStandardMaterials() {
+            const stored = localStorage.getItem('pks_deleted_standard_materials');
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed)) return parsed;
+                } catch(e) {}
+            }
+            return [];
+        }
+        let deletedStandardMaterials = getDeletedStandardMaterials();
+
         const ROOMS = [
             { id: 'kitchen',     name: 'Kitchen',      icon: '🍳', active: true  },
             { id: 'living_room', name: 'Living Room',  icon: '🛋️', active: true },
