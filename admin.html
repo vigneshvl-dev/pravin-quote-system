@@ -1566,6 +1566,15 @@
                     const savedQuotes = JSON.parse(stored);
                     const filtered = savedQuotes.filter(q => q.id !== quoteId);
                     localStorage.setItem('pks_saved_quotes', JSON.stringify(filtered));
+
+                    // Recalculate counter from highest remaining QT-xxx number
+                    let maxNum = 0;
+                    filtered.forEach(q => {
+                        const m = String(q.quoteNo).match(/^QT-(\d+)$/i);
+                        if (m) maxNum = Math.max(maxNum, parseInt(m[1], 10));
+                    });
+                    localStorage.setItem('pks_quote_counter', maxNum);
+
                     renderAdminQuotes();
                 } catch(e) {}
             }

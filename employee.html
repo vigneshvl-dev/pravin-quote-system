@@ -108,7 +108,12 @@
             border-radius: 6px;
             font-family: var(--sans);
             font-size: .82rem;
-            width: 115px;
+            width: 140px;
+        }
+
+        .cust-row input[type="date"] {
+            width: 155px;
+            color-scheme: dark;
         }
 
         .cust-row input::placeholder { color: #7a7065; }
@@ -682,11 +687,11 @@
         <!-- Customer Details (Sub-Header Row) -->
         <div class="header-inner" style="margin-top: 15px; width: 100%; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 15px;">
             <div class="cust-row" style="align-items: center; width: 100%; justify-content: flex-start; flex-wrap: wrap;">
-                <select id="docType" style="background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); color: #f0ebe2; padding: 7px 11px; border-radius: 6px; font-family: var(--sans); font-size: .82rem; outline: none; cursor: pointer;" onchange="updateDocLabels()">
+                <select id="docType" style="display:none;" onchange="updateDocLabels()">
                     <option value="Quotation">Quotation</option>
                     <option value="Invoice">Invoice</option>
                 </select>
-                <input id="quoteNo" placeholder="Quotation No.">
+                <input id="quoteNo" placeholder="QT-001" readonly style="cursor:default; opacity:0.85; background:rgba(176,125,46,0.12); border-color:rgba(176,125,46,0.4); color:#f0ebe2; font-weight:600; letter-spacing:0.5px;">
                 <input id="quoteRefNo" placeholder="Quotation Ref No." style="display: none;">
                 <input id="custName" placeholder="Customer name">
                 <input id="custPhone" placeholder="Phone">
@@ -1523,12 +1528,33 @@
             renderQuote();
         }
 
+        // ── Auto-incrementing Quote Number ──────────────────────────────────
+        function getNextQuoteNo() {
+            const stored = parseInt(localStorage.getItem('pks_quote_counter') || '0', 10);
+            return stored + 1;
+        }
+
+        function incrementQuoteNo() {
+            const next = getNextQuoteNo();
+            localStorage.setItem('pks_quote_counter', next);
+            document.getElementById('quoteNo').value = 'QT-' + String(next).padStart(3, '0');
+        }
+
+        function setInitialQuoteNo(force = false) {
+            // Only set if not already loaded from a restored quote, or if forced
+            if (force || !document.getElementById('quoteNo').value || document.getElementById('quoteNo').value.startsWith('QT-')) {
+                const current = parseInt(localStorage.getItem('pks_quote_counter') || '0', 10);
+                document.getElementById('quoteNo').value = 'QT-' + String(current + 1).padStart(3, '0');
+            }
+        }
+        // ──────────────────────────────────────────────────────────────────
+
         function resetQuote() {
             if (confirm('Clear the entire quote and customer details? This cannot be undone.')) {
                 quoteLines = [];
                 
-                // Clear metadata inputs
-                document.getElementById('quoteNo').value = '';
+                // Clear metadata inputs and set next auto number
+                incrementQuoteNo();
                 document.getElementById('custName').value = '';
                 document.getElementById('custPhone').value = '';
                 document.getElementById('custAddress').value = '';
@@ -1799,7 +1825,18 @@
             } else {
                 savedQuotes.push(newQuote);
                 localStorage.setItem('pks_saved_quotes', JSON.stringify(savedQuotes));
-                alert("Quote saved successfully to folder!");
+                // Advance to next quote number after successful save
+                incrementQuoteNo();
+                // Reset customer fields for new quote
+                quoteLines = [];
+                document.getElementById('custName').value = '';
+                document.getElementById('custPhone').value = '';
+                document.getElementById('custAddress').value = '';
+                document.getElementById('quoteDate').valueAsDate = new Date();
+                document.getElementById('docType').value = 'Quotation';
+                updateDocLabels();
+                renderQuote();
+                alert("Quote saved! Started new quote " + document.getElementById('quoteNo').value);
             }
         }
 
@@ -1901,10 +1938,22 @@
                     const savedQuotes = JSON.parse(stored);
                     const filtered = savedQuotes.filter(q => q.id !== quoteId);
                     localStorage.setItem('pks_saved_quotes', JSON.stringify(filtered));
+
+                    // Recalculate counter from highest remaining QT-xxx number
+                    let maxNum = 0;
+                    filtered.forEach(q => {
+                        const m = String(q.quoteNo).match(/^QT-(\d+)$/i);
+                        if (m) maxNum = Math.max(maxNum, parseInt(m[1], 10));
+                    });
+                    localStorage.setItem('pks_quote_counter', maxNum);
+                    // Update the current form's quote number to next available
+                    setInitialQuoteNo(true);
+
                     renderSavedQuotes();
                 } catch(e) {}
             }
         }
+
 
         // Check if there is a pending quote restore from a division change reload
         const restoreDataStr = sessionStorage.getItem('pks_restore_quote_data');
@@ -1918,6 +1967,8 @@
             } catch(e) {}
         }
 
-        // default today's date
+        // Default today's date
         document.getElementById('quoteDate').valueAsDate = new Date();
+        // Set auto-generated quote number on load
+        setInitialQuoteNo();
     </script>
