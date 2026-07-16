@@ -1391,7 +1391,7 @@
                 card.innerHTML = `
                     <div class="item-manage-card-header">
                         <div class="item-manage-card-title">${div.icon} ${div.name} <span style="font-size:0.75rem; color:var(--muted); font-weight:normal;">(ID: ${div.id})</span></div>
-                        ${['marketing', 'showroom'].includes(div.id) ? '' : `<button class="btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteDivision(${index})">Delete</button>`}
+                        <button class="btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteDivision(${index})">Delete</button>
                     </div>
                     <div style="font-size: 0.82rem; color: var(--muted); margin-top: 5px;">${div.sub}</div>
                 `;
@@ -1429,55 +1429,30 @@
             document.getElementById('newDivSub').value = '';
 
             renderDivisionsList();
-            renderDivisionSelector();
             showToast("New division added successfully!");
         }
 
         function deleteDivision(index) {
-            const div = divisionsList[index];
-            if (['marketing', 'showroom'].includes(div.id)) {
-                alert("Default divisions cannot be deleted.");
+            if (divisionsList.length <= 1) {
+                alert("You must keep at least one division in the system.");
                 return;
             }
 
+            const div = divisionsList[index];
             if (confirm(`Are you sure you want to delete the division "${div.name}"?`)) {
                 divisionsList.splice(index, 1);
                 localStorage.setItem('pks_divisions', JSON.stringify(divisionsList));
                 
                 if (div.id === selectedDivision) {
-                    sessionStorage.setItem('pks_selected_division', 'marketing');
-                    sessionStorage.setItem('pks_selected_division_name', 'Marketing');
+                    const fallbackDiv = divisionsList[0];
+                    sessionStorage.setItem('pks_selected_division', fallbackDiv.id);
+                    sessionStorage.setItem('pks_selected_division_name', fallbackDiv.name);
                     location.reload();
                     return;
                 }
                 
                 renderDivisionsList();
-                renderDivisionSelector();
                 showToast("Division deleted.");
-            }
-        }
-
-        function renderDivisionSelector() {
-            const select = document.getElementById('divisionSelector');
-            select.innerHTML = '';
-            divisionsList.forEach(div => {
-                const opt = document.createElement('option');
-                opt.value = div.id;
-                opt.textContent = div.name;
-                if (div.id === selectedDivision) {
-                    opt.selected = true;
-                }
-                select.appendChild(opt);
-            });
-        }
-
-        function onDivisionChange(divId) {
-            const div = divisionsList.find(d => d.id === divId);
-            if (div) {
-                sessionStorage.setItem('pks_selected_division', div.id);
-                sessionStorage.setItem('pks_selected_division_name', div.name);
-                document.getElementById('divisionBadge').textContent = div.name;
-                location.reload();
             }
         }
 
@@ -1495,7 +1470,6 @@
         }
 
         // Setup dynamic tabs and panels
-        renderDivisionSelector();
         updateRoomState(selectedRoom, selectedRoomName);
     </script>
 </body>
