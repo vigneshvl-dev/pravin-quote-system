@@ -944,6 +944,18 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             btnEl.classList.add('active');
+
+            // Hide room tabs when managing divisions (it's a global action, not room-specific)
+            const roomTabsEl = document.getElementById('roomTabs');
+            const roomBadgeEl = document.getElementById('roomBadge');
+            if (tabId === 'add-div') {
+                if (roomTabsEl) roomTabsEl.style.display = 'none';
+                if (roomBadgeEl) roomBadgeEl.style.display = 'none';
+            } else {
+                if (roomTabsEl) roomTabsEl.style.display = 'flex';
+                if (roomBadgeEl) roomBadgeEl.style.display = 'inline-block';
+            }
+
             renderTabContent(tabId);
         }
 
