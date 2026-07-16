@@ -760,13 +760,10 @@
                 </tfoot>
             </table>
             <div class="quote-actions">
-                <div>
-                    <button class="back-btn" onclick="location.href='rooms.html'" style="margin-right: 8px;">Change Division</button>
-                    <button class="back-btn" onclick="location.href='index.html'">Logout</button>
-                </div>
                 <div style="display:flex; gap:10px;">
                     <button class="print-btn" style="background: var(--accent); color: var(--bg);" onclick="saveCurrentQuote()">Save Quote</button>
-                    <button class="print-btn" onclick="preparePrint()">Print / Save PDF</button>
+                    <button class="print-btn" onclick="preparePrint()">🖨️ Print / Save PDF</button>
+                    <button class="print-btn" style="background: rgba(61,187,110,0.15); color: #3dbb6e; border: 1px solid #3dbb6e;" onclick="downloadQuote()">⬇️ Download</button>
                     <button class="reset-btn" onclick="resetQuote()">Clear Quote</button>
                 </div>
             </div>

@@ -125,7 +125,7 @@
         .nav-btn {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border);
-            color: var(--text);
+            color: #ffffff;
             padding: 10px 20px;
             border-radius: 30px;
             cursor: pointer;
@@ -742,6 +742,7 @@
                                 <th>Type</th>
                                 <th>Customer Name</th>
                                 <th>Phone</th>
+                                <th>Address</th>
                                 <th>Division</th>
                                 <th>Amount</th>
                                 <th style="text-align: center;">Actions</th>
@@ -1513,7 +1514,7 @@
             }
 
             if (!Array.isArray(savedQuotes) || savedQuotes.length === 0) {
-                body.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--muted); font-style: italic; padding: 20px;">No quotes saved in the folder yet.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--muted); font-style: italic; padding: 20px;">No quotes saved in the folder yet.</td></tr>`;
                 return;
             }
 
@@ -1527,6 +1528,7 @@
                     <td>${q.docType}</td>
                     <td>${q.custName || '—'}</td>
                     <td>${q.custPhone || '—'}</td>
+                    <td>${q.custAddress || '—'}</td>
                     <td>${q.divisionName}</td>
                     <td>₹${q.totalAmount.toFixed(2)}</td>
                     <td style="text-align: center; white-space: nowrap; gap: 8px;">
