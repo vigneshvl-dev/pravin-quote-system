@@ -352,6 +352,8 @@
                             <th>Customer</th>
                             <th>Phone</th>
                             <th>Division</th>
+                            <th>Room</th>
+                            <th>Material</th>
                             <th>Amount</th>
                             <th style="text-align: center;">Actions</th>
                         </tr>
@@ -476,7 +478,7 @@
             }
 
             if (!Array.isArray(savedQuotes) || savedQuotes.length === 0) {
-                body.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--muted); font-style: italic; padding: 20px;">No quotes saved in the folder yet.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="10" style="text-align: center; color: var(--muted); font-style: italic; padding: 20px;">No quotes saved in the folder yet.</td></tr>`;
                 return;
             }
 
@@ -484,6 +486,12 @@
 
             savedQuotes.forEach(q => {
                 const tr = document.createElement('tr');
+                
+                // Aggregate unique rooms and materials
+                const lines = q.quoteLines || [];
+                const uniqueRooms = [...new Set(lines.map(l => l.roomName || ''))].filter(Boolean).join(', ') || '—';
+                const uniqueMaterials = [...new Set(lines.map(l => l.material || ''))].filter(Boolean).join(', ') || '—';
+
                 tr.innerHTML = `
                     <td>${q.quoteDate || '—'}</td>
                     <td>${q.quoteNo}</td>
@@ -491,9 +499,11 @@
                     <td>${q.custName || '—'}</td>
                     <td>${q.custPhone || '—'}</td>
                     <td>${q.divisionName}</td>
+                    <td>${uniqueRooms}</td>
+                    <td>${uniqueMaterials}</td>
                     <td>₹${q.totalAmount.toFixed(2)}</td>
                     <td style="text-align: center; white-space: nowrap; gap: 8px;">
-                        <button class="logout-btn" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; background: var(--accent); color: var(--bg); border: none;" onclick="loadSavedQuote('${q.id}')">Load</button>
+                        <button class="logout-btn" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; background: var(--accent); color: var(--bg); border: none;" onclick="loadSavedQuote('${q.id}')">Edit</button>
                         <button class="logout-btn" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; background: transparent; border: 1px solid var(--danger); color: var(--danger);" onclick="deleteSavedQuote('${q.id}')">Delete</button>
                     </td>
                 `;
@@ -527,15 +537,15 @@
                 try {
                     const savedQuotes = JSON.parse(stored);
                     const filtered = savedQuotes.filter(q => q.id !== quoteId);
-                    localStorage.setItem('pks_saved_quotes', JSON.stringify(filtered));
-
-                    // Recalculate counter from highest remaining QT-xxx number
-                    let maxNum = 0;
-                    filtered.forEach(q => {
-                        const m = String(q.quoteNo).match(/^QT-(\d+)$/i);
-                        if (m) maxNum = Math.max(maxNum, parseInt(m[1], 10));
+                    
+                    // Sort remaining quotes and reindex sequentially
+                    filtered.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+                    filtered.forEach((q, idx) => {
+                        q.quoteNo = 'QT-' + String(idx + 1).padStart(3, '0');
                     });
-                    localStorage.setItem('pks_quote_counter', maxNum);
+                    
+                    localStorage.setItem('pks_saved_quotes', JSON.stringify(filtered));
+                    localStorage.setItem('pks_quote_counter', filtered.length);
 
                     renderSavedQuotes();
                 } catch(e) {}

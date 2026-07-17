@@ -23,7 +23,7 @@
             --good: #276749;
             --line: #e0d6c8;
             --radius: 8px;
-            --shadow: 0 1px 4px rgba(0,0,0,.07), 0 4px 12px rgba(0,0,0,.04);
+            --shadow: 0 1px 4px rgba(0, 0, 0, .07), 0 4px 12px rgba(0, 0, 0, .04);
             --mono: 'JetBrains Mono', 'Courier New', monospace;
             --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
@@ -48,7 +48,7 @@
             position: sticky;
             top: 0;
             z-index: 50;
-            box-shadow: 0 2px 12px rgba(0,0,0,.18);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, .18);
         }
 
         .header-inner {
@@ -69,7 +69,9 @@
             color: #f0ebe2;
         }
 
-        header h1 span { color: var(--accent); }
+        header h1 span {
+            color: var(--accent);
+        }
 
         header .tag {
             font-size: .7rem;
@@ -80,7 +82,7 @@
         }
 
         .role-badge {
-            background: rgba(176,125,46,.15);
+            background: rgba(176, 125, 46, .15);
             color: var(--accent);
             padding: 3px 9px;
             border-radius: 4px;
@@ -88,7 +90,7 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1.2px;
-            border: 1px solid rgba(176,125,46,.4);
+            border: 1px solid rgba(176, 125, 46, .4);
             margin-left: 10px;
             display: inline-block;
             vertical-align: middle;
@@ -101,8 +103,8 @@
         }
 
         .cust-row input {
-            background: rgba(255,255,255,.08);
-            border: 1px solid rgba(255,255,255,.15);
+            background: rgba(255, 255, 255, .08);
+            border: 1px solid rgba(255, 255, 255, .15);
             color: #f0ebe2;
             padding: 7px 11px;
             border-radius: 6px;
@@ -116,8 +118,14 @@
             color-scheme: dark;
         }
 
-        .cust-row input::placeholder { color: #7a7065; }
-        .cust-row input:focus { outline: none; border-color: var(--accent); }
+        .cust-row input::placeholder {
+            color: #7a7065;
+        }
+
+        .cust-row input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
 
         main {
             max-width: 1100px;
@@ -150,7 +158,10 @@
             gap: 10px;
             transition: box-shadow 0.2s;
         }
-        .item-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,.1); }
+
+        .item-card:hover {
+            box-shadow: 0 4px 18px rgba(0, 0, 0, .1);
+        }
 
         .item-head {
             display: flex;
@@ -192,7 +203,9 @@
             font-family: var(--sans);
         }
 
-        .add-btn:hover { background: #2c3e34; }
+        .add-btn:hover {
+            background: #2c3e34;
+        }
 
         .builder {
             border-top: 1px dashed var(--border);
@@ -230,7 +243,10 @@
             font-family: var(--sans);
         }
 
-        .opt-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .opt-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
 
         .opt-btn.selected {
             background: var(--accent);
@@ -250,7 +266,10 @@
             align-self: flex-start;
             font-family: var(--sans);
         }
-        .size-btn:hover { background: #1e5236; }
+
+        .size-btn:hover {
+            background: #1e5236;
+        }
 
         .size-panel {
             background: var(--surface2);
@@ -294,7 +313,10 @@
             width: 100%;
         }
 
-        .field input:focus { outline: none; border-color: var(--accent); }
+        .field input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
 
         .field input:disabled {
             opacity: 0.6;
@@ -312,7 +334,10 @@
             padding: 8px 10px;
         }
 
-        .calc-line b { color: var(--accent); font-weight: 700; }
+        .calc-line b {
+            color: var(--accent);
+            font-weight: 700;
+        }
 
         .row-actions {
             display: flex;
@@ -331,7 +356,9 @@
             font-family: var(--sans);
         }
 
-        .confirm-btn:hover { background: #1e5236; }
+        .confirm-btn:hover {
+            background: #1e5236;
+        }
 
         .cancel-btn {
             background: transparent;
@@ -400,8 +427,13 @@
             text-align: right;
         }
 
-        table.quote-table tbody tr:hover { background: var(--surface2); }
-        table.quote-table tr:last-child td { border-bottom: none; }
+        table.quote-table tbody tr:hover {
+            background: var(--surface2);
+        }
+
+        table.quote-table tr:last-child td {
+            border-bottom: none;
+        }
 
         .del-btn {
             background: none;
@@ -412,7 +444,10 @@
             padding: 2px 6px;
             border-radius: 4px;
         }
-        .del-btn:hover { background: #fde8e8; }
+
+        .del-btn:hover {
+            background: #fde8e8;
+        }
 
         .empty-row td {
             text-align: center;
@@ -451,7 +486,9 @@
             color: #f0ebe2;
         }
 
-        .print-btn:hover { background: #2c3e34; }
+        .print-btn:hover {
+            background: #2c3e34;
+        }
 
         .reset-btn {
             background: transparent;
@@ -465,17 +502,21 @@
             color: var(--muted);
         }
 
-        .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .back-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
 
         @media print {
+
             header,
             .room-tabs-container,
             .items-grid,
             .intro,
             .quote-actions,
             .del-btn,
-            th:last-child,
-            td:last-child {
+            .quote-table th:last-child,
+            .quote-table td:last-child {
                 display: none !important;
             }
 
@@ -526,6 +567,7 @@
             margin-bottom: 24px;
             box-shadow: var(--shadow);
         }
+
         .room-tabs-title {
             font-size: 0.8rem;
             text-transform: uppercase;
@@ -534,6 +576,7 @@
             font-weight: 700;
             margin-bottom: 12px;
         }
+
         .room-tabs {
             display: flex;
             gap: 10px;
@@ -541,6 +584,7 @@
             padding-bottom: 4px;
             scrollbar-width: thin;
         }
+
         .room-tab {
             background: var(--surface2);
             border: 1px solid var(--border);
@@ -557,25 +601,30 @@
             transition: all 0.2s;
             user-select: none;
         }
+
         .room-tab:hover:not(.disabled) {
             border-color: var(--accent);
             color: var(--accent);
             background: var(--accent-light);
         }
+
         .room-tab.active {
             background: var(--accent);
             color: #fff;
             border-color: var(--accent);
         }
+
         .room-tab.disabled {
             opacity: 0.45;
             cursor: not-allowed;
             background: #eee;
             border-style: dashed;
         }
+
         .room-tab .tab-icon {
             font-size: 1.1rem;
         }
+
         .room-tab .coming-soon-badge {
             font-size: 0.6rem;
             font-weight: 700;
@@ -601,18 +650,22 @@
                 margin-bottom: 30px;
                 color: #000;
             }
+
             .invoice-left {
                 width: 50%;
                 text-align: left;
             }
+
             .invoice-right {
                 width: 45%;
                 text-align: right;
             }
+
             .invoice-meta-table {
                 width: 100%;
                 border-collapse: collapse;
             }
+
             .invoice-meta-table td {
                 padding: 4px 0;
                 font-size: 0.85rem;
@@ -620,6 +673,7 @@
                 text-align: left;
                 color: #000;
             }
+
             .invoice-meta-table tr td:last-child {
                 text-align: right;
                 font-weight: 600;
@@ -634,30 +688,58 @@
     <div class="print-invoice-header">
         <div class="invoice-left">
             <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                <img src="logo.png" alt="Pravin's Kitchen Logo" style="height: 55px; border-radius: 6px; object-fit: contain;">
+                <img src="logo.png" alt="Pravin's Kitchen Logo"
+                    style="height: 55px; border-radius: 6px; object-fit: contain;">
                 <div>
                     <h2 style="color: var(--accent); margin: 0; font-size: 1.3rem;">Pravin's Kitchen</h2>
-                    <p style="font-weight: 600; font-size: 0.82rem; margin: 3px 0 0 0; color: #555;">Premium Modular Kitchens & Interiors</p>
+                    <p style="font-weight: 600; font-size: 0.82rem; margin: 3px 0 0 0; color: #555;">Premium Modular
+                        Kitchens & Interiors</p>
                 </div>
             </div>
             <p style="font-size: 0.82rem; line-height: 1.4; color: #555; margin-top: 5px;">
-                Address: 123 Designer Street, Industrial Area<br>
-                Mobile: +91 98765 43210
+                Address: Pravin Modular Kitchens,<br>
+                Tvm Main Road, Azhagiamandapam,<br>
+                Mulagumoodu Post - 629167, T.N.<br>
+                Mobile: +91 9787769970
             </p>
-            <p style="font-size: 0.72rem; margin-top: 15px; color: #777; border-top: 1px dashed #ccc; padding-top: 5px;">
+            <p
+                style="font-size: 0.72rem; margin-top: 15px; color: #777; border-top: 1px dashed #ccc; padding-top: 5px;">
                 Note: 45 Days Storage Validity & Guarantee
             </p>
         </div>
         <div class="invoice-right">
-            <h3 id="printDocTitle" style="margin-top: 0; margin-bottom: 15px; font-size: 1.6rem; color: #2c3e50; border-bottom: 2px solid var(--accent); padding-bottom: 5px; display: inline-block;">QUOTATION</h3>
+            <h3 id="printDocTitle"
+                style="margin-top: 0; margin-bottom: 15px; font-size: 1.6rem; color: #2c3e50; border-bottom: 2px solid var(--accent); padding-bottom: 5px; display: inline-block;">
+                QUOTATION</h3>
             <table class="invoice-meta-table">
-                <tr><td id="printQuoteNoLabel" style="font-weight: bold; width: 45%;">Quotation No:</td><td id="printQuoteNo">—</td></tr>
-                <tr id="printQuoteRefRow" style="display: none;"><td style="font-weight: bold;">Quotation No:</td><td id="printQuoteRefNo">—</td></tr>
-                <tr><td style="font-weight: bold;">Division:</td><td id="printDivisionName">—</td></tr>
-                <tr><td style="font-weight: bold;">Date:</td><td id="printQuoteDate">—</td></tr>
-                <tr><td style="font-weight: bold;">Customer:</td><td id="printCustName">—</td></tr>
-                <tr><td style="font-weight: bold;">Phone:</td><td id="printCustPhone">—</td></tr>
-                <tr><td style="font-weight: bold;">Address:</td><td id="printCustAddress">—</td></tr>
+                <tr>
+                    <td id="printQuoteNoLabel" style="font-weight: bold; width: 45%;">Quotation No:</td>
+                    <td id="printQuoteNo">—</td>
+                </tr>
+                <tr id="printQuoteRefRow" style="display: none;">
+                    <td style="font-weight: bold;">Quotation No:</td>
+                    <td id="printQuoteRefNo">—</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold;">Division:</td>
+                    <td id="printDivisionName">—</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold;">Date:</td>
+                    <td id="printQuoteDate">—</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold;">Customer:</td>
+                    <td id="printCustName">—</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold;">Phone:</td>
+                    <td id="printCustPhone">—</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold;">Address:</td>
+                    <td id="printCustAddress">—</td>
+                </tr>
             </table>
         </div>
     </div>
@@ -665,38 +747,52 @@
     <header>
         <div class="header-inner">
             <div style="display: flex; align-items: center; gap: 15px;">
-                <img src="logo.png" alt="Pravin's Kitchen Logo" style="height: 50px; border-radius: 6px; object-fit: contain;">
+                <img src="logo.png" alt="Pravin's Kitchen Logo"
+                    style="height: 50px; border-radius: 6px; object-fit: contain;">
                 <div>
-                    <h1>Pravin<span>'s</span> Kitchen 
-                        <span class="role-badge">Employee</span> 
-                        <span class="role-badge" id="divisionBadge" style="background:var(--accent-light);color:var(--accent-dark);border-color:var(--accent);">Marketing</span> 
-                        <span class="role-badge" id="roomBadge" style="background:var(--accent);color:#fff;border-color:var(--accent);">Kitchen</span>
+                    <h1>Pravin<span>'s</span> Kitchen
+                        <span class="role-badge">Employee</span>
+                        <span class="role-badge" id="divisionBadge"
+                            style="background:var(--accent-light);color:var(--accent-dark);border-color:var(--accent);">Marketing</span>
+                        <span class="role-badge" id="roomBadge"
+                            style="background:var(--accent);color:#fff;border-color:var(--accent);">Kitchen</span>
                     </h1>
                     <div class="tag" id="roomTitle">Modular Quote System</div>
                 </div>
             </div>
-            
+
             <!-- Top Right Page Actions -->
             <div style="display: flex; gap: 10px; align-items: center;">
-                <button class="back-btn" style="background: var(--accent); border: none; padding: 0; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; width: 40px; height: 40px; min-width: 40px;" onclick="openSavedQuotesModal()" title="Saved Quotes Folder">📂</button>
-                <button class="back-btn" style="padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #ffffff !important;" onclick="location.href='rooms.html'">Change Division</button>
-                <button class="back-btn" style="padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #ffffff !important;" onclick="location.href='index.html'">Logout</button>
+                <button class="back-btn"
+                    style="background: var(--accent); border: none; padding: 0; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; width: 40px; height: 40px; min-width: 40px;"
+                    onclick="openSavedQuotesModal()" title="Saved Quotes Folder">📂</button>
+                <button class="back-btn"
+                    style="padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #ffffff !important;"
+                    onclick="location.href='rooms.html'">Change Division</button>
+                <button class="back-btn"
+                    style="padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #ffffff !important;"
+                    onclick="location.href='index.html'">Logout</button>
             </div>
         </div>
-        
+
         <!-- Customer Details (Sub-Header Row) -->
-        <div class="header-inner" style="margin-top: 15px; width: 100%; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 15px;">
-            <div class="cust-row" style="align-items: center; width: 100%; justify-content: flex-start; flex-wrap: wrap;">
+        <div class="header-inner"
+            style="margin-top: 15px; width: 100%; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 15px;">
+            <div class="cust-row"
+                style="align-items: center; width: 100%; justify-content: flex-start; flex-wrap: wrap;">
                 <select id="docType" style="display:none;" onchange="updateDocLabels()">
                     <option value="Quotation">Quotation</option>
                     <option value="Invoice">Invoice</option>
                 </select>
-                <input id="quoteNo" placeholder="QT-001" readonly style="cursor:default; opacity:0.85; background:rgba(176,125,46,0.12); border-color:rgba(176,125,46,0.4); color:#f0ebe2; font-weight:600; letter-spacing:0.5px;">
+                <input id="quoteNo" placeholder="QT NO -00001" readonly
+                    style="cursor:default; opacity:0.85; background:rgba(176,125,46,0.12); border-color:rgba(176,125,46,0.4); color:#f0ebe2; font-weight:600; letter-spacing:0.5px;">
                 <input id="quoteRefNo" placeholder="Quotation Ref No." style="display: none;">
-                <input id="custName" placeholder="Customer name">
-                <input id="custPhone" placeholder="Phone">
+                <input id="custName" placeholder="Customer name" list="customerNames">
+                <input id="custPhone" placeholder="Phone" list="customerPhones">
                 <input id="custAddress" placeholder="Address / Area">
                 <input id="quoteDate" type="date">
+                <datalist id="customerNames"></datalist>
+                <datalist id="customerPhones"></datalist>
             </div>
         </div>
     </header>
@@ -707,20 +803,28 @@
 
         <!-- Room Selector Tabs -->
         <div class="room-tabs-container">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 12px;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 12px;">
                 <div class="room-tabs-title" style="margin-bottom: 0;">Which room are you working on?</div>
                 <div id="floorSelectorsWrap" style="display: none; gap: 10px; align-items: center;">
                     <div style="display: flex; flex-direction: column; gap: 3px;">
-                        <label style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); font-weight:700;">Floor</label>
-                        <select id="floorSelector" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; outline:none;" onchange="updateRoomState(selectedRoom, selectedRoomName)">
+                        <label
+                            style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); font-weight:700;">Floor</label>
+                        <select id="floorSelector"
+                            style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; outline:none;"
+                            onchange="updateRoomState(selectedRoom, selectedRoomName)">
                             <option value="Ground Floor">Ground Floor</option>
                             <option value="First Floor">First Floor</option>
                             <option value="Second Floor">Second Floor</option>
                         </select>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 3px;">
-                        <label style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); font-weight:700;">Room No.</label>
-                        <select id="roomNoSelector" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; outline:none;" onchange="updateRoomState(selectedRoom, selectedRoomName)">
+                        <label
+                            style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); font-weight:700;">Room
+                            No.</label>
+                        <select id="roomNoSelector"
+                            style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; outline:none;"
+                            onchange="updateRoomState(selectedRoom, selectedRoomName)">
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -767,7 +871,8 @@
             </table>
             <div class="quote-actions">
                 <div style="display:flex; gap:10px;">
-                    <button class="print-btn" style="background: var(--accent); color: var(--bg);" onclick="saveCurrentQuote()">Save Quote</button>
+                    <button class="print-btn" style="background: var(--accent); color: var(--bg);"
+                        onclick="saveCurrentQuote()">Save Quote</button>
                     <button class="print-btn" onclick="preparePrint()">🖨️ Print / Save PDF</button>
                     <button class="reset-btn" onclick="resetQuote()">Clear Quote</button>
                 </div>
@@ -776,13 +881,18 @@
     </main>
 
     <!-- Saved Quotes Modal -->
-    <div class="modal-overlay" id="quotesFolderModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
-        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 30px; width: 90%; max-width: 900px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
-                <h2 style="color: var(--accent); margin: 0; font-size: 1.5rem; font-family: var(--sans);">Saved Quotes (45-Day Auto-Cleanup)</h2>
-                <button onclick="closeSavedQuotesModal()" style="background: transparent; border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-family: var(--sans);">Close</button>
+    <div class="modal-overlay" id="quotesFolderModal"
+        style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+        <div
+            style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 30px; width: 90%; max-width: 900px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 20px;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                <h2 style="color: var(--accent); margin: 0; font-size: 1.5rem; font-family: var(--sans);">Saved Quotes
+                    (45-Day Auto-Cleanup)</h2>
+                <button onclick="closeSavedQuotesModal()"
+                    style="background: transparent; border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-family: var(--sans);">Close</button>
             </div>
-            
+
             <div style="flex: 1; min-height: 250px; overflow-x: auto;">
                 <table class="quote-table" style="width: 100%;">
                     <thead>
@@ -793,6 +903,8 @@
                             <th>Customer</th>
                             <th>Phone</th>
                             <th>Division</th>
+                            <th>Room</th>
+                            <th>Material</th>
                             <th>Amount</th>
                             <th style="text-align: center;">Actions</th>
                         </tr>
@@ -816,13 +928,13 @@
         const showRate = (role === 'admin');
 
         const ROOMS = [
-            { id: 'kitchen',     name: 'Kitchen',      icon: '🍳', active: true  },
-            { id: 'living_room', name: 'Living Room',  icon: '🛋️', active: true },
-            { id: 'bedroom',     name: 'Bedroom',      icon: '🛏️', active: true },
-            { id: 'dining_room', name: 'Dining Room',  icon: '🍽️', active: true },
-            { id: 'sitout',      name: 'Sitout',       icon: '🌿', active: true },
-            { id: 'store_room',  name: 'Store Room',   icon: '📦', active: true },
-            { id: 'toilet_area', name: 'Toilet Area',  icon: '🚿', active: true },
+            { id: 'kitchen', name: 'Kitchen', icon: '🍳', active: true },
+            { id: 'living_room', name: 'Living Room', icon: '🛋️', active: true },
+            { id: 'bedroom', name: 'Bedroom', icon: '🛏️', active: true },
+            { id: 'dining_room', name: 'Dining Room', icon: '🍽️', active: true },
+            { id: 'sitout', name: 'Sitout', icon: '🌿', active: true },
+            { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
+            { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
         ];
 
         let selectedRoom = sessionStorage.getItem('pks_selected_room') || 'kitchen';
@@ -957,7 +1069,7 @@
             if (stored) {
                 try {
                     return JSON.parse(stored);
-                } catch(e) {}
+                } catch (e) { }
             }
             return DEFAULT_RATES;
         }
@@ -968,7 +1080,7 @@
             if (stored) {
                 try {
                     return JSON.parse(stored);
-                } catch(e) {}
+                } catch (e) { }
             }
             return {};
         }
@@ -979,7 +1091,7 @@
             if (stored) {
                 try {
                     return JSON.parse(stored);
-                } catch(e) {}
+                } catch (e) { }
             }
             return [];
         }
@@ -1044,7 +1156,7 @@
                 try {
                     const parsed = JSON.parse(stored);
                     if (Array.isArray(parsed)) return parsed;
-                } catch(e) {}
+                } catch (e) { }
             }
             return [];
         }
@@ -1058,7 +1170,7 @@
                 try {
                     const parsed = JSON.parse(stored);
                     if (Array.isArray(parsed)) return parsed;
-                } catch(e) {}
+                } catch (e) { }
             }
             return [];
         }
@@ -1079,7 +1191,7 @@
                 };
             });
             const customMats = getCustomMaterials();
-            
+
             // Append custom materials to standard items
             list.forEach(item => {
                 if (!item.custom && customMats[item.id]) {
@@ -1089,7 +1201,7 @@
                         else if (m.formulaType === "L*W") formula = v => (v.L * v.W) / 144;
                         else if (m.formulaType === "SQFT") formula = v => v.SQFT;
                         else formula = v => ((v.L + v.W) * v.H) / 144;
-                        
+
                         item.options.push({
                             label: m.label,
                             fields: m.fields,
@@ -1190,22 +1302,22 @@
         function renderRoomTabs() {
             const tabsEl = document.getElementById('roomTabs');
             tabsEl.innerHTML = '';
-            
+
             ROOMS.forEach(room => {
                 const tab = document.createElement('div');
                 tab.className = `room-tab ${room.id === selectedRoom ? 'active' : ''} ${room.active ? '' : 'disabled'}`;
-                
+
                 let badge = '';
                 if (!room.active) {
                     badge = `<span class="coming-soon-badge">Soon</span>`;
                 }
-                
+
                 tab.innerHTML = `
                     <span class="tab-icon">${room.icon}</span>
                     <span class="tab-name">${room.name}</span>
                     ${badge}
                 `;
-                
+
                 if (room.active) {
                     tab.onclick = () => {
                         updateRoomState(room.id, room.name);
@@ -1351,7 +1463,7 @@
         function updateCalc(buildId, itemId, optIdx) {
             const item = ITEMS.find(i => i.id === itemId);
             const opt = item.options[optIdx];
-            
+
             // Get rate
             let rate = 0;
             const rateEl = document.getElementById(`${buildId}-rate`);
@@ -1361,7 +1473,7 @@
                 const rates = getRates();
                 rate = rates[opt.label] || 0;
             }
-            
+
             let sqft = 0;
             if (opt.fields.includes('SQFT')) {
                 const el = document.getElementById(`${buildId}-SQFT`);
@@ -1373,9 +1485,9 @@
                 const v = readValues(buildId, opt.fields);
                 sqft = opt.formula(v);
             }
-            
+
             const amount = sqft * rate;
-            
+
             let previewStr = '';
             if (opt.fields.includes('QTY')) {
                 previewStr = `Qty: <b>${sqft}</b>`;
@@ -1410,7 +1522,7 @@
         function confirmMaterial(buildId, itemId, optIdx) {
             const item = ITEMS.find(i => i.id === itemId);
             const opt = item.options[optIdx];
-            
+
             // Get rate
             let rate = 0;
             const rateEl = document.getElementById(`${buildId}-rate`);
@@ -1420,7 +1532,7 @@
                 const rates = getRates();
                 rate = rates[opt.label] || 0;
             }
-            
+
             let sqft = 0;
             if (opt.fields.includes('SQFT')) {
                 sqft = parseFloat(document.getElementById(`${buildId}-SQFT`).value) || 0;
@@ -1430,10 +1542,10 @@
                 const v = readValues(buildId, opt.fields);
                 sqft = opt.formula(v);
             }
-            
+
             const amount = sqft * rate;
             const v = readValues(buildId, opt.fields);
-            
+
             let sizeDesc = opt.fields.map(f => `${f}:${v[f]}`).join(' × ');
             if (!sizeDesc) {
                 const labelStr = opt.fields.includes('QTY') ? 'qty' : 'sqft';
@@ -1459,7 +1571,7 @@
             const item = ITEMS.find(i => i.id === itemId);
             const desc = document.getElementById(`${buildId}-desc`).value || 'Custom item';
             const sqft = parseFloat(document.getElementById(`${buildId}-sqft`).value) || 0;
-            
+
             let rate = 0;
             let amount = 0;
             if (showRate) {
@@ -1491,7 +1603,7 @@
         function renderQuote() {
             const body = document.getElementById('quoteBody');
             const showRate = (role === 'admin');
-            
+
             // Toggle header visibility
             document.getElementById('rateHeader').style.display = showRate ? '' : 'none';
 
@@ -1513,7 +1625,7 @@
                   <td><button class="del-btn" onclick="deleteLine(${l.id})" title="Remove">✕</button></td>
                 </tr>
             `).join('');
-            
+
             // Render tfoot colspan based on role
             const totalRow = document.querySelector('tfoot tr');
             totalRow.innerHTML = `
@@ -1528,23 +1640,47 @@
             renderQuote();
         }
 
-        // ── Auto-incrementing Quote Number ──────────────────────────────────
-        function getNextQuoteNo() {
-            const stored = parseInt(localStorage.getItem('pks_quote_counter') || '0', 10);
-            return stored + 1;
+        // ── Auto-incrementing Quote Number & Re-indexing ────────────────────
+        function getSavedQuotesCount() {
+            const stored = localStorage.getItem('pks_saved_quotes');
+            if (stored) {
+                try {
+                    const saved = JSON.parse(stored);
+                    if (Array.isArray(saved)) return saved.length;
+                } catch (e) { }
+            }
+            return 0;
+        }
+
+        function reindexSavedQuotes() {
+            const stored = localStorage.getItem('pks_saved_quotes');
+            if (!stored) return;
+            try {
+                const savedQuotes = JSON.parse(stored);
+                if (Array.isArray(savedQuotes)) {
+                    // Sort quotes by their creation/save order (timestamp)
+                    savedQuotes.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+                    // Reindex quote numbers sequentially
+                    savedQuotes.forEach((q, idx) => {
+                        const newNo = 'QT-' + String(idx + 1).padStart(3, '0');
+                        q.quoteNo = newNo;
+                    });
+                    localStorage.setItem('pks_saved_quotes', JSON.stringify(savedQuotes));
+                }
+            } catch (e) { }
         }
 
         function incrementQuoteNo() {
-            const next = getNextQuoteNo();
-            localStorage.setItem('pks_quote_counter', next);
-            document.getElementById('quoteNo').value = 'QT-' + String(next).padStart(3, '0');
+            reindexSavedQuotes();
+            const count = getSavedQuotesCount();
+            document.getElementById('quoteNo').value = 'QT-' + String(count + 1).padStart(3, '0');
         }
 
         function setInitialQuoteNo(force = false) {
-            // Only set if not already loaded from a restored quote, or if forced
+            reindexSavedQuotes();
             if (force || !document.getElementById('quoteNo').value || document.getElementById('quoteNo').value.startsWith('QT-')) {
-                const current = parseInt(localStorage.getItem('pks_quote_counter') || '0', 10);
-                document.getElementById('quoteNo').value = 'QT-' + String(current + 1).padStart(3, '0');
+                const count = getSavedQuotesCount();
+                document.getElementById('quoteNo').value = 'QT-' + String(count + 1).padStart(3, '0');
             }
         }
         // ──────────────────────────────────────────────────────────────────
@@ -1552,18 +1688,18 @@
         function resetQuote() {
             if (confirm('Clear the entire quote and customer details? This cannot be undone.')) {
                 quoteLines = [];
-                
+
                 // Clear metadata inputs and set next auto number
                 incrementQuoteNo();
                 document.getElementById('custName').value = '';
                 document.getElementById('custPhone').value = '';
                 document.getElementById('custAddress').value = '';
                 document.getElementById('quoteDate').valueAsDate = new Date();
-                
+
                 // Reset docType
                 document.getElementById('docType').value = 'Quotation';
                 updateDocLabels();
-                
+
                 renderQuote();
             }
         }
@@ -1594,7 +1730,7 @@
             document.getElementById('printDocTitle').textContent = (selectedDivisionName + ' ' + docType).toUpperCase();
             document.getElementById('printQuoteNoLabel').textContent = docType + ' No:';
             document.getElementById('printQuoteNo').textContent = document.getElementById('quoteNo').value || '—';
-            
+
             // Handle quotation reference row
             const printQuoteRefRow = document.getElementById('printQuoteRefRow');
             if (docType === 'Invoice') {
@@ -1648,8 +1784,10 @@
                             </div>
                         </div>
                         <p style="font-size: 0.78rem; line-height: 1.4; color: #7a6e61; margin: 0;">
-                            Address: 123 Designer Street, Industrial Area<br>
-                            Mobile: +91 98765 43210
+                            Address: Pravin Modular Kitchens,<br>
+                            Tvm Main Road, Azhagiamandapam,<br>
+                            Mulagumoodu Post - 629167, T.N.<br>
+                            Mobile: +91 9787769970
                         </p>
                         <p style="font-size: 0.68rem; margin-top: 8px; color: #7a6e61; font-weight: 500;">
                             Note: 45 Days Storage Validity & Guarantee
@@ -1669,7 +1807,7 @@
                     </div>
                 </div>
             `;
-            
+
             // Build items table HTML
             let rowsHTML = quoteLines.map((l, idx) => `
                 <tr style="border-bottom: 1px solid #e0d6c8;">
@@ -1741,11 +1879,11 @@
 
             // html2pdf options
             const opt = {
-                margin:       [10, 12, 10, 12], // top, left, bottom, right in mm
-                filename:     `${docType}_${quoteNo}_${custName}.pdf`.replace(/[^a-z0-9]/gi, '_').toLowerCase(),
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2.5, useCORS: true, letterRendering: true, backgroundColor: '#ffffff' },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                margin: [10, 12, 10, 12], // top, left, bottom, right in mm
+                filename: `${docType}_${quoteNo}_${custName}.pdf`.replace(/[^a-z0-9]/gi, '_').toLowerCase(),
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2.5, useCORS: true, letterRendering: true, backgroundColor: '#ffffff' },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
             // Run html2pdf download
@@ -1766,7 +1904,7 @@
                             localStorage.setItem('pks_saved_quotes', JSON.stringify(validQuotes));
                         }
                     }
-                } catch(e) {}
+                } catch (e) { }
             }
         }
         cleanupExpiredQuotes();
@@ -1810,7 +1948,7 @@
                 try {
                     savedQuotes = JSON.parse(stored);
                     if (!Array.isArray(savedQuotes)) savedQuotes = [];
-                } catch(e) {
+                } catch (e) {
                     savedQuotes = [];
                 }
             }
@@ -1825,19 +1963,9 @@
             } else {
                 savedQuotes.push(newQuote);
                 localStorage.setItem('pks_saved_quotes', JSON.stringify(savedQuotes));
-                // Advance to next quote number after successful save
-                incrementQuoteNo();
-                // Reset customer fields for new quote
-                quoteLines = [];
-                document.getElementById('custName').value = '';
-                document.getElementById('custPhone').value = '';
-                document.getElementById('custAddress').value = '';
-                document.getElementById('quoteDate').valueAsDate = new Date();
-                document.getElementById('docType').value = 'Quotation';
-                updateDocLabels();
-                renderQuote();
-                alert("Quote saved! Started new quote " + document.getElementById('quoteNo').value);
+                alert("Quote saved successfully!");
             }
+            initCustomerAutofill();
         }
 
         function openSavedQuotesModal() {
@@ -1859,11 +1987,11 @@
             if (stored) {
                 try {
                     savedQuotes = JSON.parse(stored);
-                } catch(e) {}
+                } catch (e) { }
             }
 
             if (!Array.isArray(savedQuotes) || savedQuotes.length === 0) {
-                body.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--muted); font-style: italic; padding: 20px;">No quotes saved in the folder yet.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="10" style="text-align: center; color: var(--muted); font-style: italic; padding: 20px;">No quotes saved in the folder yet.</td></tr>`;
                 return;
             }
 
@@ -1871,6 +1999,12 @@
 
             savedQuotes.forEach(q => {
                 const tr = document.createElement('tr');
+                
+                // Aggregate unique rooms and materials
+                const lines = q.quoteLines || [];
+                const uniqueRooms = [...new Set(lines.map(l => l.roomName || ''))].filter(Boolean).join(', ') || '—';
+                const uniqueMaterials = [...new Set(lines.map(l => l.material || ''))].filter(Boolean).join(', ') || '—';
+
                 tr.innerHTML = `
                     <td>${q.quoteDate || '—'}</td>
                     <td>${q.quoteNo}</td>
@@ -1878,9 +2012,11 @@
                     <td>${q.custName || '—'}</td>
                     <td>${q.custPhone || '—'}</td>
                     <td>${q.divisionName}</td>
+                    <td>${uniqueRooms}</td>
+                    <td>${uniqueMaterials}</td>
                     <td>₹${q.totalAmount.toFixed(2)}</td>
                     <td style="text-align: center; white-space: nowrap; gap: 8px;">
-                        <button class="confirm-btn" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; background: var(--accent); color: var(--bg);" onclick="loadSavedQuote('${q.id}')">Load</button>
+                        <button class="confirm-btn" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; background: var(--accent); color: var(--bg);" onclick="loadSavedQuote('${q.id}')">Edit</button>
                         <button class="cancel-btn" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; background: transparent; border: 1px solid var(--danger); color: var(--danger);" onclick="deleteSavedQuote('${q.id}')">Delete</button>
                     </td>
                 `;
@@ -1909,7 +2045,7 @@
                         alert("Quote loaded successfully!");
                     }
                 }
-            } catch(e) {
+            } catch (e) {
                 alert("Failed to load quote.");
             }
         }
@@ -1922,10 +2058,10 @@
             document.getElementById('custPhone').value = quote.custPhone || '';
             document.getElementById('custAddress').value = quote.custAddress || '';
             document.getElementById('quoteDate').value = quote.quoteDate || '';
-            
+
             quoteLines = [...quote.quoteLines];
             lineIdCounter = quote.lineIdCounter || (quoteLines.length > 0 ? Math.max(...quoteLines.map(l => l.id)) + 1 : 1);
-            
+
             renderQuote();
             updateDocLabels();
         }
@@ -1939,18 +2075,16 @@
                     const filtered = savedQuotes.filter(q => q.id !== quoteId);
                     localStorage.setItem('pks_saved_quotes', JSON.stringify(filtered));
 
-                    // Recalculate counter from highest remaining QT-xxx number
-                    let maxNum = 0;
-                    filtered.forEach(q => {
-                        const m = String(q.quoteNo).match(/^QT-(\d+)$/i);
-                        if (m) maxNum = Math.max(maxNum, parseInt(m[1], 10));
-                    });
-                    localStorage.setItem('pks_quote_counter', maxNum);
+                    // Reindex remaining quotes sequentially
+                    reindexSavedQuotes();
+
                     // Update the current form's quote number to next available
                     setInitialQuoteNo(true);
 
                     renderSavedQuotes();
-                } catch(e) {}
+                    // Also refresh autocomplete datalists
+                    initCustomerAutofill();
+                } catch (e) { }
             }
         }
 
@@ -1964,11 +2098,103 @@
                     restoreQuoteState(quoteToRestore);
                 }, 100);
                 sessionStorage.removeItem('pks_restore_quote_data');
-            } catch(e) {}
+            } catch (e) { }
         }
 
         // Default today's date
         document.getElementById('quoteDate').valueAsDate = new Date();
         // Set auto-generated quote number on load
         setInitialQuoteNo();
+
+        // Customer details autocomplete and auto-fill helper
+        function initCustomerAutofill() {
+            const stored = localStorage.getItem('pks_saved_quotes');
+            if (!stored) return;
+            let savedQuotes = [];
+            try {
+                savedQuotes = JSON.parse(stored);
+                if (!Array.isArray(savedQuotes)) return;
+            } catch (e) {
+                return;
+            }
+
+            const nameToDetails = {};
+            const phoneToDetails = {};
+
+            // Sort by timestamp ascending, so latest items overwrite earlier ones (keeping the latest)
+            savedQuotes.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+
+            savedQuotes.forEach(q => {
+                const name = (q.custName || '').trim();
+                const phone = (q.custPhone || '').trim();
+                const addr = (q.custAddress || '').trim();
+
+                const details = { name, phone, addr };
+
+                if (name) nameToDetails[name.toLowerCase()] = details;
+                if (phone) phoneToDetails[phone] = details;
+            });
+
+            const nameDatalist = document.getElementById('customerNames');
+            const phoneDatalist = document.getElementById('customerPhones');
+
+            if (nameDatalist) {
+                nameDatalist.innerHTML = Object.keys(nameToDetails)
+                    .map(key => `<option value="${nameToDetails[key].name}"></option>`)
+                    .join('');
+            }
+            if (phoneDatalist) {
+                phoneDatalist.innerHTML = Object.keys(phoneToDetails)
+                    .map(key => `<option value="${phoneToDetails[key].phone}"></option>`)
+                    .join('');
+            }
+
+            const nameInput = document.getElementById('custName');
+            const phoneInput = document.getElementById('custPhone');
+            const addrInput = document.getElementById('custAddress');
+
+            function handleAutofill(triggerField) {
+                if (triggerField === 'name') {
+                    const typedName = nameInput.value.trim().toLowerCase();
+                    if (nameToDetails[typedName]) {
+                        const match = nameToDetails[typedName];
+                        if (match.phone && !phoneInput.value.trim()) {
+                            phoneInput.value = match.phone;
+                        }
+                        if (match.addr && !addrInput.value.trim()) {
+                            addrInput.value = match.addr;
+                        }
+                    }
+                } else if (triggerField === 'phone') {
+                    const typedPhone = phoneInput.value.trim();
+                    if (phoneToDetails[typedPhone]) {
+                        const match = phoneToDetails[typedPhone];
+                        if (match.name && !nameInput.value.trim()) {
+                            nameInput.value = match.name;
+                        }
+                        if (match.addr && !addrInput.value.trim()) {
+                            addrInput.value = match.addr;
+                        }
+                    }
+                }
+            }
+
+            if (nameInput) {
+                nameInput.removeEventListener('input', nameInput._autofillHandler);
+                nameInput.removeEventListener('change', nameInput._autofillHandler);
+                nameInput._autofillHandler = () => handleAutofill('name');
+                nameInput.addEventListener('input', nameInput._autofillHandler);
+                nameInput.addEventListener('change', nameInput._autofillHandler);
+            }
+            if (phoneInput) {
+                phoneInput.removeEventListener('input', phoneInput._autofillHandler);
+                phoneInput.removeEventListener('change', phoneInput._autofillHandler);
+                phoneInput._autofillHandler = () => handleAutofill('phone');
+                phoneInput.addEventListener('input', phoneInput._autofillHandler);
+                phoneInput.addEventListener('change', phoneInput._autofillHandler);
+            }
+        }
+
+        // Initialize customer auto-fill logic
+        initCustomerAutofill();
     </script>
