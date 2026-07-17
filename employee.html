@@ -784,8 +784,8 @@
                     <option value="Quotation">Quotation</option>
                     <option value="Invoice">Invoice</option>
                 </select>
-                <input id="quoteNo" placeholder="QT NO -00001" readonly
-                    style="cursor:default; opacity:0.85; background:rgba(176,125,46,0.12); border-color:rgba(176,125,46,0.4); color:#f0ebe2; font-weight:600; letter-spacing:0.5px;">
+                <input id="quoteNo" placeholder="QT NO -00001"
+                    style="background:rgba(176,125,46,0.15); border-color:rgba(176,125,46,0.4); color:#f0ebe2; font-weight:600; letter-spacing:0.5px;">
                 <input id="quoteRefNo" placeholder="Quotation Ref No." style="display: none;">
                 <input id="custName" placeholder="Customer name" list="customerNames">
                 <input id="custPhone" placeholder="Phone" list="customerPhones">
@@ -942,7 +942,7 @@
 
         let FIELD_LABELS = {
             L: "Length (in)",
-            W: "Width/Breadth (in)",
+            W: "Width",
             H: "Height (in)",
             SQFT: "Sq.Ft",
             QTY: "Quantity"
@@ -1640,47 +1640,37 @@
             renderQuote();
         }
 
-        // ── Auto-incrementing Quote Number & Re-indexing ────────────────────
-        function getSavedQuotesCount() {
+        // ── Auto-incrementing Quote Number & Auto-generation ────────────────────
+        function getNextQuoteNo() {
             const stored = localStorage.getItem('pks_saved_quotes');
+            let nextNum = 1;
             if (stored) {
                 try {
                     const saved = JSON.parse(stored);
-                    if (Array.isArray(saved)) return saved.length;
+                    if (Array.isArray(saved)) {
+                        let maxNum = 0;
+                        saved.forEach(q => {
+                            if (q.quoteNo && q.quoteNo.startsWith('QT-')) {
+                                const numPart = parseInt(q.quoteNo.replace('QT-', ''), 10);
+                                if (!isNaN(numPart) && numPart > maxNum) {
+                                    maxNum = numPart;
+                                }
+                            }
+                        });
+                        nextNum = maxNum + 1;
+                    }
                 } catch (e) { }
             }
-            return 0;
-        }
-
-        function reindexSavedQuotes() {
-            const stored = localStorage.getItem('pks_saved_quotes');
-            if (!stored) return;
-            try {
-                const savedQuotes = JSON.parse(stored);
-                if (Array.isArray(savedQuotes)) {
-                    // Sort quotes by their creation/save order (timestamp)
-                    savedQuotes.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
-                    // Reindex quote numbers sequentially
-                    savedQuotes.forEach((q, idx) => {
-                        const newNo = 'QT-' + String(idx + 1).padStart(3, '0');
-                        q.quoteNo = newNo;
-                    });
-                    localStorage.setItem('pks_saved_quotes', JSON.stringify(savedQuotes));
-                }
-            } catch (e) { }
+            return 'QT-' + String(nextNum).padStart(3, '0');
         }
 
         function incrementQuoteNo() {
-            reindexSavedQuotes();
-            const count = getSavedQuotesCount();
-            document.getElementById('quoteNo').value = 'QT-' + String(count + 1).padStart(3, '0');
+            document.getElementById('quoteNo').value = '';
         }
 
         function setInitialQuoteNo(force = false) {
-            reindexSavedQuotes();
-            if (force || !document.getElementById('quoteNo').value || document.getElementById('quoteNo').value.startsWith('QT-')) {
-                const count = getSavedQuotesCount();
-                document.getElementById('quoteNo').value = 'QT-' + String(count + 1).padStart(3, '0');
+            if (force) {
+                document.getElementById('quoteNo').value = '';
             }
         }
         // ──────────────────────────────────────────────────────────────────
@@ -1999,7 +1989,7 @@
 
             savedQuotes.forEach(q => {
                 const tr = document.createElement('tr');
-                
+
                 // Aggregate unique rooms and materials
                 const lines = q.quoteLines || [];
                 const uniqueRooms = [...new Set(lines.map(l => l.roomName || ''))].filter(Boolean).join(', ') || '—';
@@ -2074,9 +2064,6 @@
                     const savedQuotes = JSON.parse(stored);
                     const filtered = savedQuotes.filter(q => q.id !== quoteId);
                     localStorage.setItem('pks_saved_quotes', JSON.stringify(filtered));
-
-                    // Reindex remaining quotes sequentially
-                    reindexSavedQuotes();
 
                     // Update the current form's quote number to next available
                     setInitialQuoteNo(true);

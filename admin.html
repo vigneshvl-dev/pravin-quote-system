@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pravin's Kitchen — Admin Panel</title>
+    <title>PraviN Kitchen's and Interiors — Admin Panel</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Mono&display=swap');
 
@@ -215,8 +215,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         h2 {
@@ -254,7 +261,7 @@
             font-size: 0.95rem;
             width: 100%;
             transition: all 0.3s;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
             font-family: var(--sans);
         }
 
@@ -262,7 +269,7 @@
         .form-group select:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 10px var(--accent-glow), inset 0 2px 4px rgba(0,0,0,0.5);
+            box-shadow: 0 0 10px var(--accent-glow), inset 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .rates-table {
@@ -369,8 +376,15 @@
         }
 
         @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .item-list-container {
@@ -559,12 +573,15 @@
 
     <header>
         <div style="display: flex; align-items: center; gap: 15px;">
-            <img src="logo.png" alt="Pravin's Kitchen Logo" style="height: 50px; border-radius: 6px; object-fit: contain;">
+            <img src="logo.png" alt="Pravin's Kitchen Logo"
+                style="height: 50px; border-radius: 6px; object-fit: contain;">
             <div>
-                <h1>Pravin<span>'s</span> Kitchen 
-                    <span class="role-badge">Admin Panel</span> 
-                    <span class="role-badge" id="divisionBadge" style="background:var(--surface2);color:var(--accent);border-color:var(--accent);">Marketing</span>
-                    <span class="role-badge" id="roomBadge" style="background:var(--accent);color:#fff;border-color:var(--accent);">Kitchen</span>
+                <h1>Pravin<span>'s</span> Kitchen
+                    <span class="role-badge">Admin Panel</span>
+                    <span class="role-badge" id="divisionBadge"
+                        style="background:var(--surface2);color:var(--accent);border-color:var(--accent);">Marketing</span>
+                    <span class="role-badge" id="roomBadge"
+                        style="background:var(--accent);color:#fff;border-color:var(--accent);">Kitchen</span>
                 </h1>
             </div>
         </div>
@@ -575,23 +592,32 @@
     </header>
 
     <!-- Room Selector Tabs -->
-    <div class="room-tabs-container-wrapper" style="max-width: 1200px; width: 100%; margin: 20px auto 0; padding: 0 20px;">
+    <div class="room-tabs-container-wrapper"
+        style="max-width: 1200px; width: 100%; margin: 20px auto 0; padding: 0 20px;">
         <div class="room-tabs-container">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 12px;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 12px;">
                 <div class="room-tabs-title" style="margin-bottom: 0;">Which room's items/rates are you managing?</div>
                 <div style="display: flex; gap: 14px; align-items: center;">
                     <div id="floorSelectorsWrap" style="display: none; gap: 10px; align-items: center;">
                         <div style="display: flex; flex-direction: column; gap: 3px;">
-                            <label style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); font-weight:700;">Floor</label>
-                            <select id="floorSelector" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; outline:none;" onchange="updateRoomState(selectedRoom, selectedRoomName)">
+                            <label
+                                style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); font-weight:700;">Floor</label>
+                            <select id="floorSelector"
+                                style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; outline:none;"
+                                onchange="updateRoomState(selectedRoom, selectedRoomName)">
                                 <option value="Ground Floor">Ground Floor</option>
                                 <option value="First Floor">First Floor</option>
                                 <option value="Second Floor">Second Floor</option>
                             </select>
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 3px;">
-                            <label style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); font-weight:700;">Room No.</label>
-                            <select id="roomNoSelector" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; outline:none;" onchange="updateRoomState(selectedRoom, selectedRoomName)">
+                            <label
+                                style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); font-weight:700;">Room
+                                No.</label>
+                            <select id="roomNoSelector"
+                                style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; outline:none;"
+                                onchange="updateRoomState(selectedRoom, selectedRoomName)">
                                 <option value="1">1</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
@@ -618,7 +644,8 @@
             <div id="rates" class="tab-panel active">
                 <h2>Default &amp; Custom Rates</h2>
                 <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 15px;">
-                    Set standard pricing per square foot for all materials. These rates will automatically lock on the employee screen.
+                    Set standard pricing per square foot for all materials. These rates will automatically lock on the
+                    employee screen.
                 </p>
                 <div style="max-height: 400px; overflow-y: auto;">
                     <table class="rates-table">
@@ -731,7 +758,8 @@
             <div id="quotes-folder" class="tab-panel">
                 <h2>Saved Quotes Folder</h2>
                 <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 20px;">
-                    All modular interior quotes saved by employees and administrators are listed below. Quotes older than 45 days are deleted automatically.
+                    All modular interior quotes saved by employees and administrators are listed below. Quotes older
+                    than 45 days are deleted automatically.
                 </p>
                 <div style="max-height: 500px; overflow-y: auto;">
                     <table class="rates-table" style="width: 100%;">
@@ -780,7 +808,7 @@
                 try {
                     const parsed = JSON.parse(stored);
                     if (Array.isArray(parsed)) return parsed;
-                } catch(e) {}
+                } catch (e) { }
             }
             localStorage.setItem('pks_divisions', JSON.stringify(DEFAULT_DIVISIONS));
             return DEFAULT_DIVISIONS;
@@ -794,7 +822,7 @@
                 try {
                     const parsed = JSON.parse(stored);
                     if (Array.isArray(parsed)) return parsed;
-                } catch(e) {}
+                } catch (e) { }
             }
             return [];
         }
@@ -806,20 +834,20 @@
                 try {
                     const parsed = JSON.parse(stored);
                     if (Array.isArray(parsed)) return parsed;
-                } catch(e) {}
+                } catch (e) { }
             }
             return [];
         }
         let deletedStandardMaterials = getDeletedStandardMaterials();
 
         const ROOMS = [
-            { id: 'kitchen',     name: 'Kitchen',      icon: '🍳', active: true  },
-            { id: 'living_room', name: 'Living Room',  icon: '🛋️', active: true },
-            { id: 'bedroom',     name: 'Bedroom',      icon: '🛏️', active: true },
-            { id: 'dining_room', name: 'Dining Room',  icon: '🍽️', active: true },
-            { id: 'sitout',      name: 'Sitout',       icon: '🌿', active: true },
-            { id: 'store_room',  name: 'Store Room',   icon: '📦', active: true },
-            { id: 'toilet_area', name: 'Toilet Area',  icon: '🚿', active: true },
+            { id: 'kitchen', name: 'Kitchen', icon: '🍳', active: true },
+            { id: 'living_room', name: 'Living Room', icon: '🛋️', active: true },
+            { id: 'bedroom', name: 'Bedroom', icon: '🛏️', active: true },
+            { id: 'dining_room', name: 'Dining Room', icon: '🍽️', active: true },
+            { id: 'sitout', name: 'Sitout', icon: '🌿', active: true },
+            { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
+            { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
         ];
 
         let selectedRoom = sessionStorage.getItem('pks_selected_room') || 'kitchen';
@@ -841,7 +869,7 @@
             "Marine Ply – Lamination (Box)": 450,
             "Marine Ply (Box Type)": 450,
             "Marine Ply (Door Type)": 450,
-            
+
             "Marine Ply – Acrylic": 650,
             "Marine Ply – Acrylic (Box Type)": 650,
             "Marine Ply – Acrylic (Door Type)": 650,
@@ -849,7 +877,7 @@
             "Marine Ply – Acrylic (Partition Type)": 650,
             "Marine Ply – Acrylic (Framed)": 650,
             "Marine Ply – Acrylic (Box)": 650,
-            
+
             "WPC": 550,
             "WPC (Box Type)": 550,
             "WPC (Door Type)": 550,
@@ -931,9 +959,9 @@
             if (stored) {
                 try {
                     return JSON.parse(stored);
-                } catch(e) {}
+                } catch (e) { }
             }
-            return {...DEFAULT_RATES};
+            return { ...DEFAULT_RATES };
         }
 
         function getCustomMaterials() {
@@ -941,7 +969,7 @@
             if (stored) {
                 try {
                     return JSON.parse(stored);
-                } catch(e) {}
+                } catch (e) { }
             }
             return {};
         }
@@ -951,7 +979,7 @@
             if (stored) {
                 try {
                     return JSON.parse(stored);
-                } catch(e) {}
+                } catch (e) { }
             }
             return [];
         }
@@ -1043,14 +1071,14 @@
                 localStorage.removeItem('pks_deleted_standard_materials');
                 deletedStandardMaterials = [];
                 localStorage.removeItem('pks_saved_quotes');
-                
+
                 // Set all rates in currentRates to 0
                 currentRates = {};
                 Object.keys(DEFAULT_RATES).forEach(k => {
                     currentRates[k] = 0;
                 });
                 localStorage.setItem('pks_rates', JSON.stringify(currentRates));
-                
+
                 BASE_ITEMS = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
                 customMaterials = {};
                 customItems = [];
@@ -1070,7 +1098,7 @@
         function renderItemsDropdown() {
             const select = document.getElementById('matTargetItem');
             select.innerHTML = '';
-            
+
             // Standard Items
             BASE_ITEMS.forEach(item => {
                 const opt = document.createElement('option');
@@ -1096,7 +1124,7 @@
             BASE_ITEMS.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'item-manage-card';
-                
+
                 // Get standard list
                 let filteredOptions = item.options.filter(opt => !deletedStandardMaterials.includes(`${item.id}-${opt}`));
                 let matTags = filteredOptions.map(opt => `
@@ -1105,7 +1133,7 @@
                         <button onclick="removeStandardMaterial(${item.id}, '${opt}')">✕</button>
                     </span>
                 `).join('');
-                
+
                 // Check if any custom materials added
                 const customList = customMaterials[item.id] || [];
                 let customTags = customList.map((m, index) => `
@@ -1131,7 +1159,7 @@
             customItems.forEach((item, index) => {
                 const div = document.createElement('div');
                 div.className = 'item-manage-card';
-                
+
                 let optTags = item.options.map((opt, optIdx) => `
                     <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
                         ${opt.label} (${opt.note})
@@ -1159,7 +1187,7 @@
             BASE_ITEMS.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'item-manage-card';
-                
+
                 let matTags = item.options.map(opt => `<span class="tag-pill">${opt}</span>`).join('');
                 const customList = customMaterials[item.id] || [];
                 let customTags = customList.map((m, index) => `
@@ -1185,7 +1213,7 @@
             customItems.forEach((item, index) => {
                 const div = document.createElement('div');
                 div.className = 'item-manage-card';
-                
+
                 let optTags = item.options.map((opt, optIdx) => `
                     <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
                         ${opt.label} (${opt.note})
@@ -1248,7 +1276,7 @@
             // Clean inputs & redraw
             document.getElementById('matLabel').value = '';
             document.getElementById('matInitialRate').value = '';
-            
+
             renderCurrentItemsList();
             renderCustomItemsList();
             renderRatesTable();
@@ -1327,11 +1355,11 @@
             if (confirm("Are you sure you want to delete this standard item card? (You can restore it later by resetting defaults).")) {
                 deletedStandardItems.push(itemId);
                 localStorage.setItem('pks_deleted_standard_items', JSON.stringify(deletedStandardItems));
-                
+
                 // Refresh base items
                 const rawItems = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
                 BASE_ITEMS = rawItems.filter(item => !deletedStandardItems.includes(item.id));
-                
+
                 renderItemsDropdown();
                 renderCurrentItemsList();
                 renderCustomItemsList();
@@ -1354,22 +1382,22 @@
         function renderRoomTabs() {
             const tabsEl = document.getElementById('roomTabs');
             tabsEl.innerHTML = '';
-            
+
             ROOMS.forEach(room => {
                 const tab = document.createElement('div');
                 tab.className = `room-tab ${room.id === selectedRoom ? 'active' : ''} ${room.active ? '' : 'disabled'}`;
-                
+
                 let badge = '';
                 if (!room.active) {
                     badge = `<span class="coming-soon-badge">Soon</span>`;
                 }
-                
+
                 tab.innerHTML = `
                     <span class="tab-icon">${room.icon}</span>
                     <span class="tab-name">${room.name}</span>
                     ${badge}
                 `;
-                
+
                 if (room.active) {
                     tab.onclick = () => {
                         updateRoomState(room.id, room.name);
@@ -1400,7 +1428,7 @@
             }
 
             renderRoomTabs();
-            
+
             const activePanel = document.querySelector('.tab-panel.active');
             if (activePanel) {
                 renderTabContent(activePanel.id);
@@ -1469,7 +1497,7 @@
             if (confirm(`Are you sure you want to delete the division "${div.name}"?`)) {
                 divisionsList.splice(index, 1);
                 localStorage.setItem('pks_divisions', JSON.stringify(divisionsList));
-                
+
                 if (div.id === selectedDivision) {
                     const fallbackDiv = divisionsList[0];
                     sessionStorage.setItem('pks_selected_division', fallbackDiv.id);
@@ -1477,7 +1505,7 @@
                     location.reload();
                     return;
                 }
-                
+
                 renderDivisionsList();
                 showToast("Division deleted.");
             }
@@ -1496,7 +1524,7 @@
                             localStorage.setItem('pks_saved_quotes', JSON.stringify(validQuotes));
                         }
                     }
-                } catch(e) {}
+                } catch (e) { }
             }
         }
         cleanupExpiredQuotes();
@@ -1510,7 +1538,7 @@
             if (stored) {
                 try {
                     savedQuotes = JSON.parse(stored);
-                } catch(e) {}
+                } catch (e) { }
             }
 
             if (!Array.isArray(savedQuotes) || savedQuotes.length === 0) {
@@ -1555,7 +1583,7 @@
                         location.href = 'employee.html';
                     }
                 }
-            } catch(e) {}
+            } catch (e) { }
         }
 
         function deleteAdminQuote(quoteId) {
@@ -1565,18 +1593,12 @@
                 try {
                     const savedQuotes = JSON.parse(stored);
                     const filtered = savedQuotes.filter(q => q.id !== quoteId);
-                    
-                    // Sort remaining quotes and reindex sequentially
-                    filtered.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
-                    filtered.forEach((q, idx) => {
-                        q.quoteNo = 'QT-' + String(idx + 1).padStart(3, '0');
-                    });
-                    
+
                     localStorage.setItem('pks_saved_quotes', JSON.stringify(filtered));
                     localStorage.setItem('pks_quote_counter', filtered.length);
 
                     renderAdminQuotes();
-                } catch(e) {}
+                } catch (e) { }
             }
         }
 

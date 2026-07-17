@@ -538,12 +538,6 @@
                     const savedQuotes = JSON.parse(stored);
                     const filtered = savedQuotes.filter(q => q.id !== quoteId);
                     
-                    // Sort remaining quotes and reindex sequentially
-                    filtered.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
-                    filtered.forEach((q, idx) => {
-                        q.quoteNo = 'QT-' + String(idx + 1).padStart(3, '0');
-                    });
-                    
                     localStorage.setItem('pks_saved_quotes', JSON.stringify(filtered));
                     localStorage.setItem('pks_quote_counter', filtered.length);
 
