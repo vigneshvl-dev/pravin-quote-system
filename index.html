@@ -43,21 +43,29 @@
         body::before {
             content: '';
             position: absolute;
-            width: 400px;
-            height: 400px;
-            top: -100px;
-            left: -100px;
+            width: 450px;
+            height: 450px;
+            top: -150px;
+            left: -150px;
             pointer-events: none;
+            background: radial-gradient(circle, rgba(61, 187, 110, 0.15) 0%, transparent 70%);
+            filter: blur(45px);
+            animation: floatSlow 18s infinite alternate ease-in-out;
+            z-index: 1;
         }
 
         body::after {
             content: '';
             position: absolute;
-            width: 500px;
-            height: 500px;
-            bottom: -150px;
-            right: -150px;
+            width: 550px;
+            height: 550px;
+            bottom: -200px;
+            right: -200px;
             pointer-events: none;
+            background: radial-gradient(circle, rgba(46, 204, 113, 0.08) 0%, transparent 70%);
+            filter: blur(45px);
+            animation: floatSlowReverse 24s infinite alternate ease-in-out;
+            z-index: 1;
         }
 
         .login-container {
@@ -82,10 +90,11 @@
         }
 
         .brand-header h1 {
-            font-size: 2.2rem;
+            font-size: 1.85rem;
             margin: 0;
             letter-spacing: 0.5px;
             color: var(--text);
+            white-space: nowrap;
         }
 
 
@@ -280,6 +289,39 @@
             display: none;
         }
 
+        /* Ambient floating animations */
+        @keyframes floatSlow {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(70px, 40px) scale(1.08); }
+            100% { transform: translate(-30px, 70px) scale(0.95); }
+        }
+
+        @keyframes floatSlowReverse {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-70px, -40px) scale(1.1); }
+            100% { transform: translate(30px, -80px) scale(0.9); }
+        }
+
+        /* Element animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animated-fade-in {
+            animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.22s; }
+        .delay-3 { animation-delay: 0.35s; }
+        .delay-4 { animation-delay: 0.48s; }
         /* Hide default browser password reveal eye icon */
         input::-ms-reveal,
         input::-ms-clear {
@@ -291,13 +333,13 @@
 <body>
 
     <div class="login-container">
-        <div class="brand-header">
-            <img src="logo.png" alt="Pravin Kitchens & Interiors Logo" class="brand-logo">
-            <h1>Pravin Kitchens &amp; Interiors</h1>
-            <p>Modular Quote System</p>
+        <div class="brand-header animated-fade-in delay-1">
+            <img src="logo.png" alt="Pravin Kitchens & Interiors Logo" class="brand-logo animated-fade-in delay-2">
+            <h1 class="animated-fade-in delay-3">Pravin Kitchens &amp; Interiors</h1>
+            <p class="animated-fade-in delay-3" style="margin-top: 8px;">Modular Quote System</p>
         </div>
 
-        <div class="card">
+        <div class="card animated-fade-in delay-4">
             <div class="card-title">Select Portal to Continue</div>
             <!-- Admin Panel Button -->
             <button class="role-btn admin-btn" onclick="openAdminModal()">
@@ -308,7 +350,7 @@
             </button>
 
             <!-- Employee Panel Button -->
-            <button class="role-btn" onclick="goEmployee()">
+            <button class="role-btn" onclick="openEmployeeModal()">
                 <div>
                     <span>Employee Portal</span>
                 </div>
@@ -345,6 +387,36 @@
             </div>
         </div>
     </div>
+
+    <!-- Employee Password Modal -->
+    <div class="modal-overlay" id="employeeModal">
+        <div class="modal">
+            <h3 class="modal-title">Employee Access Required</h3>
+            <div class="modal-body">
+                <label for="employeePass">Enter Passcode</label>
+                <div style="position: relative; display: flex; align-items: center;">
+                    <input type="password" id="employeePass" placeholder="••••••••" onkeydown="handleEmployeeKeyDown(event)"
+                        style="padding-right: 40px; width: 100%;">
+                    <button type="button" onclick="toggleEmployeePassVisibility()"
+                        style="position: absolute; right: 12px; background: none; border: none; cursor: pointer; color: #ffffff; padding: 0; display: flex; align-items: center; justify-content: center; outline: none;"
+                        title="Toggle Password Visibility">
+                        <svg id="eyeIconEmployee" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
+                <div class="error-msg" id="employeeErrorMsg">Incorrect passcode. Try again.</div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeEmployeeModal()">Cancel</button>
+                <button class="modal-btn confirm" onclick="verifyEmployee()">Login</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Set default passcode in localStorage if not exists or is still default
         if (!localStorage.getItem('pks_admin_pass') || localStorage.getItem('pks_admin_pass') === 'admin123') {
@@ -385,9 +457,57 @@
             }
         }
 
-        function goEmployee() {
-            sessionStorage.setItem('pks_role', 'employee');
-            location.href = 'rooms.html';
+        function openEmployeeModal() {
+            document.getElementById('employeeModal').classList.add('active');
+            document.getElementById('employeePass').focus();
+            document.getElementById('employeeErrorMsg').style.display = 'none';
+        }
+
+        function closeEmployeeModal() {
+            document.getElementById('employeeModal').classList.remove('active');
+            document.getElementById('employeePass').value = '';
+            document.getElementById('employeePass').type = 'password';
+            document.getElementById('eyeIconEmployee').innerHTML = `
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+            `;
+        }
+
+        function toggleEmployeePassVisibility() {
+            const input = document.getElementById('employeePass');
+            const icon = document.getElementById('eyeIconEmployee');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerHTML = `
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                `;
+            } else {
+                input.type = 'password';
+                icon.innerHTML = `
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                `;
+            }
+        }
+
+        function verifyEmployee() {
+            const entered = document.getElementById('employeePass').value;
+            const correct = 'a123';
+
+            if (entered === correct) {
+                sessionStorage.setItem('pks_role', 'employee');
+                location.href = 'rooms.html';
+            } else {
+                document.getElementById('employeeErrorMsg').style.display = 'block';
+                document.getElementById('employeePass').select();
+            }
+        }
+
+        function handleEmployeeKeyDown(event) {
+            if (event.key === 'Enter') {
+                verifyEmployee();
+            }
         }
 
         function verifyAdmin() {

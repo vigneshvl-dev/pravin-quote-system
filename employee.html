@@ -998,13 +998,19 @@
         document.getElementById('divisionBadge').textContent = selectedDivisionName;
 
         const role = sessionStorage.getItem('pks_role');
+        if (!role) {
+            location.href = 'index.html';
+        }
         const showRate = (role === 'admin');
 
         const ROOMS = [
             { id: 'kitchen', name: 'Kitchen', icon: '🍳', active: true },
             { id: 'living_room', name: 'Living Room', icon: '🛋️', active: true },
+            { id: 'prayer_unit', name: 'Prayer Unit', icon: '🪔', active: true },
             { id: 'bedroom', name: 'Bedroom', icon: '🛏️', active: true },
             { id: 'dining_room', name: 'Dining Room', icon: '🍽️', active: true },
+            { id: 'musical_room', name: 'Musical Room', icon: '🎵', active: true },
+            { id: 'study_room', name: 'Study Room', icon: '📚', active: true },
             { id: 'sitout', name: 'Sitout', icon: '🌿', active: true },
             { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
             { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
@@ -1143,11 +1149,11 @@
             "Dustbin Unit": 0,
             "Detergent Holder": 0,
             "GTBT": 0,
-            "Rowling Shutter": 0,
+            "ROLLING SHUTTER": 0,
             "Tall Unit": 0,
             "Swing Corner": 0,
             "Magic Corner": 0,
-            "Parcel Corner": 0,
+            "PARACEL CORNER": 0,
             "D-Tray": 0,
             "Soft Closing Runner": 0,
             "Soft Closing Hinges": 0,
@@ -1163,11 +1169,11 @@
             { label: "Dustbin Unit", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
             { label: "Detergent Holder", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
             { label: "GTBT", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "Rowling Shutter", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "ROLLING SHUTTER", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
             { label: "Tall Unit", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
             { label: "Swing Corner", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
             { label: "Magic Corner", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
-            { label: "Parcel Corner", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "PARACEL CORNER", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
             { label: "D-Tray", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
             { label: "Soft Closing Runner", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
             { label: "Soft Closing Hinges", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
@@ -1226,44 +1232,70 @@
             living_room: [
                 { id: 16, name: "Tv Unit – Wall Panelling", options: WALL_PANEL },
                 { id: 17, name: "Tv Unit – Bottom Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 18, name: "Tv Unit – Side Showal Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 18, name: "Tv Unit – Side Show Wall Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 19, name: "Living & Dining Room Partition", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 20, name: "Living Room Wall Panelling", options: WALL_PANEL },
-                { id: 21, name: "Staircase Bottom", options: MP_LAM_ACR_WPC_BOX_DOOR }
+                { id: 21, name: "Staircase Bottom", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 60, name: "QUATUYAD", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 61, name: "LIVING AND KITCHEN PARTITION", options: PARTITION }
+            ],
+            prayer_unit: [
+                { id: 75, name: "PRAYER UNIT BOTTOM CABINET", options: MP_LAM_ACR_WPC_BOX_DOOR }
             ],
             bedroom: [
-                { id: 25, name: "Coboard", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 26, name: "Loft", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 27, name: "Bed back wall paneling", options: WALL_PANEL },
+                { id: 25, name: "Wardrobe", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 27, name: "Bed back wall paneling with headrest", options: WALL_PANEL },
                 { id: 28, name: "Bed", options: BED_OPTS },
                 { id: 29, name: "Bay window", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 30, name: "Dressing unit wall paneling", options: WALL_PANEL },
                 { id: 31, name: "Dressing unit bottom cabinet", options: DRESSING_BOTTOM_OPTS },
                 { id: 32, name: "Tv unit-wall paneling", options: WALL_PANEL },
                 { id: 33, name: "Tv unit-bottom cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 34, name: "Tv unit-SIDE SHOWAL CABINET", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 34, name: "Tv unit-SIDE SHOW WALL CABINET", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 65, name: "SIDE CABINET", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 66, name: "CUPBOARD 1", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 67, name: "CUPBOARD 2", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 68, name: "LOFT 1", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 69, name: "LOFT 2", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 70, name: "WALL PANNELING", options: WALL_PANEL },
+                { id: 71, name: "WALL PANNELING WITH HIDDEN DOOR", options: WALL_PANEL }
             ],
             dining_room: [
-                { id: 37, name: "Washpasing unit bottom cabin", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 38, name: "Washbasen unit wall paneling", options: WALL_PANEL },
-                { id: 39, name: "Dining room cracker unit", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 37, name: "Wash basin unit bottom cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 38, name: "Wash basin unit wall paneling", options: WALL_PANEL },
+                { id: 39, name: "Dining room crockery unit", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 40, name: "Accessories", options: ACCESSORY_OPTS },
+            ],
+            musical_room: [
+                { id: 80, name: "WALL PANEL", options: WALL_PANEL },
+                { id: 81, name: "WALL PANNELLING TABLE", options: MP_LAM_ACR_WPC_BOX_DOOR }
+            ],
+            study_room: [
+                { id: 85, name: "BOOK SHELF", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 86, name: "STUDY TABLE", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 87, name: "STUDY TABLE TOP BOX", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 88, name: "COMPUTER TABLE", options: MP_LAM_ACR_WPC_BOX_DOOR }
             ],
             toilet_area: [
                 { id: 41, name: "Toilet area washbasin cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 42, name: "Glass partition", options: GLASS_PARTITION_OPTS },
             ],
             store_room: [
-                { id: 44, name: "Store room cobaord", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 44, name: "Store room cupboard", options: MP_LAM_ACR_WPC_BOX_DOOR },
             ],
             sitout: [
                 { id: 46, name: "Chappal stand", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 47, name: "Sit out area seeling", options: SITOUT_CEILING_OPTS },
+                { id: 47, name: "Sit out area ceiling", options: SITOUT_CEILING_OPTS },
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_OPTS }
             ]
         };
+
+        for (const room in ROOM_ITEMS) {
+            ROOM_ITEMS[room].forEach(item => {
+                if (item.name) item.name = item.name.toUpperCase();
+            });
+        }
 
         function getDeletedStandardItems() {
             const stored = localStorage.getItem('pks_deleted_standard_items');
@@ -1300,7 +1332,7 @@
                 const filteredOptions = rawOptions.filter(opt => !deletedMats.includes(`${item.id}-${opt}`));
                 return {
                     id: item.id,
-                    name: item.name,
+                    name: item.name.toUpperCase(),
                     options: filteredOptions,
                     custom: item.custom
                 };
@@ -1349,7 +1381,7 @@
 
                     list.push({
                         id: item.id,
-                        name: item.name,
+                        name: item.name.toUpperCase(),
                         options: processedOptions
                     });
                 });
@@ -1524,7 +1556,7 @@
         function selectMaterial(buildId, itemId, optIdx, btnEl, optRow) {
             [...optRow.children].forEach(b => b.classList.remove('selected'));
             btnEl.classList.add('selected');
-            
+
             const item = ITEMS.find(i => i.id === itemId);
             const opt = item.options[optIdx];
             if (opt.label === "Soft Closing Hinges" || opt.label === "Profile Handle") {
@@ -1686,8 +1718,6 @@
                 sizeDesc = opt.fields.map(f => `${f}:${v[f]}`).join(' × ');
                 if (!sizeDesc || sizeDesc.includes('undefined')) {
                     sizeDesc = `${sqft} sqft`;
-                } else {
-                    sizeDesc += ` (${sqft} sqft)`;
                 }
             }
 
