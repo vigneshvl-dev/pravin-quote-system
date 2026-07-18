@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pravin Kitchen's and Interiors — Admin Panel</title>
+    <title>Pravin Kitchens & Interiors — Admin Panel</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Mono&display=swap');
 
@@ -754,17 +754,19 @@
                     <!-- populated by JS -->
                 </div>
             </div>
-            
+
             <!-- Manage Settings & Specs Tab -->
             <div id="settings" class="tab-panel">
                 <h2>Material Specifications &amp; Terms</h2>
                 <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 15px;">
-                    Define the default list of materials / descriptions that will be printed in the quote summary after the total.
+                    Define the default list of materials / descriptions that will be printed in the quote summary after
+                    the total.
                 </p>
                 <div class="sub-form" style="background: none; border: none; padding: 0;">
                     <div class="form-group">
                         <label for="materialSpecsInput">Material Specifications Text</label>
-                        <textarea id="materialSpecsInput" rows="6" style="background: rgba(5, 11, 7, 0.75); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 10px; font-size: 0.95rem; width: 100%; resize: vertical; font-family: var(--sans); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5); transition: all 0.3s;"></textarea>
+                        <textarea id="materialSpecsInput" rows="6"
+                            style="background: rgba(5, 11, 7, 0.75); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 10px; font-size: 0.95rem; width: 100%; resize: vertical; font-family: var(--sans); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5); transition: all 0.3s;"></textarea>
                     </div>
                     <div class="action-row">
                         <button class="btn-primary" onclick="saveSettings()">Save Settings</button>
@@ -913,8 +915,45 @@
             "Glass": 350,
             "Wood finishing": 500,
             "Veneer finishing": 700,
-            "PU Paint": 600
+            "PU Paint": 600,
+            "Basket": 0,
+            "Tandom Box": 0,
+            "Oil Pull Out": 0,
+            "PVC Cutlery Tray": 0,
+            "SS Cutlery Tray": 0,
+            "Dustbin Unit": 0,
+            "Detergent Holder": 0,
+            "GTBT": 0,
+            "Rowling Shutter": 0,
+            "Tall Unit": 0,
+            "Swing Corner": 0,
+            "Magic Corner": 0,
+            "Parcel Corner": 0,
+            "D-Tray": 0,
+            "Soft Closing Runner": 0,
+            "Soft Closing Hinges": 0,
+            "Profile Handle": 0
         };
+
+        const ACCESSORY_LIST = [
+            "Basket",
+            "Tandom Box",
+            "Oil Pull Out",
+            "PVC Cutlery Tray",
+            "SS Cutlery Tray",
+            "Dustbin Unit",
+            "Detergent Holder",
+            "GTBT",
+            "Rowling Shutter",
+            "Tall Unit",
+            "Swing Corner",
+            "Magic Corner",
+            "Parcel Corner",
+            "D-Tray",
+            "Soft Closing Runner",
+            "Soft Closing Hinges",
+            "Profile Handle"
+        ];
 
         const ROOM_ITEMS = {
             kitchen: [
@@ -930,6 +969,7 @@
                 { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
                 { id: 11, name: "Kitchen Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
                 { id: 12, name: "Kitchen & Dining Partition", options: ["WPC", "Marine Plane", "Engineering Wood"] },
+                { id: 15, name: "Accessories", options: ACCESSORY_LIST }
             ],
             living_room: [
                 { id: 16, name: "Tv Unit – Wall Panelling", options: ["PVC", "Lamination", "Charcoal"] },
@@ -938,6 +978,7 @@
                 { id: 19, name: "Living & Dining Room Partition", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
                 { id: 20, name: "Living Room Wall Panelling", options: ["PVC", "Lamination", "Charcoal"] },
                 { id: 21, name: "Staircase Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 23, name: "Accessories", options: ACCESSORY_LIST }
             ],
             bedroom: [
                 { id: 25, name: "Coboard", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
@@ -954,7 +995,8 @@
             dining_room: [
                 { id: 37, name: "Washpasing unit bottom cabin", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
                 { id: 38, name: "Washbasen unit wall paneling", options: ["PVC", "Lamination", "Charcoal"] },
-                { id: 39, name: "Dining room cracker unit", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] }
+                { id: 39, name: "Dining room cracker unit", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
+                { id: 40, name: "Accessories", options: ACCESSORY_LIST }
             ],
             toilet_area: [
                 { id: 41, name: "Toilet area washbasin cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },

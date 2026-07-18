@@ -694,7 +694,7 @@
     <div class="print-invoice-header">
         <div class="invoice-left">
             <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                <img src="logo.png" alt="Pravin Kitchen's and Interiors Logo"
+                <img src="logo.png" alt="Pravin Kitchens & Interiors Logo"
                     style="height: 55px; border-radius: 6px; object-fit: contain;">
                 <div>
                     <h2 style="color: var(--accent); margin: 0; font-size: 1.3rem;">Pravin Kitchen's and Interiors</h2>
@@ -1126,8 +1126,45 @@
             "Glass": 350,
             "Wood finishing": 500,
             "Veneer finishing": 700,
-            "PU Paint": 600
+            "PU Paint": 600,
+            "Basket": 0,
+            "Tandom Box": 0,
+            "Oil Pull Out": 0,
+            "PVC Cutlery Tray": 0,
+            "SS Cutlery Tray": 0,
+            "Dustbin Unit": 0,
+            "Detergent Holder": 0,
+            "GTBT": 0,
+            "Rowling Shutter": 0,
+            "Tall Unit": 0,
+            "Swing Corner": 0,
+            "Magic Corner": 0,
+            "Parcel Corner": 0,
+            "D-Tray": 0,
+            "Soft Closing Runner": 0,
+            "Soft Closing Hinges": 0,
+            "Profile Handle": 0
         };
+
+        const ACCESSORY_OPTS = [
+            { label: "Basket", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Tandom Box", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Oil Pull Out", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "PVC Cutlery Tray", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "SS Cutlery Tray", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Dustbin Unit", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Detergent Holder", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "GTBT", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Rowling Shutter", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Tall Unit", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Swing Corner", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Magic Corner", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Parcel Corner", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "D-Tray", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Soft Closing Runner", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Soft Closing Hinges", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
+            { label: "Profile Handle", fields: ["QTY"], formula: v => v.QTY, note: "qty" }
+        ];
 
         // Load rates from localStorage or use defaults
         function getRates() {
@@ -1177,6 +1214,7 @@
                 { id: 10, name: "Ledge", options: LEDGE },
                 { id: 11, name: "Kitchen Side Storage Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 12, name: "Kitchen & Dining Partition", options: PARTITION },
+                { id: 15, name: "Accessories", options: ACCESSORY_OPTS },
             ],
             living_room: [
                 { id: 16, name: "Tv Unit – Wall Panelling", options: WALL_PANEL },
@@ -1185,6 +1223,7 @@
                 { id: 19, name: "Living & Dining Room Partition", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 20, name: "Living Room Wall Panelling", options: WALL_PANEL },
                 { id: 21, name: "Staircase Bottom", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 23, name: "Accessories", options: ACCESSORY_OPTS },
             ],
             bedroom: [
                 { id: 25, name: "Coboard", options: MP_LAM_ACR_WPC_BOX_DOOR },
@@ -1202,6 +1241,7 @@
                 { id: 37, name: "Washpasing unit bottom cabin", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 38, name: "Washbasen unit wall paneling", options: WALL_PANEL },
                 { id: 39, name: "Dining room cracker unit", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 40, name: "Accessories", options: ACCESSORY_OPTS },
             ],
             toilet_area: [
                 { id: 41, name: "Toilet area washbasin cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },

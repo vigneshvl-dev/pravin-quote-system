@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pravin Kitchen's and Interiors — Select Division</title>
+    <title>Pravin Kitchens & Interiors — Select Division</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 
@@ -298,14 +298,17 @@
         <div class="header-left">
             <img src="logo.png" alt="Pravin Kitchen's and Interiors Logo">
             <div>
-                <h1>Pravin Kitchen<span>'s</span> and Interiors <span class="role-badge" id="roleBadge">Loading...</span></h1>
+                <h1>Pravin Kitchen<span>'s</span> and Interiors <span class="role-badge"
+                        id="roleBadge">Loading...</span></h1>
                 <div
                     style="font-size:0.75rem; color:var(--muted); margin-top:2px; text-transform:uppercase; letter-spacing:1.5px;">
                     Select Division</div>
             </div>
         </div>
         <div style="display: flex; gap: 10px; align-items: center;">
-            <button class="logout-btn" style="background: var(--accent); border-color: var(--accent); padding: 0; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; width: 40px; height: 40px; min-width: 40px;" onclick="openSavedQuotesModal()" title="Saved Quotes Folder">📂</button>
+            <button class="logout-btn"
+                style="background: var(--accent); border-color: var(--accent); padding: 0; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; width: 40px; height: 40px; min-width: 40px;"
+                onclick="openSavedQuotesModal()" title="Saved Quotes Folder">📂</button>
         </div>
     </header>
 
@@ -319,13 +322,18 @@
     </main>
 
     <!-- Saved Quotes Modal -->
-    <div class="modal-overlay" id="quotesFolderModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);">
-        <div style="background: rgba(18, 36, 23, 0.95); border: 1px solid var(--border); border-radius: var(--radius); padding: 30px; width: 90%; max-width: 900px; box-shadow: var(--shadow); max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; backdrop-filter: var(--blur);">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
-                <h2 style="color: var(--accent); margin: 0; font-size: 1.5rem; font-family: var(--sans);">Saved Quotes (45-Day Auto-Cleanup)</h2>
-                <button onclick="closeSavedQuotesModal()" style="background: transparent; border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-family: var(--sans);">Close</button>
+    <div class="modal-overlay" id="quotesFolderModal"
+        style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);">
+        <div
+            style="background: rgba(18, 36, 23, 0.95); border: 1px solid var(--border); border-radius: var(--radius); padding: 30px; width: 90%; max-width: 900px; box-shadow: var(--shadow); max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; backdrop-filter: var(--blur);">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+                <h2 style="color: var(--accent); margin: 0; font-size: 1.5rem; font-family: var(--sans);">Saved Quotes
+                    (45-Day Auto-Cleanup)</h2>
+                <button onclick="closeSavedQuotesModal()"
+                    style="background: transparent; border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-family: var(--sans);">Close</button>
             </div>
-            
+
             <div style="flex: 1; min-height: 250px; overflow-x: auto;">
                 <style>
                     .quote-table-custom {
@@ -333,11 +341,14 @@
                         border-collapse: collapse;
                         font-size: 0.9rem;
                     }
-                    .quote-table-custom th, .quote-table-custom td {
+
+                    .quote-table-custom th,
+                    .quote-table-custom td {
                         padding: 10px;
                         text-align: left;
                         border-bottom: 1px solid var(--border);
                     }
+
                     .quote-table-custom th {
                         color: var(--accent);
                         font-weight: 600;
@@ -378,7 +389,7 @@
                 try {
                     const parsed = JSON.parse(stored);
                     if (Array.isArray(parsed)) return parsed;
-                } catch(e) {
+                } catch (e) {
                     console.error("Error parsing divisions, using defaults", e);
                 }
             }
@@ -451,7 +462,7 @@
                             localStorage.setItem('pks_saved_quotes', JSON.stringify(validQuotes));
                         }
                     }
-                } catch(e) {}
+                } catch (e) { }
             }
         }
 
@@ -474,7 +485,7 @@
             if (stored) {
                 try {
                     savedQuotes = JSON.parse(stored);
-                } catch(e) {}
+                } catch (e) { }
             }
 
             if (!Array.isArray(savedQuotes) || savedQuotes.length === 0) {
@@ -486,7 +497,7 @@
 
             savedQuotes.forEach(q => {
                 const tr = document.createElement('tr');
-                
+
                 // Aggregate unique rooms and materials
                 const lines = q.quoteLines || [];
                 const uniqueRooms = [...new Set(lines.map(l => l.roomName || ''))].filter(Boolean).join(', ') || '—';
@@ -525,7 +536,7 @@
                         location.href = 'employee.html';
                     }
                 }
-            } catch(e) {
+            } catch (e) {
                 alert("Failed to load quote.");
             }
         }
@@ -537,12 +548,12 @@
                 try {
                     const savedQuotes = JSON.parse(stored);
                     const filtered = savedQuotes.filter(q => q.id !== quoteId);
-                    
+
                     localStorage.setItem('pks_saved_quotes', JSON.stringify(filtered));
                     localStorage.setItem('pks_quote_counter', filtered.length);
 
                     renderSavedQuotes();
-                } catch(e) {}
+                } catch (e) { }
             }
         }
 
