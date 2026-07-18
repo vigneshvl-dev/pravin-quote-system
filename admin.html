@@ -636,6 +636,7 @@
             <button class="tab-btn" onclick="switchTab('add-opt', this)">Manage Materials</button>
             <button class="tab-btn" onclick="switchTab('add-item', this)">Manage Items</button>
             <button class="tab-btn" onclick="switchTab('add-div', this)">Manage Divisions</button>
+            <button class="tab-btn" onclick="switchTab('settings', this)">Settings &amp; Specs</button>
             <button class="tab-btn" onclick="switchTab('quotes-folder', this)">Saved Quotes</button>
         </div>
 
@@ -751,6 +752,23 @@
                 <h3 style="margin-top: 30px; font-size: 1rem; color: var(--accent);">Current Divisions</h3>
                 <div class="item-list-container" id="currentDivisionsList">
                     <!-- populated by JS -->
+                </div>
+            </div>
+            
+            <!-- Manage Settings & Specs Tab -->
+            <div id="settings" class="tab-panel">
+                <h2>Material Specifications &amp; Terms</h2>
+                <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 15px;">
+                    Define the default list of materials / descriptions that will be printed in the quote summary after the total.
+                </p>
+                <div class="sub-form" style="background: none; border: none; padding: 0;">
+                    <div class="form-group">
+                        <label for="materialSpecsInput">Material Specifications Text</label>
+                        <textarea id="materialSpecsInput" rows="6" style="background: rgba(5, 11, 7, 0.75); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 10px; font-size: 0.95rem; width: 100%; resize: vertical; font-family: var(--sans); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5); transition: all 0.3s;"></textarea>
+                    </div>
+                    <div class="action-row">
+                        <button class="btn-primary" onclick="saveSettings()">Save Settings</button>
+                    </div>
                 </div>
             </div>
 
@@ -996,10 +1014,10 @@
             document.getElementById(tabId).classList.add('active');
             btnEl.classList.add('active');
 
-            // Hide room tabs when managing divisions (it's a global action, not room-specific)
+            // Hide room tabs when managing divisions or settings (it's a global action, not room-specific)
             const roomTabsEl = document.getElementById('roomTabs');
             const roomBadgeEl = document.getElementById('roomBadge');
-            if (tabId === 'add-div' || tabId === 'quotes-folder') {
+            if (tabId === 'add-div' || tabId === 'settings' || tabId === 'quotes-folder') {
                 if (roomTabsEl) roomTabsEl.style.display = 'none';
                 if (roomBadgeEl) roomBadgeEl.style.display = 'none';
             } else {
@@ -1602,6 +1620,12 @@
             }
         }
 
+        function saveSettings() {
+            const specs = document.getElementById('materialSpecsInput').value.trim();
+            localStorage.setItem('pks_material_specs', specs);
+            showToast("Settings saved successfully!");
+        }
+
         /* ---------- Initialize View ---------- */
         function renderTabContent(tabId) {
             if (tabId === 'rates') renderRatesTable();
@@ -1612,6 +1636,9 @@
                 renderCustomItemsList();
             } else if (tabId === 'add-div') {
                 renderDivisionsList();
+            } else if (tabId === 'settings') {
+                const defaultSpecs = "marine ply thickness-16mm,lamination thickness 0.8mm,hinges-brand sleek,kitchen hinges soft closing,kitchen handle profile,room hinges not soft closing,room handle ss";
+                document.getElementById('materialSpecsInput').value = localStorage.getItem('pks_material_specs') || defaultSpecs;
             } else if (tabId === 'quotes-folder') {
                 renderAdminQuotes();
             }

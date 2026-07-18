@@ -516,8 +516,14 @@
             .quote-actions,
             .del-btn,
             .quote-table th:last-child,
-            .quote-table td:last-child {
+            .quote-table td:last-child,
+            .specs-and-terms-container,
+            #uiSpecsBlock {
                 display: none !important;
+            }
+
+            .print-only-specs-terms {
+                display: block !important;
             }
 
             body {
@@ -869,6 +875,66 @@
                     </tr>
                 </tfoot>
             </table>
+
+            <!-- Materials Specs Display (Screen Only) -->
+            <div id="uiSpecsBlock"
+                style="margin-top: 18px; padding: 12px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.8rem; line-height: 1.5; color: var(--text); display: none;">
+                <strong style="color: var(--accent-dark); display: block; margin-bottom: 4px;">Material
+                    Specifications:</strong>
+                <span id="uiSpecsText"></span>
+            </div>
+
+            <!-- Payment Terms Inputs (Screen Only) -->
+            <div class="specs-and-terms-container"
+                style="margin-top: 18px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; display: none; flex-direction: column; gap: 14px;">
+                <div
+                    style="font-weight: 700; font-size: 0.85rem; color: var(--accent-dark); text-transform: uppercase; letter-spacing: 0.5px;">
+                    Payment Terms</div>
+                <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
+                        <label
+                            style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Advance
+                            Payment</label>
+                        <input type="text" id="payAdvance" placeholder="e.g. 50% Advance"
+                            style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
+                    </div>
+                    <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
+                        <label
+                            style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Second
+                            Payment</label>
+                        <input type="text" id="paySecond" placeholder="e.g. 40% Delivery"
+                            style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
+                    </div>
+                    <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
+                        <label
+                            style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Final
+                            Payment</label>
+                        <input type="text" id="payFinal" placeholder="e.g. 10% Handover"
+                            style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Print-Only Payment Terms & Specs (shown only during browser print) -->
+            <div class="print-only-specs-terms" style="display: none; margin-top: 20px;">
+                <div
+                    style="margin-bottom: 12px; padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px;">
+                    <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Material
+                        Specifications:</strong>
+                    <span id="printSpecsText"></span>
+                </div>
+                <div
+                    style="padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px;">
+                    <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Payment
+                        Terms:</strong>
+                    <ul style="margin: 0; padding-left: 15px; list-style-type: square; color: #333;">
+                        <li><strong>Advance Payment:</strong> <span id="printPayAdvance"></span></li>
+                        <li><strong>Second Payment:</strong> <span id="printPaySecond"></span></li>
+                        <li><strong>Final Payment:</strong> <span id="printPayFinal"></span></li>
+                    </ul>
+                </div>
+            </div>
+
             <div class="quote-actions">
                 <div style="display:flex; gap:10px;">
                     <button class="print-btn" style="background: var(--accent); color: var(--bg);"
@@ -1424,7 +1490,7 @@
                 </div>
             `).join('');
 
-            const defaultLabel = opt.fields.includes('QTY') ? 'Qty: <b>0</b>' : (opt.fields.includes('SQFT') ? 'Sq.Ft: <b>0</b>' : 'Inches: <b>0</b>');
+            const defaultLabel = opt.fields.includes('QTY') ? 'Qty: <b>0</b>' : 'Sq.Ft: <b>0</b>';
 
             sizeArea.innerHTML = `
                 <div class="size-panel">
@@ -1486,16 +1552,17 @@
                 sqft = opt.formula(v);
             }
 
+            if (!opt.fields.includes('QTY')) {
+                sqft = Math.round(sqft);
+            }
+
             const amount = sqft * rate;
 
             let previewStr = '';
             if (opt.fields.includes('QTY')) {
                 previewStr = `Qty: <b>${sqft}</b>`;
-            } else if (opt.fields.includes('SQFT')) {
-                previewStr = `Sq.Ft: <b>${sqft.toFixed(2)}</b>`;
             } else {
-                // Convert back from Sq.Ft (which divided by 144) to get raw inches
-                previewStr = `Inches: <b>${(sqft * 144).toFixed(0)}</b>`;
+                previewStr = `Sq.Ft: <b>${sqft}</b>`;
             }
 
             document.getElementById(`${buildId}-calc`).innerHTML = showRate
@@ -1504,7 +1571,8 @@
         }
 
         function updateCustomCalc(buildId) {
-            const sqft = parseFloat(document.getElementById(`${buildId}-sqft`).value) || 0;
+            const rawSqft = parseFloat(document.getElementById(`${buildId}-sqft`).value) || 0;
+            const sqft = Math.round(rawSqft);
             let rate = 0;
             let amount = 0;
             if (showRate) {
@@ -1543,16 +1611,20 @@
                 sqft = opt.formula(v);
             }
 
+            if (!opt.fields.includes('QTY')) {
+                sqft = Math.round(sqft);
+            }
+
             const amount = sqft * rate;
             const v = readValues(buildId, opt.fields);
 
             let sizeDesc = opt.fields.map(f => `${f}:${v[f]}`).join(' × ');
             if (!sizeDesc) {
                 const labelStr = opt.fields.includes('QTY') ? 'qty' : 'sqft';
-                sizeDesc = `${sqft.toFixed(2)} ${labelStr}`;
+                sizeDesc = `${sqft} ${labelStr}`;
             } else {
                 const labelStr = opt.fields.includes('QTY') ? 'qty' : 'sqft';
-                sizeDesc += ` (${sqft.toFixed(2)} ${labelStr})`;
+                sizeDesc += ` (${sqft} ${labelStr})`;
             }
 
             quoteLines.push({
@@ -1570,7 +1642,7 @@
         function confirmCustom(buildId, itemId) {
             const item = ITEMS.find(i => i.id === itemId);
             const desc = document.getElementById(`${buildId}-desc`).value || 'Custom item';
-            const sqft = parseFloat(document.getElementById(`${buildId}-sqft`).value) || 0;
+            const sqft = Math.round(parseFloat(document.getElementById(`${buildId}-sqft`).value) || 0);
 
             let rate = 0;
             let amount = 0;
@@ -1610,7 +1682,12 @@
             if (quoteLines.length === 0) {
                 body.innerHTML = `<tr class="empty-row"><td colspan="${showRate ? 9 : 8}">No items added yet — start with any card above.</td></tr>`;
                 document.getElementById('grandTotal').textContent = '₹0';
+                document.getElementById('uiSpecsBlock').style.display = 'none';
+                document.querySelector('.specs-and-terms-container').style.display = 'none';
                 return;
+            } else {
+                document.getElementById('uiSpecsBlock').style.display = 'block';
+                document.querySelector('.specs-and-terms-container').style.display = 'flex';
             }
             body.innerHTML = quoteLines.map((l, idx) => `
                 <tr>
@@ -1619,7 +1696,7 @@
                   <td>${l.itemName}</td>
                   <td>${l.material}</td>
                   <td>${l.size}</td>
-                  <td class="num">${l.sqft.toFixed(2)}</td>
+                  <td class="num">${l.sqft}</td>
                   ${showRate ? `<td class="num">₹${l.rate.toFixed(2)}</td>` : ''}
                   <td class="num">₹${l.amount.toFixed(2)}</td>
                   <td><button class="del-btn" onclick="deleteLine(${l.id})" title="Remove">✕</button></td>
@@ -1633,6 +1710,10 @@
                 <td class="num" id="grandTotal">₹${quoteLines.reduce((s, l) => s + l.amount, 0).toFixed(2)}</td>
                 <td></td>
             `;
+
+            // Display dynamic specs
+            const defaultSpecs = "marine ply thickness-16mm,lamination thickness 0.8mm,hinges-brand sleek,kitchen hinges soft closing,kitchen handle profile,room hinges not soft closing,room handle ss";
+            document.getElementById('uiSpecsText').textContent = localStorage.getItem('pks_material_specs') || defaultSpecs;
         }
 
         function deleteLine(id) {
@@ -1686,6 +1767,10 @@
                 document.getElementById('custAddress').value = '';
                 document.getElementById('quoteDate').valueAsDate = new Date();
 
+                document.getElementById('payAdvance').value = '';
+                document.getElementById('paySecond').value = '';
+                document.getElementById('payFinal').value = '';
+
                 // Reset docType
                 document.getElementById('docType').value = 'Quotation';
                 updateDocLabels();
@@ -1735,6 +1820,14 @@
             document.getElementById('printCustName').textContent = document.getElementById('custName').value || '—';
             document.getElementById('printCustPhone').textContent = document.getElementById('custPhone').value || '—';
             document.getElementById('printCustAddress').textContent = document.getElementById('custAddress').value || '—';
+
+            // Populate print specs and terms
+            const defaultSpecs = "marine ply thickness-16mm,lamination thickness 0.8mm,hinges-brand sleek,kitchen hinges soft closing,kitchen handle profile,room hinges not soft closing,room handle ss";
+            document.getElementById('printSpecsText').textContent = localStorage.getItem('pks_material_specs') || defaultSpecs;
+            document.getElementById('printPayAdvance').textContent = document.getElementById('payAdvance').value || '—';
+            document.getElementById('printPaySecond').textContent = document.getElementById('paySecond').value || '—';
+            document.getElementById('printPayFinal').textContent = document.getElementById('payFinal').value || '—';
+
             window.print();
         }
 
@@ -1770,7 +1863,7 @@
                             <img src="logo.png" alt="Pravin Kitchen's and Interiors Logo" style="height: 48px; border-radius: 6px; object-fit: contain;" onerror="this.style.display='none'">
                             <div>
                                 <h2 style="color: #b07d2e; margin: 0; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.5px; font-family: sans-serif;">Pravin Kitchen's and Interiors</h2>
-                                <p style="font-weight: 600; font-size: 0.75rem; margin: 2px 0 0 0; color: #7a6e61; text-transform: uppercase; letter-spacing: 0.5px;">Premium Modular Kitchens & Interiors</p>
+                                <p style="font-weight: 600; font-size: 0.75rem; margin: 2px 0 0 0; color: #7a6e61; text-transform: uppercase; letter-spacing: 0.5px;"></p>
                             </div>
                         </div>
                         <p style="font-size: 0.78rem; line-height: 1.4; color: #7a6e61; margin: 0;">
@@ -1780,7 +1873,7 @@
                             Mobile: +91 9787769970
                         </p>
                         <p style="font-size: 0.68rem; margin-top: 8px; color: #7a6e61; font-weight: 500;">
-                            Note: 45 Days Storage Validity & Guarantee
+                        
                         </p>
                     </div>
                     <div style="width: 45%; text-align: right;">
@@ -1806,7 +1899,7 @@
                     <td style="padding: 8px 10px; font-size: 0.78rem; font-weight: 600; color: #1a1714; border: none;">${l.itemName}</td>
                     <td style="padding: 8px 10px; font-size: 0.78rem; color: #7a6e61; border: none;">${l.material}</td>
                     <td style="padding: 8px 10px; font-size: 0.78rem; color: #7a6e61; font-family: monospace; border: none;">${l.size}</td>
-                    <td style="padding: 8px 10px; font-size: 0.78rem; text-align: right; color: #1a1714; font-weight: 500; border: none;">${l.sqft.toFixed(2)}</td>
+                    <td style="padding: 8px 10px; font-size: 0.78rem; text-align: right; color: #1a1714; font-weight: 500; border: none;">${l.sqft}</td>
                     ${showRate ? `<td style="padding: 8px 10px; font-size: 0.78rem; text-align: right; color: #1a1714; font-weight: 500; border: none;">₹${l.rate.toFixed(2)}</td>` : ''}
                     <td style="padding: 8px 10px; font-size: 0.78rem; text-align: right; color: #1a1714; font-weight: 600; border: none;">₹${l.amount.toFixed(2)}</td>
                 </tr>
@@ -1865,7 +1958,29 @@
                 </div>
             `;
 
-            element.innerHTML = letterheadHTML + tableHTML + footerHTML;
+            // Specs and Payment Terms HTML for PDF
+            const defaultSpecs = "marine ply thickness-16mm,lamination thickness 0.8mm,hinges-brand sleek,kitchen hinges soft closing,kitchen handle profile,room hinges not soft closing,room handle ss";
+            const specsText = localStorage.getItem('pks_material_specs') || defaultSpecs;
+            const payAdvance = document.getElementById('payAdvance').value || '';
+            const paySecond = document.getElementById('paySecond').value || '';
+            const payFinal = document.getElementById('payFinal').value || '';
+
+            let specsAndTermsHTML = `
+                <div style="margin-top: 15px; padding: 10px; background: #fdfaf6; border: 1px solid #e0d6c8; border-radius: 6px; font-size: 0.78rem; color: #1a1714; line-height: 1.4;">
+                    <strong style="color: #b07d2e; display: block; margin-bottom: 4px;">Material Specifications:</strong>
+                    <div>${specsText}</div>
+                </div>
+                <div style="margin-top: 12px; padding: 10px; background: #fdfaf6; border: 1px solid #e0d6c8; border-radius: 6px; font-size: 0.78rem; color: #1a1714; line-height: 1.4;">
+                    <strong style="color: #b07d2e; display: block; margin-bottom: 4px;">Payment Terms:</strong>
+                    <ul style="margin: 0; padding-left: 15px; list-style-type: square; color: #1a1714;">
+                        <li><strong>Advance Payment:</strong> ${payAdvance || '—'}</li>
+                        <li><strong>Second Payment:</strong> ${paySecond || '—'}</li>
+                        <li><strong>Final Payment:</strong> ${payFinal || '—'}</li>
+                    </ul>
+                </div>
+            `;
+
+            element.innerHTML = letterheadHTML + tableHTML + specsAndTermsHTML + footerHTML;
 
             // html2pdf options
             const opt = {
@@ -1928,6 +2043,9 @@
                 divisionName: selectedDivisionName,
                 totalAmount,
                 quoteLines: [...quoteLines],
+                payAdvance: document.getElementById('payAdvance').value,
+                paySecond: document.getElementById('paySecond').value,
+                payFinal: document.getElementById('payFinal').value,
                 lineIdCounter,
                 timestamp: Date.now()
             };
@@ -2048,6 +2166,10 @@
             document.getElementById('custPhone').value = quote.custPhone || '';
             document.getElementById('custAddress').value = quote.custAddress || '';
             document.getElementById('quoteDate').value = quote.quoteDate || '';
+
+            document.getElementById('payAdvance').value = quote.payAdvance || '';
+            document.getElementById('paySecond').value = quote.paySecond || '';
+            document.getElementById('payFinal').value = quote.payFinal || '';
 
             quoteLines = [...quote.quoteLines];
             lineIdCounter = quote.lineIdCounter || (quoteLines.length > 0 ? Math.max(...quoteLines.map(l => l.id)) + 1 : 1);
