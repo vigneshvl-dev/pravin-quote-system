@@ -591,43 +591,7 @@
         </div>
     </header>
 
-    <!-- Room Selector Tabs -->
-    <div class="room-tabs-container-wrapper"
-        style="max-width: 1200px; width: 100%; margin: 20px auto 0; padding: 0 20px;">
-        <div class="room-tabs-container">
-            <div
-                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 12px;">
-                <div style="display: flex; gap: 14px; align-items: center;">
-                    <div id="floorSelectorsWrap" style="display: none; gap: 10px; align-items: center;">
-                        <div style="display: flex; flex-direction: column; gap: 3px;">
-                            <label
-                                style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); font-weight:700;">Floor</label>
-                            <select id="floorSelector"
-                                style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; outline:none;"
-                                onchange="updateRoomState(selectedRoom, selectedRoomName)">
-                                <option value="Ground Floor">Ground Floor</option>
-                                <option value="First Floor">First Floor</option>
-                                <option value="Second Floor">Second Floor</option>
-                            </select>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 3px;">
-                            <label
-                                style="font-size:0.68rem; text-transform:uppercase; color:var(--muted); font-weight:700;">Room
-                                No.</label>
-                            <select id="roomNoSelector"
-                                style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:4px 8px; border-radius:4px; font-size:0.8rem; outline:none;"
-                                onchange="updateRoomState(selectedRoom, selectedRoomName)">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="room-tabs" id="roomTabs"></div>
-        </div>
-    </div>
+
 
     <div class="layout">
         <div class="sidebar">
