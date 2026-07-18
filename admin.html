@@ -1668,7 +1668,7 @@
         }
 
         function saveSettings() {
-            const specs = document.getElementById('materialSpecsInput').value.trim();
+            const specs = document.getElementById('materialSpecsInput').value.trim().toUpperCase();
             localStorage.setItem('pks_material_specs', specs);
             showToast("Settings saved successfully!");
         }
@@ -1684,8 +1684,8 @@
             } else if (tabId === 'add-div') {
                 renderDivisionsList();
             } else if (tabId === 'settings') {
-                const defaultSpecs = "marine ply thickness-16mm,lamination thickness 0.8mm,hinges-brand sleek,kitchen hinges soft closing,kitchen handle profile,room hinges not soft closing,room handle ss";
-                document.getElementById('materialSpecsInput').value = localStorage.getItem('pks_material_specs') || defaultSpecs;
+                const defaultSpecs = "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
+                document.getElementById('materialSpecsInput').value = (localStorage.getItem('pks_material_specs') || defaultSpecs).toUpperCase();
             } else if (tabId === 'quotes-folder') {
                 renderAdminQuotes();
             }
