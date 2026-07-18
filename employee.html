@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pravin Kitchen's and Interiors — Employee Quote System</title>
+    <title>Pravin Kitchens &amp; Interiors — Employee Quote System</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
@@ -697,7 +697,7 @@
                 <img src="logo.png" alt="Pravin Kitchens & Interiors Logo"
                     style="height: 55px; border-radius: 6px; object-fit: contain;">
                 <div>
-                    <h2 style="color: var(--accent); margin: 0; font-size: 1.3rem;">Pravin Kitchen's and Interiors</h2>
+                    <h2 style="color: var(--accent); margin: 0; font-size: 1.3rem;">Pravin Kitchens &amp; Interiors</h2>
                     <p style="font-weight: 600; font-size: 0.82rem; margin: 3px 0 0 0; color: #555;">Premium Modular
                         Kitchens & Interiors</p>
                 </div>
@@ -753,10 +753,10 @@
     <header>
         <div class="header-inner">
             <div style="display: flex; align-items: center; gap: 15px;">
-                <img src="logo.png" alt="Pravin Kitchen's and Interiors Logo"
+                <img src="logo.png" alt="Pravin Kitchens &amp; Interiors Logo"
                     style="height: 50px; border-radius: 6px; object-fit: contain;">
                 <div>
-                    <h1>Pravin Kitchen<span>'s</span> and Interiors
+                    <h1>Pravin Kitchens &amp; Interiors
                         <span class="role-badge">Employee</span>
                         <span class="role-badge" id="divisionBadge"
                             style="background:var(--accent-light);color:var(--accent-dark);border-color:var(--accent);">Marketing</span>
@@ -1001,6 +1001,7 @@
             { id: 'sitout', name: 'Sitout', icon: '🌿', active: true },
             { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
             { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
+            { id: 'accessories', name: 'Accessories', icon: '✨', active: true }
         ];
 
         let selectedRoom = sessionStorage.getItem('pks_selected_room') || 'kitchen';
@@ -1214,7 +1215,6 @@
                 { id: 10, name: "Ledge", options: LEDGE },
                 { id: 11, name: "Kitchen Side Storage Cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 12, name: "Kitchen & Dining Partition", options: PARTITION },
-                { id: 15, name: "Accessories", options: ACCESSORY_OPTS },
             ],
             living_room: [
                 { id: 16, name: "Tv Unit – Wall Panelling", options: WALL_PANEL },
@@ -1253,6 +1253,9 @@
             sitout: [
                 { id: 46, name: "Chappal stand", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 47, name: "Sit out area seeling", options: SITOUT_CEILING_OPTS },
+            ],
+            accessories: [
+                { id: 50, name: "Accessories", options: ACCESSORY_OPTS }
             ]
         };
 
@@ -1300,7 +1303,8 @@
 
             // Append custom materials to standard items
             list.forEach(item => {
-                if (!item.custom && customMats[item.id]) {
+                const isAccessoryCard = [15, 23, 40, 50].includes(item.id);
+                if (!isAccessoryCard && !item.custom && customMats[item.id]) {
                     customMats[item.id].forEach(m => {
                         let formula;
                         if (m.formulaType === "L*H") formula = v => (v.L * v.H) / 144;
@@ -1319,29 +1323,31 @@
             });
 
             // Append admin created completely custom items
-            const customItems = getCustomItems();
-            customItems.forEach(item => {
-                const processedOptions = item.options.map(opt => {
-                    let formula;
-                    if (opt.formulaType === "L*H") formula = v => (v.L * v.H) / 144;
-                    else if (opt.formulaType === "L*W") formula = v => (v.L * v.W) / 144;
-                    else if (opt.formulaType === "SQFT") formula = v => v.SQFT;
-                    else formula = v => ((v.L + v.W) * v.H) / 144;
+            if (selectedRoom !== 'accessories') {
+                const customItems = getCustomItems();
+                customItems.forEach(item => {
+                    const processedOptions = item.options.map(opt => {
+                        let formula;
+                        if (opt.formulaType === "L*H") formula = v => (v.L * v.H) / 144;
+                        else if (opt.formulaType === "L*W") formula = v => (v.L * v.W) / 144;
+                        else if (opt.formulaType === "SQFT") formula = v => v.SQFT;
+                        else formula = v => ((v.L + v.W) * v.H) / 144;
 
-                    return {
-                        label: opt.label,
-                        fields: opt.fields,
-                        formula: formula,
-                        note: opt.note
-                    };
-                });
+                        return {
+                            label: opt.label,
+                            fields: opt.fields,
+                            formula: formula,
+                            note: opt.note
+                        };
+                    });
 
-                list.push({
-                    id: item.id,
-                    name: item.name,
-                    options: processedOptions
+                    list.push({
+                        id: item.id,
+                        name: item.name,
+                        options: processedOptions
+                    });
                 });
-            });
+            }
 
             return list;
         }
@@ -1512,7 +1518,14 @@
         function selectMaterial(buildId, itemId, optIdx, btnEl, optRow) {
             [...optRow.children].forEach(b => b.classList.remove('selected'));
             btnEl.classList.add('selected');
-            openSizePanel(buildId, itemId, optIdx);
+            
+            const item = ITEMS.find(i => i.id === itemId);
+            const opt = item.options[optIdx];
+            if (opt.label === "Soft Closing Hinges" || opt.label === "Profile Handle") {
+                confirmMaterial(buildId, itemId, optIdx);
+            } else {
+                openSizePanel(buildId, itemId, optIdx);
+            }
         }
 
         function openSizePanel(buildId, itemId, optIdx) {
@@ -1643,9 +1656,11 @@
 
             let sqft = 0;
             if (opt.fields.includes('SQFT')) {
-                sqft = parseFloat(document.getElementById(`${buildId}-SQFT`).value) || 0;
+                const el = document.getElementById(`${buildId}-SQFT`);
+                sqft = el ? (parseFloat(el.value) || 0) : 0;
             } else if (opt.fields.includes('QTY')) {
-                sqft = parseFloat(document.getElementById(`${buildId}-QTY`).value) || 0;
+                const el = document.getElementById(`${buildId}-QTY`);
+                sqft = el ? (parseFloat(el.value) || 0) : 1;
             } else {
                 const v = readValues(buildId, opt.fields);
                 sqft = opt.formula(v);
@@ -1659,7 +1674,7 @@
             const v = readValues(buildId, opt.fields);
 
             let sizeDesc = opt.fields.map(f => `${f}:${v[f]}`).join(' × ');
-            if (!sizeDesc) {
+            if (!sizeDesc || sizeDesc.includes('undefined')) {
                 const labelStr = opt.fields.includes('QTY') ? 'qty' : 'sqft';
                 sizeDesc = `${sqft} ${labelStr}`;
             } else {
@@ -1900,9 +1915,9 @@
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #b07d2e; padding-bottom: 15px; margin-bottom: 25px;">
                     <div style="width: 50%;">
                         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                            <img src="logo.png" alt="Pravin Kitchen's and Interiors Logo" style="height: 48px; border-radius: 6px; object-fit: contain;" onerror="this.style.display='none'">
+                            <img src="logo.png" alt="Pravin Kitchens &amp; Interiors Logo" style="height: 48px; border-radius: 6px; object-fit: contain;" onerror="this.style.display='none'">
                             <div>
-                                <h2 style="color: #b07d2e; margin: 0; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.5px; font-family: sans-serif;">Pravin Kitchen's and Interiors</h2>
+                                <h2 style="color: #b07d2e; margin: 0; font-size: 1.3rem; font-weight: 700; letter-spacing: -0.5px; font-family: sans-serif;">Pravin Kitchens &amp; Interiors</h2>
                                 <p style="font-weight: 600; font-size: 0.75rem; margin: 2px 0 0 0; color: #7a6e61; text-transform: uppercase; letter-spacing: 0.5px;"></p>
                             </div>
                         </div>
@@ -1990,7 +2005,7 @@
                     <div style="width: 35%; text-align: center;">
                         <div style="border-bottom: 1px solid #1a1714; height: 40px; margin-bottom: 6px; width: 80%; margin-left: auto; margin-right: auto;"></div>
                         <p style="font-size: 0.72rem; font-weight: 600; color: #1c2820; margin: 0; text-transform: uppercase;">Authorized Signatory</p>
-                        <p style="font-size: 0.62rem; color: #7a6e61; margin: 2px 0 0 0;">Pravin Kitchen's and Interiors</p>
+                        <p style="font-size: 0.62rem; color: #7a6e61; margin: 2px 0 0 0;">Pravin Kitchens &amp; Interiors</p>
                     </div>
                 </div>
                 <div style="margin-top: 40px; border-top: 1px solid #e0d6c8; padding-top: 12px; text-align: center;">

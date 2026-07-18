@@ -573,10 +573,10 @@
 
     <header>
         <div style="display: flex; align-items: center; gap: 15px;">
-            <img src="logo.png" alt="Pravin Kitchen's and Interiors Logo"
+            <img src="logo.png" alt="Pravin Kitchens &amp; Interiors Logo"
                 style="height: 50px; border-radius: 6px; object-fit: contain;">
             <div>
-                <h1>Pravin Kitchen<span>'s</span> and Interiors
+                <h1>Pravin Kitchens &amp; Interiors
                     <span class="role-badge">Admin Panel</span>
                     <span class="role-badge" id="divisionBadge"
                         style="background:var(--surface2);color:var(--accent);border-color:var(--accent);">Marketing</span>
@@ -597,7 +597,6 @@
         <div class="room-tabs-container">
             <div
                 style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 12px;">
-                <div class="room-tabs-title" style="margin-bottom: 0;">Which room's items/rates are you managing?</div>
                 <div style="display: flex; gap: 14px; align-items: center;">
                     <div id="floorSelectorsWrap" style="display: none; gap: 10px; align-items: center;">
                         <div style="display: flex; flex-direction: column; gap: 3px;">
@@ -867,7 +866,7 @@
             { id: 'dining_room', name: 'Dining Room', icon: '🍽️', active: true },
             { id: 'sitout', name: 'Sitout', icon: '🌿', active: true },
             { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
-            { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
+            { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true }
         ];
 
         let selectedRoom = sessionStorage.getItem('pks_selected_room') || 'kitchen';
@@ -968,8 +967,7 @@
                 { id: 9, name: "Spice Rack", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
                 { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
                 { id: 11, name: "Kitchen Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
-                { id: 12, name: "Kitchen & Dining Partition", options: ["WPC", "Marine Plane", "Engineering Wood"] },
-                { id: 15, name: "Accessories", options: ACCESSORY_LIST }
+                { id: 12, name: "Kitchen & Dining Partition", options: ["WPC", "Marine Plane", "Engineering Wood"] }
             ],
             living_room: [
                 { id: 16, name: "Tv Unit – Wall Panelling", options: ["PVC", "Lamination", "Charcoal"] },
@@ -1168,12 +1166,14 @@
             });
 
             // Custom Items
-            customItems.forEach(item => {
-                const opt = document.createElement('option');
-                opt.value = `custom-${item.id}`;
-                opt.textContent = `${item.id}. ${item.name} [Custom]`;
-                select.appendChild(opt);
-            });
+            if (selectedRoom !== 'accessories') {
+                customItems.forEach(item => {
+                    const opt = document.createElement('option');
+                    opt.value = `custom-${item.id}`;
+                    opt.textContent = `${item.id}. ${item.name} [Custom]`;
+                    select.appendChild(opt);
+                });
+            }
         }
 
         function renderCurrentItemsList() {
@@ -1194,8 +1194,9 @@
                     </span>
                 `).join('');
 
-                // Check if any custom materials added
-                const customList = customMaterials[item.id] || [];
+                // Check if any custom materials added (block for Accessories standard cards)
+                const isAccessoryCard = [15, 23, 40, 50].includes(item.id);
+                const customList = isAccessoryCard ? [] : (customMaterials[item.id] || []);
                 let customTags = customList.map((m, index) => `
                     <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
                         ${m.label} (${m.note})
@@ -1216,27 +1217,29 @@
             });
 
             // Render Custom items under the same list
-            customItems.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = 'item-manage-card';
+            if (selectedRoom !== 'accessories') {
+                customItems.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'item-manage-card';
 
-                let optTags = item.options.map((opt, optIdx) => `
-                    <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
-                        ${opt.label} (${opt.note})
-                        <button onclick="removeCustomItemMaterial(${index}, ${optIdx})">✕</button>
-                    </span>
-                `).join('');
+                    let optTags = item.options.map((opt, optIdx) => `
+                        <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
+                            ${opt.label} (${opt.note})
+                            <button onclick="removeCustomItemMaterial(${index}, ${optIdx})">✕</button>
+                        </span>
+                    `).join('');
 
-                div.innerHTML = `
-                    <div class="item-manage-card-header">
-                        <div class="item-manage-card-title">${item.id}. ${item.name} <span class="role-badge" style="font-size:0.68rem; padding: 2px 8px; margin-left: 8px; background: rgba(61, 187, 110, 0.15);">Custom</span></div>
-                    </div>
-                    <div class="tags-row">
-                        ${optTags.length > 0 ? optTags : '<span style="font-size:0.8rem; color:var(--muted); font-style:italic;">No materials added — choose target item above to add.</span>'}
-                    </div>
-                `;
-                container.appendChild(div);
-            });
+                    div.innerHTML = `
+                        <div class="item-manage-card-header">
+                            <div class="item-manage-card-title">${item.id}. ${item.name} <span class="role-badge" style="font-size:0.68rem; padding: 2px 8px; margin-left: 8px; background: rgba(61, 187, 110, 0.15);">Custom</span></div>
+                        </div>
+                        <div class="tags-row">
+                            ${optTags.length > 0 ? optTags : '<span style="font-size:0.8rem; color:var(--muted); font-style:italic;">No materials added — choose target item above to add.</span>'}
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
         }
 
         function renderCustomItemsList() {
@@ -1249,7 +1252,8 @@
                 div.className = 'item-manage-card';
 
                 let matTags = item.options.map(opt => `<span class="tag-pill">${opt}</span>`).join('');
-                const customList = customMaterials[item.id] || [];
+                const isAccessoryCard = [15, 23, 40, 50].includes(item.id);
+                const customList = isAccessoryCard ? [] : (customMaterials[item.id] || []);
                 let customTags = customList.map((m, index) => `
                     <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
                         ${m.label} (${m.note})
@@ -1270,27 +1274,29 @@
             });
 
             // 2. Render Custom items
-            customItems.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = 'item-manage-card';
+            if (selectedRoom !== 'accessories') {
+                customItems.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'item-manage-card';
 
-                let optTags = item.options.map((opt, optIdx) => `
-                    <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
-                        ${opt.label} (${opt.note})
-                    </span>
-                `).join('');
+                    let optTags = item.options.map((opt, optIdx) => `
+                        <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
+                            ${opt.label} (${opt.note})
+                        </span>
+                    `).join('');
 
-                div.innerHTML = `
-                    <div class="item-manage-card-header">
-                        <div class="item-manage-card-title">${item.id}. ${item.name} <span class="role-badge" style="font-size:0.68rem; padding: 2px 8px; margin-left: 8px; background: rgba(61, 187, 110, 0.15);">Custom</span></div>
-                        <button class="btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteCustomItem(${index})">Delete Card</button>
-                    </div>
-                    <div class="tags-row" style="margin-bottom: 10px;">
-                        ${optTags || '<span style="font-size: 0.8rem; color: var(--muted); font-style: italic;">No materials added yet</span>'}
-                    </div>
-                `;
-                container.appendChild(div);
-            });
+                    div.innerHTML = `
+                        <div class="item-manage-card-header">
+                            <div class="item-manage-card-title">${item.id}. ${item.name} <span class="role-badge" style="font-size:0.68rem; padding: 2px 8px; margin-left: 8px; background: rgba(61, 187, 110, 0.15);">Custom</span></div>
+                            <button class="btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteCustomItem(${index})">Delete Card</button>
+                        </div>
+                        <div class="tags-row" style="margin-bottom: 10px;">
+                            ${optTags || '<span style="font-size: 0.8rem; color: var(--muted); font-style: italic;">No materials added yet</span>'}
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
         }
 
         /* ---------- Custom material option actions ---------- */
