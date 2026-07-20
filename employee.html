@@ -993,9 +993,10 @@
     <script>
         const selectedDivision = sessionStorage.getItem('pks_selected_division') || 'marketing';
         const selectedDivisionName = sessionStorage.getItem('pks_selected_division_name') || 'Marketing';
+        const isEconomyMode = sessionStorage.getItem('pks_economy_mode') === 'true';
 
         // Render division badge in header
-        document.getElementById('divisionBadge').textContent = selectedDivisionName;
+        document.getElementById('divisionBadge').textContent = selectedDivisionName + (isEconomyMode ? ' (Economy)' : ' (Premium)');
 
         const role = sessionStorage.getItem('pks_role');
         if (!role) {
@@ -1003,7 +1004,7 @@
         }
         const showRate = (role === 'admin');
 
-        const ROOMS = [
+        const allRooms = [
             { id: 'kitchen', name: 'Kitchen', icon: '🍳', active: true },
             { id: 'living_room', name: 'Living Room', icon: '🛋️', active: true },
             { id: 'prayer_unit', name: 'Prayer Unit', icon: '🪔', active: true },
@@ -1016,6 +1017,8 @@
             { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
             { id: 'accessories', name: 'Accessories', icon: '✨', active: true }
         ];
+
+        const ROOMS = allRooms.filter(r => !(isEconomyMode && r.id === 'study_room'));
 
         let selectedRoom = sessionStorage.getItem('pks_selected_room') || 'kitchen';
         let selectedRoomName = sessionStorage.getItem('pks_selected_room_name') || 'Kitchen';
@@ -1135,6 +1138,9 @@
             "Charcoal": 400,
             "Marine Plane": 350,
             "Engineering Wood": 280,
+            "Engineering Wood (Box Type)": 280,
+            "Engineering Wood (Door Type)": 280,
+            "Engineering Wood (Door Only)": 280,
             "King Size Bed (Direct Price)": 35000,
             "Queen Size Bed (Direct Price)": 28000,
             "Glass": 350,
@@ -1291,8 +1297,68 @@
             ]
         };
 
+        const ENG_WOOD_BOX_DOOR = [
+            { label: "Engineering Wood (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Engineering Wood (Door Type)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
+        ];
+
+        const ENG_WOOD_ONLY = [
+            { label: "Engineering Wood", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" }
+        ];
+
+        const ROOM_ITEMS_ECONOMY = {
+            kitchen: [
+                { id: 101, name: "Staircase Bottom", options: ENG_WOOD_BOX_DOOR }
+            ],
+            living_room: [
+                { id: 102, name: "Living", options: ENG_WOOD_ONLY },
+                { id: 103, name: "Kitchen Partition", options: ENG_WOOD_ONLY }
+            ],
+            prayer_unit: [
+                { id: 104, name: "Prayer Unit Cabinet", options: ENG_WOOD_BOX_DOOR }
+            ],
+            bedroom: [
+                { id: 105, name: "Wardrobe", options: ENG_WOOD_BOX_DOOR },
+                { id: 106, name: "Bed", options: ENG_WOOD_ONLY },
+                { id: 107, name: "Bay Window", options: ENG_WOOD_BOX_DOOR },
+                { id: 108, name: "Side Cabinet", options: ENG_WOOD_BOX_DOOR },
+                { id: 109, name: "Cupboard", options: ENG_WOOD_BOX_DOOR },
+                { id: 110, name: "Loft", options: ENG_WOOD_BOX_DOOR }
+            ],
+            dining_room: [
+                { id: 117, name: "Wash basin unit bottom cabinet", options: ENG_WOOD_BOX_DOOR },
+                { id: 118, name: "Wash basin unit wall paneling", options: ENG_WOOD_ONLY },
+                { id: 119, name: "Dining room crockery unit", options: ENG_WOOD_BOX_DOOR },
+                { id: 120, name: "Accessories", options: ACCESSORY_OPTS }
+            ],
+            musical_room: [
+                { id: 111, name: "Table", options: ENG_WOOD_ONLY }
+            ],
+            study_room: [],
+            sitout: [
+                { id: 112, name: "Chappal Stand", options: ENG_WOOD_BOX_DOOR },
+                { id: 113, name: "Table", options: ENG_WOOD_ONLY }
+            ],
+            store_room: [
+                { id: 114, name: "Store Room and Cupboard", options: ENG_WOOD_BOX_DOOR },
+                { id: 115, name: "Table", options: ENG_WOOD_ONLY }
+            ],
+            toilet_area: [
+                { id: 41, name: "Toilet Area Washbasin Cabinet", options: ENG_WOOD_BOX_DOOR }
+            ],
+            accessories: [
+                { id: 50, name: "Accessories", options: ACCESSORY_OPTS }
+            ]
+        };
+
         for (const room in ROOM_ITEMS) {
             ROOM_ITEMS[room].forEach(item => {
+                if (item.name) item.name = item.name.toUpperCase();
+            });
+        }
+
+        for (const room in ROOM_ITEMS_ECONOMY) {
+            ROOM_ITEMS_ECONOMY[room].forEach(item => {
                 if (item.name) item.name = item.name.toUpperCase();
             });
         }
@@ -1307,7 +1373,8 @@
             }
             return [];
         }
-        const initialRawItems = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+        const itemsSource = isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS;
+        const initialRawItems = itemsSource[selectedRoom] || itemsSource.kitchen;
         const initialDeleted = getDeletedStandardItems();
         let BASE_ITEMS = initialRawItems.filter(item => !initialDeleted.includes(item.id));
 
@@ -1329,7 +1396,7 @@
             const deletedMats = getDeletedStandardMaterials();
             const list = BASE_ITEMS.map(item => {
                 const rawOptions = item.options ? [...item.options] : [];
-                const filteredOptions = rawOptions.filter(opt => !deletedMats.includes(`${item.id}-${opt}`));
+                const filteredOptions = isEconomyMode ? rawOptions : rawOptions.filter(opt => !deletedMats.includes(`${item.id}-${opt}`));
                 return {
                     id: item.id,
                     name: item.name.toUpperCase(),
@@ -1337,6 +1404,11 @@
                     custom: item.custom
                 };
             });
+
+            if (isEconomyMode) {
+                return list;
+            }
+
             const customMats = getCustomMaterials();
 
             // Append custom materials to standard items
@@ -1410,7 +1482,8 @@
             sessionStorage.setItem('pks_selected_room', roomId);
             sessionStorage.setItem('pks_selected_room_name', roomName);
 
-            const rawItems = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+            const itemsSource = isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS;
+            const rawItems = itemsSource[selectedRoom] || itemsSource.kitchen;
             const deleted = getDeletedStandardItems();
             BASE_ITEMS = rawItems.filter(item => !deleted.includes(item.id));
             ITEMS = getFullItemsList();
@@ -2236,6 +2309,7 @@
                 quoteDate,
                 divisionId: selectedDivision,
                 divisionName: selectedDivisionName,
+                economyMode: isEconomyMode,
                 totalAmount,
                 quoteLines: [...quoteLines],
                 payAdvance: document.getElementById('payAdvance').value,
@@ -2335,9 +2409,12 @@
                 const quote = savedQuotes.find(q => q.id === quoteId);
                 if (quote) {
                     if (confirm("Load this quote? This will replace your current workspace modifications.")) {
-                        if (quote.divisionId && quote.divisionId !== selectedDivision) {
+                        const quoteEconomyMode = quote.economyMode ? 'true' : 'false';
+                        const currentEconomyMode = sessionStorage.getItem('pks_economy_mode') || 'false';
+                        if ((quote.divisionId && quote.divisionId !== selectedDivision) || (quoteEconomyMode !== currentEconomyMode)) {
                             sessionStorage.setItem('pks_selected_division', quote.divisionId);
                             sessionStorage.setItem('pks_selected_division_name', quote.divisionName);
+                            sessionStorage.setItem('pks_economy_mode', quoteEconomyMode);
                             sessionStorage.setItem('pks_restore_quote_data', JSON.stringify(quote));
                             location.reload();
                             return;

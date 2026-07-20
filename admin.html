@@ -923,6 +923,9 @@
             "Charcoal": 400,
             "Marine Plane": 350,
             "Engineering Wood": 280,
+            "Engineering Wood (Box Type)": 280,
+            "Engineering Wood (Door Type)": 280,
+            "Engineering Wood (Door Only)": 280,
             "King Size Bed (Direct Price)": 35000,
             "Queen Size Bed (Direct Price)": 28000,
             "Glass": 350,
@@ -1772,6 +1775,7 @@
                     if (confirm("Load this quote to the Quote Builder?")) {
                         sessionStorage.setItem('pks_selected_division', quote.divisionId);
                         sessionStorage.setItem('pks_selected_division_name', quote.divisionName);
+                        sessionStorage.setItem('pks_economy_mode', quote.economyMode ? 'true' : 'false');
                         sessionStorage.setItem('pks_restore_quote_data', JSON.stringify(quote));
                         sessionStorage.setItem('pks_role', 'admin');
                         location.href = 'employee.html';
