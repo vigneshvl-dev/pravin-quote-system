@@ -450,6 +450,16 @@
             transform: scale(1.2);
         }
 
+        .tag-pill button.rename-btn {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .tag-pill button.rename-btn:hover {
+            color: var(--accent);
+            transform: scale(1.2);
+        }
+
         .tags-row {
             display: flex;
             flex-wrap: wrap;
@@ -687,6 +697,7 @@
                             <option value="L*H">L * H [Wall Panel / Beam]</option>
                             <option value="L*W">L * W [Ledge]</option>
                             <option value="SQFT">SQFT [Direct input]</option>
+                            <option value="QTY">QTY [Quantity based]</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1213,21 +1224,22 @@
                 const div = document.createElement('div');
                 div.className = 'item-manage-card';
 
-                // Get standard list
+                // Get standard list (filter deleted)
                 let filteredOptions = item.options.filter(opt => !deletedStandardMaterials.includes(`${item.id}-${opt}`));
                 let matTags = filteredOptions.map(opt => `
                     <span class="tag-pill">
                         ${opt}
-                        <button onclick="removeStandardMaterial(${item.id}, '${opt}')">✕</button>
+                        <button class="rename-btn" onclick="renameMaterialOption(${item.id}, ${JSON.stringify(opt).replace(/"/g, '&quot;')}, 'standard')" title="Rename">✎</button>
+                        <button onclick="removeStandardMaterial(${item.id}, ${JSON.stringify(opt).replace(/"/g, '&quot;')})">✕</button>
                     </span>
                 `).join('');
 
-                // Check if any custom materials added (block for Accessories standard cards)
-                const isAccessoryCard = [15, 23, 40, 50].includes(item.id);
-                const customList = isAccessoryCard ? [] : (customMaterials[item.id] || []);
+                // Custom materials for this item (allow for all cards)
+                const customList = customMaterials[item.id] || [];
                 let customTags = customList.map((m, index) => `
                     <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
-                        ${m.label} (${m.note})
+                        ${m.label}
+                        <button class="rename-btn" onclick="renameMaterialOption(${item.id}, ${JSON.stringify(m.label).replace(/"/g, '&quot;')}, 'custom-standard', null, ${index})" title="Rename">✎</button>
                         <button onclick="removeCustomMaterial(${item.id}, ${index})">✕</button>
                     </span>
                 `).join('');
@@ -1252,7 +1264,8 @@
 
                     let optTags = item.options.map((opt, optIdx) => `
                         <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
-                            ${opt.label} (${opt.note})
+                            ${opt.label}
+                            <button class="rename-btn" onclick="renameMaterialOption(${item.id}, ${JSON.stringify(opt.label).replace(/"/g, '&quot;')}, 'custom-item', ${index}, ${optIdx})" title="Rename">✎</button>
                             <button onclick="removeCustomItemMaterial(${index}, ${optIdx})">✕</button>
                         </span>
                     `).join('');
@@ -1280,11 +1293,10 @@
                 div.className = 'item-manage-card';
 
                 let matTags = item.options.map(opt => `<span class="tag-pill">${opt}</span>`).join('');
-                const isAccessoryCard = [15, 23, 40, 50].includes(item.id);
-                const customList = isAccessoryCard ? [] : (customMaterials[item.id] || []);
+                const customList = customMaterials[item.id] || [];
                 let customTags = customList.map((m, index) => `
                     <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
-                        ${m.label} (${m.note})
+                        ${m.label}
                     </span>
                 `).join('');
 
@@ -1309,7 +1321,7 @@
 
                     let optTags = item.options.map((opt, optIdx) => `
                         <span class="tag-pill" style="border: 1px solid var(--accent); color: var(--accent);">
-                            ${opt.label} (${opt.note})
+                            ${opt.label}
                         </span>
                     `).join('');
 
@@ -1344,6 +1356,7 @@
             if (formulaType === "L*H") { fields = ["L", "H"]; note = "L×H"; }
             else if (formulaType === "L*W") { fields = ["L", "W"]; note = "L×W"; }
             else if (formulaType === "SQFT") { fields = ["SQFT"]; note = "direct sq.ft"; }
+            else if (formulaType === "QTY") { fields = ["QTY"]; note = "qty"; }
             else { fields = ["L", "W", "H"]; note = "(L+W)×H"; }
 
             // Check target type
@@ -1398,6 +1411,93 @@
                 renderCustomItemsList();
                 showToast("Material option removed.");
             }
+        }
+
+        function getStandardFormulaInfo(itemId, optName) {
+            const name = optName.trim();
+            const nameUpper = name.toUpperCase();
+            // QTY-based items
+            if (nameUpper.includes("DIRECT PRICE") || nameUpper.includes("BASKET") ||
+                nameUpper.includes("TANDOM") || nameUpper.includes("RUNNER") ||
+                nameUpper.includes("HINGE") || nameUpper.includes("HANDLE") ||
+                nameUpper.includes("PULL OUT") || nameUpper.includes("TALL UNIT") ||
+                nameUpper.includes("MAGIC CORNER") || nameUpper.includes("SHUTTER") ||
+                nameUpper.includes("DETERGENT") || nameUpper.includes("D-TRAY") ||
+                nameUpper.includes("GTBT") || nameUpper.includes("CORNER") ||
+                nameUpper.includes("PARACEL") || nameUpper.includes("SWING")) {
+                return { formulaType: "QTY", fields: ["QTY"], note: "qty" };
+            }
+            // L*W formulas (Ledge, Sit out ceiling)
+            if (itemId === 10 || itemId === 47 || name === "Wood finishing" ||
+                name === "Veneer finishing" || name === "PU Paint") {
+                return { formulaType: "L*W", fields: ["L", "W"], note: "L×W" };
+            }
+            // SQFT (Spice rack)
+            if (itemId === 9) {
+                return { formulaType: "SQFT", fields: ["SQFT"], note: "direct sq.ft" };
+            }
+            // L*H (Wall panel, Beam, Door type)
+            if (nameUpper.includes("DOOR ONLY") || nameUpper.includes("DOOR TYPE") ||
+                name === "Glass" || itemId === 6 || itemId === 7 || itemId === 16 ||
+                itemId === 20 || itemId === 27 || itemId === 30 || itemId === 32 ||
+                itemId === 38 || itemId === 70 || itemId === 71 || itemId === 80) {
+                return { formulaType: "L*H", fields: ["L", "H"], note: "L×H" };
+            }
+            // Default: (L+W)*H
+            return { formulaType: "(L+W)*H", fields: ["L", "W", "H"], note: "(L+W)×H" };
+        }
+
+        function renameMaterialOption(itemId, oldLabel, type, customItemIndex, customOptIndex) {
+            const newLabel = prompt(`Rename "${oldLabel}" to:`, oldLabel);
+            if (!newLabel) return;
+            const cleanLabel = newLabel.trim();
+            if (!cleanLabel) { alert("Name cannot be empty."); return; }
+            if (cleanLabel === oldLabel) return;
+
+            // Transfer rate
+            if (currentRates[oldLabel] !== undefined) {
+                currentRates[cleanLabel] = currentRates[oldLabel];
+                // Only delete old key if not referenced elsewhere
+                let usedElsewhere = false;
+                for (const room in ROOM_ITEMS) {
+                    ROOM_ITEMS[room].forEach(item => {
+                        if (item.id !== itemId && item.options.includes(oldLabel) &&
+                            !deletedStandardMaterials.includes(`${item.id}-${oldLabel}`)) {
+                            usedElsewhere = true;
+                        }
+                    });
+                }
+                if (!usedElsewhere) delete currentRates[oldLabel];
+            } else {
+                currentRates[cleanLabel] = 0;
+            }
+            localStorage.setItem('pks_rates', JSON.stringify(currentRates));
+
+            if (type === 'standard') {
+                // Hide the old standard option
+                deletedStandardMaterials.push(`${itemId}-${oldLabel}`);
+                localStorage.setItem('pks_deleted_standard_materials', JSON.stringify(deletedStandardMaterials));
+                // Add as a custom material with the same formula
+                const fi = getStandardFormulaInfo(itemId, oldLabel);
+                if (!customMaterials[itemId]) customMaterials[itemId] = [];
+                customMaterials[itemId].push({ label: cleanLabel, fields: fi.fields, formulaType: fi.formulaType, note: fi.note });
+                localStorage.setItem('pks_custom_materials', JSON.stringify(customMaterials));
+            } else if (type === 'custom-standard') {
+                if (customMaterials[itemId] && customMaterials[itemId][customOptIndex]) {
+                    customMaterials[itemId][customOptIndex].label = cleanLabel;
+                    localStorage.setItem('pks_custom_materials', JSON.stringify(customMaterials));
+                }
+            } else if (type === 'custom-item') {
+                if (customItems[customItemIndex] && customItems[customItemIndex].options[customOptIndex]) {
+                    customItems[customItemIndex].options[customOptIndex].label = cleanLabel;
+                    localStorage.setItem('pks_custom_items', JSON.stringify(customItems));
+                }
+            }
+
+            renderCurrentItemsList();
+            renderCustomItemsList();
+            renderRatesTable();
+            showToast("Material renamed successfully!");
         }
 
         /* ---------- Custom Item Actions ---------- */
