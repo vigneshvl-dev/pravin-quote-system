@@ -868,13 +868,6 @@
                         <td colspan="9">No items added yet — start with any card above.</td>
                     </tr>
                 </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="7" style="text-align:right;">Total</td>
-                        <td class="num" id="grandTotal">₹0</td>
-                        <td></td>
-                    </tr>
-                </tfoot>
             </table>
 
             <!-- Materials Specs Display (Screen Only) -->
@@ -1965,15 +1958,15 @@
                 `;
             }
 
-            body.innerHTML = html;
-
-            // Render tfoot colspan based on role
-            const totalRow = document.querySelector('tfoot tr');
-            totalRow.innerHTML = `
-                <td colspan="${showRate ? 7 : 6}" style="text-align:right;">Grand Total (Rooms + Accessories)</td>
-                <td class="num" id="grandTotal">₹${grandTotal.toFixed(2)}</td>
-                <td></td>
+            html += `
+                <tr style="background: var(--accent-light); font-weight: 700; color: var(--accent-dark); border-top: 2px solid var(--accent);">
+                    <td colspan="${showRate ? 7 : 6}" style="text-align:right;">Grand Total (Rooms + Accessories)</td>
+                    <td class="num" id="grandTotal">₹${grandTotal.toFixed(2)}</td>
+                    <td></td>
+                </tr>
             `;
+
+            body.innerHTML = html;
 
             // Display dynamic specs
             const defaultSpecs = "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
@@ -2232,13 +2225,11 @@
                         </thead>
                         <tbody>
                             ${rowsHTML}
-                        </tbody>
-                        <tfoot>
                             <tr style="background: #fdfaf6; font-weight: 700; border-top: 2px solid #b07d2e;">
                                 <td colspan="${showRate ? 7 : 6}" style="padding: 10px; font-size: 0.82rem; text-align: right; color: #1c2820; border: none;">Grand Total (Rooms + Accessories)</td>
                                 <td style="padding: 10px; font-size: 0.85rem; text-align: right; color: #b07d2e; font-weight: 700; border: none;">₹${grandTotal.toFixed(2)}</td>
                             </tr>
-                        </tfoot>
+                        </tbody>
                     </table>
                 </div>
             `;
