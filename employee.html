@@ -1064,8 +1064,8 @@
         ];
         const PARTITION = [
             { label: "WPC", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Marine Ply", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Engineering Wood", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Lamination", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Acrylic", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
         ];
 
         /* ---------- Shared Materials Groups ---------- */
@@ -1203,6 +1203,11 @@
             return {};
         }
 
+        function getCleanMaterialName(rawName) {
+            if (!rawName || typeof rawName !== 'string') return rawName;
+            return rawName.replace(/\s*\((Box Type|Partition Type|Door Only|Door Type|Framed|Box)\)/gi, '').trim();
+        }
+
         function getRateForMaterial(materialLabel, roomId, divisionId, isEco) {
             const divId = divisionId || sessionStorage.getItem('pks_selected_division') || 'marketing';
             const eco = (isEco !== undefined ? isEco : isEconomyMode);
@@ -1211,26 +1216,22 @@
             const allRoomRates = getStoredRoomRates();
             const modeStr = eco ? 'economy' : 'premium';
             const specificKey = `${divId}_${modeStr}_${room}`;
+            const roomRatesObj = allRoomRates[specificKey] || {};
 
-            if (allRoomRates[specificKey] && allRoomRates[specificKey][materialLabel] !== undefined) {
-                return allRoomRates[specificKey][materialLabel];
+            // 1. Direct match in room rates
+            if (roomRatesObj[materialLabel] !== undefined) {
+                return roomRatesObj[materialLabel];
             }
 
-            // Fallback to legacy pks_rates
-            const globalStored = localStorage.getItem('pks_rates');
-            if (globalStored) {
-                try {
-                    const parsed = JSON.parse(globalStored);
-                    if (parsed && parsed[materialLabel] !== undefined) {
-                        return parsed[materialLabel];
-                    }
-                } catch (e) { }
+            // 2. Clean base material match in room rates
+            const cleanLabel = getCleanMaterialName(materialLabel);
+            if (roomRatesObj[cleanLabel] !== undefined) {
+                return roomRatesObj[cleanLabel];
             }
 
-            // Default rates fallback
-            if (DEFAULT_RATES[materialLabel] !== undefined) {
-                return DEFAULT_RATES[materialLabel];
-            }
+            // 3. Fallback to default rates ONLY (room-isolated)
+            if (DEFAULT_RATES[materialLabel] !== undefined) return DEFAULT_RATES[materialLabel];
+            if (DEFAULT_RATES[cleanLabel] !== undefined) return DEFAULT_RATES[cleanLabel];
 
             return 0;
         }

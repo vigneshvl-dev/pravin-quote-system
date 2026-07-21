@@ -1033,7 +1033,7 @@
 
         const ROOM_ITEMS = {
             kitchen: [
-                { id: 1, name: "Kitchen Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)"] },
+                { id: 1, name: "Kitchen Bottom", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Partition Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Partition Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Partition Type)", "WPC (Door Only)", "Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
                 { id: 2, name: "Kitchen Top Box", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
                 { id: 3, name: "Kitchen Loft", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Framed)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Framed)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Framed)", "WPC (Door Only)"] },
                 { id: 4, name: "Kitchen – Island Cabin", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)"] },
@@ -1044,7 +1044,7 @@
                 { id: 9, name: "Spice Rack", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
                 { id: 10, name: "Ledge", options: ["Marine Ply – Lamination", "Marine Ply – Acrylic", "WPC"] },
                 { id: 11, name: "Kitchen Side Storage Cabinet", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
-                { id: 12, name: "Kitchen & Dining Partition", options: ["WPC", "Marine Plane", "Engineering Wood"] }
+                { id: 12, name: "Kitchen & Dining Partition", options: ["WPC", "Marine Ply – Lamination", "Marine Ply – Acrylic", "Engineering Wood"] }
             ],
             living_room: [
                 { id: 16, name: "Tv Unit – Wall Panelling", options: ["PVC", "Lamination", "Charcoal"] },
@@ -1207,6 +1207,11 @@
             return {};
         }
 
+        function getCleanMaterialName(rawName) {
+            if (!rawName || typeof rawName !== 'string') return rawName;
+            return rawName.replace(/\s*\((Box Type|Partition Type|Door Only|Door Type|Framed|Box)\)/gi, '').trim();
+        }
+
         function getRoomRatesKey(divId, isEco, roomId) {
             const mode = isEco ? 'economy' : 'premium';
             return `${divId}_${mode}_${roomId}`;
@@ -1219,26 +1224,22 @@
 
             const allRoomRates = getStoredRoomRates();
             const specificKey = getRoomRatesKey(divId, eco, room);
+            const roomRatesObj = allRoomRates[specificKey] || {};
 
-            if (allRoomRates[specificKey] && allRoomRates[specificKey][materialLabel] !== undefined) {
-                return allRoomRates[specificKey][materialLabel];
+            // 1. Direct match in room rates
+            if (roomRatesObj[materialLabel] !== undefined) {
+                return roomRatesObj[materialLabel];
             }
 
-            // Fallback to legacy pks_rates
-            const globalStored = localStorage.getItem('pks_rates');
-            if (globalStored) {
-                try {
-                    const parsed = JSON.parse(globalStored);
-                    if (parsed && parsed[materialLabel] !== undefined) {
-                        return parsed[materialLabel];
-                    }
-                } catch(e) {}
+            // 2. Clean base material match in room rates
+            const cleanLabel = getCleanMaterialName(materialLabel);
+            if (roomRatesObj[cleanLabel] !== undefined) {
+                return roomRatesObj[cleanLabel];
             }
 
-            // Default rates fallback
-            if (DEFAULT_RATES[materialLabel] !== undefined) {
-                return DEFAULT_RATES[materialLabel];
-            }
+            // 3. Fallback to default rates ONLY (room-isolated, no cross-room bleeding)
+            if (DEFAULT_RATES[materialLabel] !== undefined) return DEFAULT_RATES[materialLabel];
+            if (DEFAULT_RATES[cleanLabel] !== undefined) return DEFAULT_RATES[cleanLabel];
 
             return 0;
         }
@@ -1246,20 +1247,20 @@
         function getRoomMaterials(roomId) {
             const premItems = ROOM_ITEMS[roomId] || [];
             const ecoItems = ROOM_ITEMS_ECONOMY[roomId] || [];
+            const allRoomItems = [...premItems, ...ecoItems];
             const deletedItems = getDeletedStandardItems();
             const deletedMats = getDeletedStandardMaterials();
 
             const matSet = new Set();
 
-            [...premItems, ...ecoItems].forEach(item => {
+            allRoomItems.forEach(item => {
                 if (!deletedItems.includes(item.id)) {
                     const rawOptions = item.options ? [...item.options] : [];
                     const filteredOptions = rawOptions.filter(opt => !deletedMats.includes(`${item.id}-${opt}`));
                     filteredOptions.forEach(opt => {
-                        if (typeof opt === 'string') {
-                            matSet.add(opt);
-                        } else if (opt && opt.label) {
-                            matSet.add(opt.label);
+                        let label = typeof opt === 'string' ? opt : (opt && opt.label ? opt.label : '');
+                        if (label) {
+                            matSet.add(label);
                         }
                     });
                 }
@@ -1267,7 +1268,7 @@
 
             // Custom materials added to standard items in this room
             const customMats = getCustomMaterials();
-            premItems.forEach(item => {
+            allRoomItems.forEach(item => {
                 if (customMats[item.id]) {
                     customMats[item.id].forEach(m => {
                         if (m && m.label) matSet.add(m.label);
@@ -1281,8 +1282,8 @@
                 customItems.forEach(item => {
                     if (item && item.options) {
                         item.options.forEach(opt => {
-                            if (typeof opt === 'string') matSet.add(opt);
-                            else if (opt && opt.label) matSet.add(opt.label);
+                            let label = typeof opt === 'string' ? opt : (opt && opt.label ? opt.label : '');
+                            if (label) matSet.add(label);
                         });
                     }
                 });
@@ -1390,17 +1391,13 @@
 
             if (!allRoomRates[roomKey]) allRoomRates[roomKey] = {};
 
-            let globalRates = getRates();
-
             inputs.forEach(input => {
                 const mat = input.dataset.material;
                 const val = parseFloat(input.value) || 0;
                 allRoomRates[roomKey][mat] = val;
-                globalRates[mat] = val;
             });
 
             localStorage.setItem('pks_room_rates', JSON.stringify(allRoomRates));
-            localStorage.setItem('pks_rates', JSON.stringify(globalRates));
 
             showToast(`Rates for ${selectedRoomName} saved successfully!`);
         }
