@@ -776,9 +776,9 @@
                     style="height: 50px; border-radius: 6px; object-fit: contain;">
                 <div>
                     <h1>Pravin Kitchens &amp; Interiors
-                        <span class="role-badge">Employee</span>
-                        <span class="role-badge" id="divisionBadge"
-                            style="background:var(--accent-light);color:var(--accent-dark);border-color:var(--accent);">Marketing</span>
+                        <span class="role-badge">Employee Dashboard</span>
+                        <span class="role-badge" id="divisionBadge" onclick="location.href='rooms.html'"
+                            style="background:var(--accent-light);color:var(--accent-dark);border-color:var(--accent);cursor:pointer;" title="Click to change Division / Mode">Marketing (Premium Dashboard)</span>
                         <span class="role-badge" id="roomBadge"
                             style="background:var(--accent);color:#fff;border-color:var(--accent);">Kitchen</span>
                     </h1>
@@ -1001,7 +1001,7 @@
         const isEconomyMode = sessionStorage.getItem('pks_economy_mode') === 'true';
 
         // Render division badge in header
-        document.getElementById('divisionBadge').textContent = selectedDivisionName + (isEconomyMode ? ' (Economy)' : ' (Premium)');
+        document.getElementById('divisionBadge').textContent = selectedDivisionName + (isEconomyMode ? ' (Economy Dashboard)' : ' (Premium Dashboard)');
 
         const role = sessionStorage.getItem('pks_role');
         if (!role) {
@@ -1189,6 +1189,49 @@
             { label: "Soft Closing Hinges", fields: ["QTY"], formula: v => v.QTY, note: "qty" },
             { label: "Profile Handle", fields: ["QTY"], formula: v => v.QTY, note: "qty" }
         ];
+
+        function getStoredRoomRates() {
+            const stored = localStorage.getItem('pks_room_rates');
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (parsed && typeof parsed === 'object') return parsed;
+                } catch (e) { }
+            }
+            return {};
+        }
+
+        function getRateForMaterial(materialLabel, roomId, divisionId, isEco) {
+            const divId = divisionId || sessionStorage.getItem('pks_selected_division') || 'marketing';
+            const eco = (isEco !== undefined ? isEco : isEconomyMode);
+            const room = roomId || selectedRoom || 'kitchen';
+
+            const allRoomRates = getStoredRoomRates();
+            const modeStr = eco ? 'economy' : 'premium';
+            const specificKey = `${divId}_${modeStr}_${room}`;
+
+            if (allRoomRates[specificKey] && allRoomRates[specificKey][materialLabel] !== undefined) {
+                return allRoomRates[specificKey][materialLabel];
+            }
+
+            // Fallback to legacy pks_rates
+            const globalStored = localStorage.getItem('pks_rates');
+            if (globalStored) {
+                try {
+                    const parsed = JSON.parse(globalStored);
+                    if (parsed && parsed[materialLabel] !== undefined) {
+                        return parsed[materialLabel];
+                    }
+                } catch (e) { }
+            }
+
+            // Default rates fallback
+            if (DEFAULT_RATES[materialLabel] !== undefined) {
+                return DEFAULT_RATES[materialLabel];
+            }
+
+            return 0;
+        }
 
         // Load rates from localStorage or use defaults
         function getRates() {
@@ -1694,8 +1737,7 @@
             const opt = item.options[optIdx];
             const sizeArea = document.getElementById(`${buildId}-sizeArea`);
 
-            const rates = getRates();
-            const defaultRate = rates[opt.label] || 0;
+            const defaultRate = getRateForMaterial(opt.label, selectedRoom, selectedDivisionName, isEconomyMode);
 
             const fieldsHtml = opt.fields.map(f => `
                 <div class="field">
@@ -1750,8 +1792,7 @@
             if (rateEl) {
                 rate = parseFloat(rateEl.value) || 0;
             } else {
-                const rates = getRates();
-                rate = rates[opt.label] || 0;
+                rate = getRateForMaterial(opt.label, selectedRoom, selectedDivisionName, isEconomyMode);
             }
 
             let sqft = 0;
@@ -1811,8 +1852,7 @@
             if (rateEl) {
                 rate = parseFloat(rateEl.value) || 0;
             } else {
-                const rates = getRates();
-                rate = rates[opt.label] || 0;
+                rate = getRateForMaterial(opt.label, selectedRoom, selectedDivisionName, isEconomyMode);
             }
 
             let sqft = 0;
