@@ -61,6 +61,7 @@
             pointer-events: none;
             z-index: 0;
             filter: blur(40px);
+            will-change: transform;
         }
 
         body::after {
@@ -74,6 +75,7 @@
             pointer-events: none;
             z-index: 0;
             filter: blur(40px);
+            will-change: transform;
         }
 
         header {
@@ -1237,9 +1239,10 @@
                 return roomRatesObj[cleanLabel];
             }
 
-            // 3. Fallback to default rates ONLY (room-isolated, no cross-room bleeding)
-            if (DEFAULT_RATES[materialLabel] !== undefined) return DEFAULT_RATES[materialLabel];
-            if (DEFAULT_RATES[cleanLabel] !== undefined) return DEFAULT_RATES[cleanLabel];
+            // 3. Fallback to default rates (customizable)
+            const ratesObj = getRates();
+            if (ratesObj[materialLabel] !== undefined) return ratesObj[materialLabel];
+            if (ratesObj[cleanLabel] !== undefined) return ratesObj[cleanLabel];
 
             return 0;
         }
@@ -1412,6 +1415,7 @@
                 localStorage.removeItem('pks_deleted_standard_materials');
                 deletedStandardMaterials = [];
                 localStorage.removeItem('pks_saved_quotes');
+                localStorage.removeItem('pks_room_rates');
 
                 // Set all rates in currentRates to 0
                 currentRates = {};
@@ -1419,6 +1423,8 @@
                     currentRates[k] = 0;
                 });
                 localStorage.setItem('pks_rates', JSON.stringify(currentRates));
+
+
 
                 BASE_ITEMS = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
                 customMaterials = {};
