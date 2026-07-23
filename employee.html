@@ -1107,7 +1107,16 @@
         ];
 
         const KITCHEN_BOTTOM_OPTS = [
-            { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            {
+                label: "Marine Ply – Lamination (Box Type)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "Inside: Fabric/Off-White | Outside: Lamination (Customer Choice) | Hinges: Sleek Soft Close | Hiech",
+                subOptions: [
+                    { label: "Basic 710 BWO" },
+                    { label: "Marie Grade" },
+                    { label: "Saburi Ply" },
+                ]
+            },
             { label: "Marine Ply – Lamination (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "Marine Ply – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
             { label: "Marine Ply – Acrylic (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
@@ -1116,10 +1125,8 @@
             { label: "WPC (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "WPC (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "WPC (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "Marine Ply (Box-Type) – Basic 710 BWO | Inside: Fabric/Off-White | Outside: Lamination (Customer Choice) | Hinges: Sleek Soft Close | Hiech", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Marie Grade (Box-Type) | Inside: Fabric/Off-White | Outside: Lamination (Customer Choice) | Hinges: Sleek Soft Close | Hiech", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Saburi Ply (Box-Type) | Inside: Fabric/Off-White | Outside: Lamination (Customer Choice) | Hinges: Sleek Soft Close | Hiech", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
         ];
+
 
 
         const KITCHEN_LOFT_OPTS = [
