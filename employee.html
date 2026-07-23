@@ -43,8 +43,13 @@
         }
 
         @keyframes fadeInPage {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         header {
@@ -879,6 +884,8 @@
                 <thead>
                     <tr>
                         <th>#</th>
+                        <th>Room</th>
+                        <th>Item</th>
                         <th>Material</th>
                         <th>Size</th>
                         <th class="num">Sq.Ft</th>
@@ -889,7 +896,7 @@
                 </thead>
                 <tbody id="quoteBody">
                     <tr class="empty-row">
-                        <td colspan="7">No items added yet — start with any card above.</td>
+                        <td colspan="9">No items added yet — start with any card above.</td>
                     </tr>
                 </tbody>
             </table>
@@ -1100,15 +1107,7 @@
         ];
 
         const KITCHEN_BOTTOM_OPTS = [
-            {
-                label: "Marine Ply – Lamination (Box Type)",
-                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                subOptions: [
-                    { label: "Basic 710 BWO | Inside: Fabric/Off-White | Outside: Lamination (Customer Choice) | Hinges: Sleek Soft Close | Hiech", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-                    { label: "Marie Grade | Inside: Fabric/Off-White | Outside: Lamination (Customer Choice) | Hinges: Sleek Soft Close | Hiech", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-                    { label: "Saburi Ply | Inside: Fabric/Off-White | Outside: Lamination (Customer Choice) | Hinges: Sleek Soft Close | Hiech", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-                ]
-            },
+            { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "Marine Ply – Lamination (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "Marine Ply – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
             { label: "Marine Ply – Acrylic (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
@@ -1117,7 +1116,11 @@
             { label: "WPC (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "WPC (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "WPC (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            { label: "Marine Ply (Box-Type) – Basic 710 BWO | Inside: Fabric/Off-White | Outside: Lamination (Customer Choice) | Hinges: Sleek Soft Close | Hiech", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marie Grade (Box-Type) | Inside: Fabric/Off-White | Outside: Lamination (Customer Choice) | Hinges: Sleek Soft Close | Hiech", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Saburi Ply (Box-Type) | Inside: Fabric/Off-White | Outside: Lamination (Customer Choice) | Hinges: Sleek Soft Close | Hiech", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
         ];
+
 
         const KITCHEN_LOFT_OPTS = [
             { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
@@ -1774,112 +1777,16 @@
             });
         }
 
-        function selectMaterial(buildId, itemId, optIdx, btnEl, optRow, parentLabel) {
+        function selectMaterial(buildId, itemId, optIdx, btnEl, optRow) {
             [...optRow.children].forEach(b => b.classList.remove('selected'));
             btnEl.classList.add('selected');
 
             const item = ITEMS.find(i => i.id === itemId);
-            // Resolve the actual option — could be a sub-option index passed as string "parentIdx:subIdx"
-            let opt;
-            if (typeof optIdx === 'string' && optIdx.includes(':')) {
-                const [pIdx, sIdx] = optIdx.split(':').map(Number);
-                opt = item.options[pIdx].subOptions[sIdx];
-            } else {
-                opt = item.options[optIdx];
-            }
-
-            // If option has subOptions, show grade buttons AND size fields simultaneously
-            if (opt.subOptions && opt.subOptions.length > 0) {
-                const sizeArea = document.getElementById(`${buildId}-sizeArea`);
-                const defaultRate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode);
-                const fieldsHtml = opt.fields.map(f => `
-                    <div class="field">
-                      <label>${FIELD_LABELS[f]}</label>
-                      <input type="number" step="0.01" id="${buildId}-${f}" placeholder="0">
-                    </div>
-                `).join('');
-
-                sizeArea.innerHTML = `
-                    <div class="size-panel" id="${buildId}-direct-panel">
-                      <div class="step-label" style="margin-top:8px;">Choose grade for <b>${opt.label}</b></div>
-                      <div class="opt-row" id="${buildId}-subopts" style="flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
-                      <div class="step-label">Size &amp; rate <span style="text-transform:none;color:var(--muted)">(${opt.note})</span></div>
-                      <div class="field-row">
-                        ${fieldsHtml}
-                        <div class="field" ${showRate ? '' : 'style="display:none;"'}>
-                          <label>Rate (₹/sq.ft) [Locked]</label>
-                          <input type="number" step="0.01" id="${buildId}-rate" value="${defaultRate}" disabled>
-                        </div>
-                      </div>
-                      <div class="calc-line" id="${buildId}-calc">Sq.Ft: <b>0</b>${showRate ? ' &nbsp;|&nbsp; Amount: <b>₹0</b>' : ''}</div>
-                      <div class="row-actions">
-                        <button class="confirm-btn" id="${buildId}-direct-confirm">Add to Quote</button>
-                        <button class="cancel-btn" onclick="closeBuilder('${buildId}')">Cancel</button>
-                      </div>
-                    </div>
-                `;
-
-                // Track selected grade
-                let selectedGradeLabel = opt.label; // default: no sub selected = use parent label
-                const subRow = document.getElementById(`${buildId}-subopts`);
-
-                opt.subOptions.forEach((sub, sIdx) => {
-                    const subBtn = document.createElement('button');
-                    subBtn.className = 'opt-btn';
-                    subBtn.textContent = sub.label;
-                    subBtn.onclick = () => {
-                        [...subRow.children].forEach(b => b.classList.remove('selected'));
-                        subBtn.classList.add('selected');
-                        selectedGradeLabel = `${opt.label} – ${sub.label}`;
-                    };
-                    subRow.appendChild(subBtn);
-                });
-
-                // Live calc
-                const doCalc = () => {
-                    const v2 = {};
-                    opt.fields.forEach(f2 => { const e = document.getElementById(`${buildId}-${f2}`); if (e) v2[f2] = parseFloat(e.value) || 0; });
-                    let sq = opt.formula(v2);
-                    sq = Math.round(sq);
-                    const rt = parseFloat(document.getElementById(`${buildId}-rate`)?.value) || 0;
-                    const calc = document.getElementById(`${buildId}-calc`);
-                    if (calc) calc.innerHTML = `Sq.Ft: <b>${sq}</b>${showRate ? ` &nbsp;|&nbsp; Amount: <b>₹${(sq * rt).toFixed(2)}</b>` : ''}`;
-                };
-                opt.fields.forEach(f => {
-                    const el = document.getElementById(`${buildId}-${f}`);
-                    if (el) el.addEventListener('input', doCalc);
-                });
-
-                // Confirm handler — uses whichever grade is selected
-                document.getElementById(`${buildId}-direct-confirm`).onclick = () => {
-                    const v = {};
-                    opt.fields.forEach(f => { const el = document.getElementById(`${buildId}-${f}`); if (el) v[f] = parseFloat(el.value) || 0; });
-                    let sqft = Math.round(opt.formula(v));
-                    const rate = parseFloat(document.getElementById(`${buildId}-rate`)?.value) || getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode);
-                    const amount = sqft * rate;
-                    const sizeDesc = opt.fields.map(f => `${f}:${v[f]}`).join(' × ');
-                    const roomLabel = getFullRoomLabel();
-                    quoteLines.push({
-                        id: lineIdCounter++,
-                        roomId: selectedRoom,
-                        roomName: roomLabel,
-                        itemName: ITEMS.find(i => i.id === itemId)?.name || '',
-                        material: selectedGradeLabel,
-                        size: sizeDesc,
-                        sqft,
-                        rate,
-                        amount
-                    });
-                    document.getElementById(`builders-${itemId}`).removeChild(document.getElementById(buildId));
-                    renderQuote();
-                };
-                return;
-            }
-
+            const opt = item.options[optIdx];
             if (opt.label === "Soft Closing Hinges" || opt.label === "Profile Handle") {
-                confirmMaterialDirect(buildId, itemId, opt);
+                confirmMaterial(buildId, itemId, optIdx);
             } else {
-                openSizePanelDirect(buildId, itemId, opt);
+                openSizePanel(buildId, itemId, optIdx);
             }
         }
 
@@ -1923,77 +1830,6 @@
             });
             updateCalc(buildId, itemId, optIdx);
         }
-        // Direct versions — accept opt object (used for subOptions / merged opts)
-        function openSizePanelDirect(buildId, itemId, opt) {
-            const sizeArea = document.getElementById(`${buildId}-sizeArea`);
-            const defaultRate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode);
-            const fieldsHtml = opt.fields.map(f => `
-                <div class="field">
-                  <label>${FIELD_LABELS[f]}</label>
-                  <input type="number" step="0.01" id="${buildId}-${f}" placeholder="0">
-                </div>
-            `).join('');
-            const defaultLabel = opt.fields.includes('QTY') ? 'Qty: <b>0</b>' : 'Sq.Ft: <b>0</b>';
-            // Store opt on the element so confirmMaterialDirect can read it
-            sizeArea.innerHTML = `
-                <div class="size-panel" id="${buildId}-direct-panel">
-                  <div class="step-label">Size &amp; rate — ${opt.label} <span style="text-transform:none;color:var(--muted)">(${opt.note})</span></div>
-                  <div class="field-row">
-                    ${fieldsHtml}
-                    <div class="field" ${showRate ? '' : 'style="display:none;"'}>
-                      <label>Rate (₹/sq.ft) [Locked]</label>
-                      <input type="number" step="0.01" id="${buildId}-rate" value="${defaultRate}" disabled>
-                    </div>
-                  </div>
-                  <div class="calc-line" id="${buildId}-calc">${defaultLabel}${showRate ? ' &nbsp;|&nbsp; Amount: <b>₹0</b>' : ''}</div>
-                  <div class="row-actions">
-                    <button class="confirm-btn" id="${buildId}-direct-confirm">Add to Quote</button>
-                    <button class="cancel-btn" onclick="closeBuilder('${buildId}')">Cancel</button>
-                  </div>
-                </div>
-            `;
-            // Attach confirm with closure over opt
-            document.getElementById(`${buildId}-direct-confirm`).onclick = () => confirmMaterialDirect(buildId, itemId, opt);
-            // Live calc
-            opt.fields.forEach(f => {
-                const el = document.getElementById(`${buildId}-${f}`);
-                if (el) el.addEventListener('input', () => {
-                    const v2 = {};
-                    opt.fields.forEach(f2 => { const e = document.getElementById(`${buildId}-${f2}`); if (e) v2[f2] = parseFloat(e.value) || 0; });
-                    let sq = opt.fields.includes('SQFT') ? (v2.SQFT || 0) : opt.fields.includes('QTY') ? (v2.QTY || 0) : opt.formula(v2);
-                    if (!opt.fields.includes('QTY')) sq = Math.round(sq);
-                    const rt = parseFloat(document.getElementById(`${buildId}-rate`)?.value) || 0;
-                    const calc = document.getElementById(`${buildId}-calc`);
-                    if (calc) calc.innerHTML = opt.fields.includes('QTY')
-                        ? `Qty: <b>${sq}</b>${showRate ? ` &nbsp;|&nbsp; Amount: <b>₹${(sq * rt).toFixed(2)}</b>` : ''}`
-                        : `Sq.Ft: <b>${sq}</b>${showRate ? ` &nbsp;|&nbsp; Amount: <b>₹${(sq * rt).toFixed(2)}</b>` : ''}`;
-                });
-            });
-        }
-
-        function confirmMaterialDirect(buildId, itemId, opt) {
-            let rate = parseFloat(document.getElementById(`${buildId}-rate`)?.value) || getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode);
-            const v = {};
-            opt.fields.forEach(f => { const el = document.getElementById(`${buildId}-${f}`); if (el) v[f] = parseFloat(el.value) || 0; });
-            let sqft = opt.fields.includes('SQFT') ? (v.SQFT || 0) : opt.fields.includes('QTY') ? (v.QTY || 1) : opt.formula(v);
-            if (!opt.fields.includes('QTY')) sqft = Math.round(sqft);
-            const amount = sqft * rate;
-            let sizeDesc = opt.fields.includes('QTY') ? `QT:${v.QTY || sqft || 1}` : opt.fields.map(f => `${f}:${v[f]}`).join(' × ');
-            const roomLabel = getFullRoomLabel();
-            quoteLines.push({
-                id: lineIdCounter++,
-                roomId: selectedRoom,
-                roomName: roomLabel,
-                itemName: ITEMS.find(i => i.id === itemId)?.name || '',
-                material: opt.label,
-                size: sizeDesc,
-                sqft,
-                rate,
-                amount
-            });
-            document.getElementById(`builders-${itemId}`).removeChild(document.getElementById(buildId));
-            renderQuote();
-        }
 
         function readValues(buildId, fields) {
             const v = {};
@@ -2003,7 +1839,6 @@
             });
             return v;
         }
-
 
         function updateCalc(buildId, itemId, optIdx) {
             const item = ITEMS.find(i => i.id === itemId);
@@ -2162,7 +1997,7 @@
             document.getElementById('rateHeader').style.display = showRate ? '' : 'none';
 
             if (quoteLines.length === 0) {
-                body.innerHTML = `<tr class="empty-row"><td colspan="${showRate ? 7 : 6}">No items added yet — start with any card above.</td></tr>`;
+                body.innerHTML = `<tr class="empty-row"><td colspan="${showRate ? 9 : 8}">No items added yet — start with any card above.</td></tr>`;
                 document.getElementById('grandTotal').textContent = '₹0';
                 document.getElementById('uiSpecsBlock').style.display = 'none';
                 document.querySelector('.specs-and-terms-container').style.display = 'none';
@@ -2182,81 +2017,70 @@
 
             let html = '';
             let lineIndex = 1;
-            const colSpan = showRate ? 7 : 6;
-
-            // Helper: group lines by roomName
-            function groupByRoom(lines) {
-                const groups = [];
-                const seen = {};
-                lines.forEach(l => {
-                    if (!seen[l.roomName]) { seen[l.roomName] = []; groups.push({ room: l.roomName, items: seen[l.roomName] }); }
-                    seen[l.roomName].push(l);
-                });
-                return groups;
-            }
 
             if (roomLines.length > 0) {
-                groupByRoom(roomLines).forEach(group => {
-                    // Room header row
-                    html += `<tr style="background: var(--surface2); border-top: 2px solid var(--accent);">
-                        <td colspan="${colSpan}" style="font-weight:700; font-size:0.82rem; color:var(--accent); padding:8px 14px; letter-spacing:0.5px; text-transform:uppercase;">
-                            🏠 ${group.room}
-                        </td>
-                        <td></td>
-                    </tr>`;
-                    group.items.forEach(l => {
-                        html += `<tr>
+                roomLines.forEach(l => {
+                    html += `
+                        <tr>
                           <td>${lineIndex++}</td>
-                          <td colspan="1" style="font-weight:600; font-size:0.78rem;">${l.itemName} &mdash; ${l.material}</td>
+                          <td><span class="role-badge" style="margin-left:0; background:var(--accent-light); color:var(--accent-dark); border-color:rgba(176,125,46,.4); font-size:0.65rem;">${l.roomName}</span></td>
+                          <td>${l.itemName}</td>
+                          <td>${l.material}</td>
                           <td>${l.size}</td>
                           <td class="num">${l.sqft}</td>
                           ${showRate ? `<td class="num">₹${l.rate.toFixed(2)}</td>` : ''}
                           <td class="num">₹${l.amount.toFixed(2)}</td>
                           <td><button class="del-btn" onclick="deleteLine(${l.id})" title="Remove">✕</button></td>
-                        </tr>`;
-                    });
+                        </tr>
+                    `;
                 });
 
-                html += `<tr class="subtotal-row" style="background: rgba(255,255,255,0.03); font-weight:600; border-bottom:2px solid var(--border);">
-                      <td colspan="${showRate ? 4 : 3}" style="text-align:right; color:var(--muted); font-size:0.85rem;">Rooms Subtotal</td>
+                html += `
+                    <tr class="subtotal-row" style="background: rgba(255, 255, 255, 0.03); font-weight: 600; border-bottom: 2px solid var(--border);">
+                      <td colspan="5" style="text-align: right; color: var(--muted); font-size: 0.85rem;">Rooms Subtotal</td>
                       <td class="num"></td>
                       ${showRate ? '<td></td>' : ''}
-                      <td class="num" style="color:var(--text);">₹${roomTotal.toFixed(2)}</td>
+                      <td class="num" style="color: var(--text);">₹${roomTotal.toFixed(2)}</td>
                       <td></td>
-                    </tr>`;
+                    </tr>
+                `;
             }
 
             if (accessoryLines.length > 0) {
-                html += `<tr style="background: var(--surface2); border-top: 2px solid var(--accent);">
-                    <td colspan="${colSpan}" style="font-weight:700; font-size:0.82rem; color:var(--accent); padding:8px 14px; letter-spacing:0.5px; text-transform:uppercase;">✨ Accessories</td>
-                    <td></td>
-                </tr>`;
                 accessoryLines.forEach(l => {
-                    html += `<tr>
+                    html += `
+                        <tr>
                           <td>${lineIndex++}</td>
-                          <td colspan="1" style="font-weight:600; font-size:0.78rem;">${l.itemName} &mdash; ${l.material}</td>
+                          <td><span class="role-badge" style="margin-left:0; background:var(--accent-light); color:var(--accent-dark); border-color:rgba(176,125,46,.4); font-size:0.65rem;">${l.roomName}</span></td>
+                          <td>${l.itemName}</td>
+                          <td>${l.material}</td>
                           <td>${l.size}</td>
                           <td class="num">${l.sqft}</td>
                           ${showRate ? `<td class="num">₹${l.rate.toFixed(2)}</td>` : ''}
                           <td class="num">₹${l.amount.toFixed(2)}</td>
                           <td><button class="del-btn" onclick="deleteLine(${l.id})" title="Remove">✕</button></td>
-                        </tr>`;
+                        </tr>
+                    `;
                 });
 
-                html += `<tr class="subtotal-row" style="background: rgba(255,255,255,0.03); font-weight:600; border-bottom:2px solid var(--border);">
-                      <td colspan="${showRate ? 4 : 3}" style="text-align:right; color:var(--muted); font-size:0.85rem;">Accessories Subtotal</td>
+                html += `
+                    <tr class="subtotal-row" style="background: rgba(255, 255, 255, 0.03); font-weight: 600; border-bottom: 2px solid var(--border);">
+                      <td colspan="5" style="text-align: right; color: var(--muted); font-size: 0.85rem;">Accessories Subtotal</td>
                       <td class="num"></td>
                       ${showRate ? '<td></td>' : ''}
-                      <td class="num" style="color:var(--text);">₹${accessoryTotal.toFixed(2)}</td>
+                      <td class="num" style="color: var(--text);">₹${accessoryTotal.toFixed(2)}</td>
                       <td></td>
-                    </tr>`;
+                    </tr>
+                `;
             }
 
-            html += `<tr style="background: var(--accent-light); font-weight:700; color:var(--accent-dark); border-top:2px solid var(--accent);">
-                    <td colspan="${showRate ? 5 : 4}" style="text-align:right;">Grand Total (Rooms + Accessories)</td>
+            html += `
+                <tr style="background: var(--accent-light); font-weight: 700; color: var(--accent-dark); border-top: 2px solid var(--accent);">
+                    <td colspan="${showRate ? 7 : 6}" style="text-align:right;">Grand Total (Rooms + Accessories)</td>
                     <td class="num" id="grandTotal">₹${grandTotal.toFixed(2)}</td>
                     <td></td>
-                </tr>`;
+                </tr>
+            `;
 
             body.innerHTML = html;
 
