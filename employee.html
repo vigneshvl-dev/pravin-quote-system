@@ -880,34 +880,36 @@
                 <h2>Quote Summary</h2>
                 <div class="line"></div>
             </div>
+            <!-- Sq.Ft & Rate Toggle -->
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); width: fit-content;">
+                <span style="font-size: 0.8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Show Sq.Ft &amp; Rate</span>
+                <label class="sqft-toggle-wrap" style="position:relative; display:inline-block; width:44px; height:24px; cursor:pointer;">
+                    <input type="checkbox" id="sqftRateToggle" onchange="toggleSqftRate(this.checked)" style="opacity:0; width:0; height:0; position:absolute;">
+                    <span id="sqftToggleTrack" style="position:absolute; top:0; left:0; right:0; bottom:0; background:var(--border); border-radius:24px; transition:background 0.2s;">
+                        <span id="sqftToggleThumb" style="position:absolute; top:3px; left:3px; width:18px; height:18px; background:#fff; border-radius:50%; transition:transform 0.2s; box-shadow:0 1px 4px rgba(0,0,0,0.2);"></span>
+                    </span>
+                </label>
+            </div>
             <table class="quote-table">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Room</th>
+                        <th>S.NO</th>
                         <th>Item</th>
                         <th>Material</th>
                         <th>Size</th>
-                        <th class="num">Sq.Ft</th>
-                        <th class="num" id="rateHeader">Rate</th>
+                        <th class="num" id="sqftHeader" style="display:none;">Sq.Ft</th>
+                        <th class="num" id="rateHeader" style="display:none;">Rate</th>
                         <th class="num">Amount</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody id="quoteBody">
                     <tr class="empty-row">
-                        <td colspan="9">No items added yet — start with any card above.</td>
+                        <td colspan="6">No items added yet — start with any card above.</td>
                     </tr>
                 </tbody>
             </table>
 
-            <!-- Materials Specs Display (Screen Only) -->
-            <div id="uiSpecsBlock"
-                style="margin-top: 18px; padding: 12px 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.8rem; line-height: 1.5; color: var(--text); display: none;">
-                <strong style="color: var(--accent-dark); display: block; margin-bottom: 4px;">Material
-                    Specifications:</strong>
-                <span id="uiSpecsText"></span>
-            </div>
 
             <!-- Payment Terms Inputs (Screen Only) -->
             <div class="specs-and-terms-container"
@@ -940,14 +942,8 @@
                 </div>
             </div>
 
-            <!-- Print-Only Payment Terms & Specs (shown only during browser print) -->
+            <!-- Print-Only Payment Terms (shown only during browser print) -->
             <div class="print-only-specs-terms" style="display: none; margin-top: 20px;">
-                <div
-                    style="margin-bottom: 12px; padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px;">
-                    <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Material
-                        Specifications:</strong>
-                    <span id="printSpecsText"></span>
-                </div>
                 <div
                     style="padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px;">
                     <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Payment
@@ -1110,21 +1106,48 @@
             {
                 label: "Marine Ply – Lamination (Box Type)",
                 fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Inside: Fabric/Off-White | Outside: Lamination (Customer Choice) | Hinges: Sleek Soft Close | Hiech",
-                subOptions: [
-                    { label: "Basic 710 BWO" },
-                    { label: "Marie Grade" },
-                    { label: "Saburi Ply" },
-                ]
+                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Back Panel: WPC – 8mm Thickness | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Silent"
             },
-            { label: "Marine Ply – Lamination (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Marine Ply – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "Marine Ply – Acrylic (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Marine Ply – Acrylic (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Marine Ply – Acrylic (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "WPC (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "WPC (Partition Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "WPC (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            {
+                label: "Marine Ply – Lamination (Partition Type)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Silent"
+            },
+            {
+                label: "Marine Ply – Lamination (Door Only)",
+                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
+                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Silent"
+            },
+            {
+                label: "Marine Ply – Acrylic (Box Type)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Back Panel: WPC – 8mm Thickness | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Silent"
+            },
+            {
+                label: "Marine Ply – Acrylic (Partition Type)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Silent"
+            },
+            {
+                label: "Marine Ply – Acrylic (Door Only)",
+                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
+                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Silent"
+            },
+            {
+                label: "WPC (Box Type)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Feelam | Soft Closing Hinges: Hitech / Sleek"
+            },
+            {
+                label: "WPC (Partition Type)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Customer Choice Laminates | Soft Closing Hinges: Hitech / Sleek"
+            },
+            {
+                label: "WPC (Door Only)",
+                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Customer Choice Laminates | Soft Closing Hinges: Hitech / Sleek"
+            },
         ];
 
 
@@ -1804,6 +1827,18 @@
 
             const defaultRate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode);
 
+
+
+            const specsHtml = (!isEconomyMode && opt.specs) ? `
+                <div style="background: var(--accent-light); border: 1px solid rgba(176,125,46,0.35); border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 0.77rem; line-height: 1.65; color: var(--accent-dark);">
+                    <strong style="display:block; margin-bottom:5px; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.6px;">📋 Specifications</strong>
+                    ${opt.specs.split('|').map(s => {
+                        const t = s.trim();
+                        return `<div style="padding:1px 0;">▸ ${t}</div>`;
+                    }).join('')}
+                </div>
+            ` : '';
+
             const fieldsHtml = opt.fields.map(f => `
                 <div class="field">
                   <label>${FIELD_LABELS[f]}</label>
@@ -1816,6 +1851,7 @@
             sizeArea.innerHTML = `
                 <div class="size-panel">
                   <div class="step-label">Size &amp; rate — ${opt.label} <span style="text-transform:none;color:var(--muted)">(${opt.note})</span></div>
+                  ${specsHtml}
                   <div class="field-row">
                     ${fieldsHtml}
                     <div class="field" ${showRate ? '' : 'style="display:none;"'}>
@@ -1837,6 +1873,7 @@
             });
             updateCalc(buildId, itemId, optIdx);
         }
+
 
         function readValues(buildId, fields) {
             const v = {};
@@ -1955,6 +1992,7 @@
                 roomName: getFullRoomLabel(),
                 itemName: item.name,
                 material: opt.label,
+                specs: isEconomyMode ? '' : (opt.specs || ''),
                 size: sizeDesc,
                 sqft, rate, amount
             });
@@ -1996,27 +2034,79 @@
             if (el) el.remove();
         }
 
+        // ── Sq.Ft & Rate toggle state ─────────────────────
+        let showSqftRate = false;
+
+        function toggleSqftRate(on) {
+            showSqftRate = on;
+            const track = document.getElementById('sqftToggleTrack');
+            const thumb = document.getElementById('sqftToggleThumb');
+            if (track) track.style.background = on ? 'var(--accent)' : 'var(--border)';
+            if (thumb) thumb.style.transform = on ? 'translateX(20px)' : 'translateX(0)';
+            renderQuote();
+        }
+
+        function shortenItemName(fullName, roomName) {
+            // Strip known room prefixes from item name for display
+            const prefixes = [
+                roomName.toUpperCase() + ' \u2013 ',
+                roomName.toUpperCase() + ' - ',
+                roomName.toUpperCase() + ' ',
+                'KITCHEN \u2013 ',
+                'KITCHEN - ',
+                'KITCHEN ',
+                'LIVING ROOM ',
+                'LIVING AND ',
+                'BREAKFAST TABLE – ',
+                'BREAKFAST TABLE - ',
+                'TV UNIT – ',
+                'TV UNIT-',
+                'DRESSING UNIT ',
+                'TOILET AREA ',
+                'STORE ROOM ',
+                'PRAYER UNIT ',
+                'DINING ROOM ',
+                'WASH BASIN UNIT ',
+                'SIT OUT AREA ',
+            ];
+            let name = fullName.trim();
+            for (const p of prefixes) {
+                if (name.startsWith(p)) {
+                    name = name.slice(p.length).trim();
+                    break;
+                }
+            }
+            return name || fullName;
+        }
+
         function renderQuote() {
             const body = document.getElementById('quoteBody');
             const showRate = (role === 'admin');
+            const showSqFt = showSqftRate;
 
-            // Toggle header visibility
-            document.getElementById('rateHeader').style.display = showRate ? '' : 'none';
+            // Calculate colspan dynamically
+            // Columns: S.NO | Item | Material | Size | [Sq.Ft] | [Rate] | Amount | Delete
+            const baseColCount = 4; // S.NO + Item + Material + Size
+            const extraCols = (showSqFt ? 1 : 0) + (showSqFt && showRate ? 1 : 0);
+            const totalCols = baseColCount + extraCols + 2; // +Amount +Delete
+
+            // Header column visibility
+            const sqftHeader = document.getElementById('sqftHeader');
+            const rateHeader = document.getElementById('rateHeader');
+            if (sqftHeader) sqftHeader.style.display = showSqFt ? '' : 'none';
+            if (rateHeader) rateHeader.style.display = (showSqFt && showRate) ? '' : 'none';
 
             if (quoteLines.length === 0) {
-                body.innerHTML = `<tr class="empty-row"><td colspan="${showRate ? 9 : 8}">No items added yet — start with any card above.</td></tr>`;
-                document.getElementById('grandTotal').textContent = '₹0';
-                document.getElementById('uiSpecsBlock').style.display = 'none';
+                body.innerHTML = `<tr class="empty-row"><td colspan="${totalCols}">No items added yet — start with any card above.</td></tr>`;
                 document.querySelector('.specs-and-terms-container').style.display = 'none';
                 return;
             } else {
-                document.getElementById('uiSpecsBlock').style.display = 'block';
                 document.querySelector('.specs-and-terms-container').style.display = 'flex';
             }
 
-            // Split into Rooms and Accessories
-            const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase() === 'accessories' || l.roomName.toLowerCase().includes('accessories')));
-            const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase() === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
+            // Separate room lines from accessory lines
+            const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories')));
+            const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
 
             const roomTotal = roomLines.reduce((s, l) => s + l.amount, 0);
             const accessoryTotal = accessoryLines.reduce((s, l) => s + l.amount, 0);
@@ -2025,75 +2115,128 @@
             let html = '';
             let lineIndex = 1;
 
+            // ── Group room lines by roomName ──
             if (roomLines.length > 0) {
+                // Build ordered unique room list preserving insertion order
+                const roomOrder = [];
+                const roomMap = {};
                 roomLines.forEach(l => {
+                    if (!roomMap[l.roomName]) {
+                        roomMap[l.roomName] = [];
+                        roomOrder.push(l.roomName);
+                    }
+                    roomMap[l.roomName].push(l);
+                });
+
+                roomOrder.forEach(roomName => {
+                    const lines = roomMap[roomName];
+                    const roomSubTotal = lines.reduce((s, l) => s + l.amount, 0);
+
+                    // Room group header row
                     html += `
-                        <tr>
-                          <td>${lineIndex++}</td>
-                          <td><span class="role-badge" style="margin-left:0; background:var(--accent-light); color:var(--accent-dark); border-color:rgba(176,125,46,.4); font-size:0.65rem;">${l.roomName}</span></td>
-                          <td>${l.itemName}</td>
-                          <td>${l.material}</td>
-                          <td>${l.size}</td>
-                          <td class="num">${l.sqft}</td>
-                          ${showRate ? `<td class="num">₹${l.rate.toFixed(2)}</td>` : ''}
-                          <td class="num">₹${l.amount.toFixed(2)}</td>
-                          <td><button class="del-btn" onclick="deleteLine(${l.id})" title="Remove">✕</button></td>
+                        <tr style="background: var(--header);">
+                            <td colspan="${totalCols}" style="padding: 7px 14px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); border-bottom: 1px solid var(--border);">
+                                🏠 ${roomName}
+                            </td>
+                        </tr>
+                    `;
+
+                    lines.forEach(l => {
+                        const shortName = shortenItemName(l.itemName, roomName);
+                        const materialCellContent = l.specs ? `
+                            <div style="font-size: 0.75rem; color: var(--text); line-height: 1.45;">
+                                ${l.specs.split('|').map((s, idx) => `<div style="${idx > 0 ? 'margin-top:3px;' : ''}">• ${s.trim()}</div>`).join('')}
+                            </div>` : `<strong style="color:var(--text);">${l.material}</strong>`;
+
+                        html += `
+                            <tr>
+                              <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
+                              <td style="vertical-align:top; padding-top:10px;"><strong>${shortName}</strong></td>
+                              <td style="vertical-align:top; padding-top:10px;">
+                                  ${materialCellContent}
+                              </td>
+                              <td style="vertical-align:top; padding-top:10px;">${l.size}</td>
+                              ${showSqFt ? `<td class="num" style="vertical-align:top; padding-top:10px;">${l.sqft}</td>` : ''}
+                              ${(showSqFt && showRate) ? `<td class="num" style="vertical-align:top; padding-top:10px;">₹${l.rate.toFixed(2)}</td>` : ''}
+                              <td class="num" style="vertical-align:top; padding-top:10px;">₹${l.amount.toFixed(2)}</td>
+                              <td style="vertical-align:top; padding-top:10px;"><button class="del-btn" onclick="deleteLine(${l.id})" title="Remove">✕</button></td>
+                            </tr>
+                        `;
+                    });
+
+                    // Room subtotal row
+                    html += `
+                        <tr style="background: rgba(176,125,46,0.06); border-bottom: 1px solid var(--border);">
+                            <td colspan="${totalCols - 2}" style="text-align:right; font-size:0.8rem; color:var(--muted); font-weight:600; padding:6px 14px;">Subtotal — ${roomName}</td>
+                            <td class="num" style="color:var(--text); font-weight:700;">₹${roomSubTotal.toFixed(2)}</td>
+                            <td></td>
                         </tr>
                     `;
                 });
 
-                html += `
-                    <tr class="subtotal-row" style="background: rgba(255, 255, 255, 0.03); font-weight: 600; border-bottom: 2px solid var(--border);">
-                      <td colspan="5" style="text-align: right; color: var(--muted); font-size: 0.85rem;">Rooms Subtotal</td>
-                      <td class="num"></td>
-                      ${showRate ? '<td></td>' : ''}
-                      <td class="num" style="color: var(--text);">₹${roomTotal.toFixed(2)}</td>
-                      <td></td>
-                    </tr>
-                `;
+                // Rooms grand subtotal
+                if (roomOrder.length > 1) {
+                    html += `
+                        <tr class="subtotal-row" style="background: rgba(255,255,255,0.03); font-weight: 600; border-bottom: 2px solid var(--border);">
+                          <td colspan="${totalCols - 2}" style="text-align: right; color: var(--muted); font-size: 0.85rem;">Rooms Total</td>
+                          <td class="num" style="color: var(--text);">₹${roomTotal.toFixed(2)}</td>
+                          <td></td>
+                        </tr>
+                    `;
+                }
             }
 
+            // ── Accessories group ──
             if (accessoryLines.length > 0) {
+                html += `
+                    <tr style="background: var(--header);">
+                        <td colspan="${totalCols}" style="padding: 7px 14px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); border-bottom: 1px solid var(--border);">
+                            ✨ Accessories
+                        </td>
+                    </tr>
+                `;
+
                 accessoryLines.forEach(l => {
+                    const accMaterialCellContent = l.specs ? `
+                        <div style="font-size: 0.75rem; color: var(--text); line-height: 1.45;">
+                            ${l.specs.split('|').map((s, idx) => `<div style="${idx > 0 ? 'margin-top:3px;' : ''}">• ${s.trim()}</div>`).join('')}
+                        </div>` : `<strong style="color:var(--text);">${l.material}</strong>`;
+
                     html += `
                         <tr>
-                          <td>${lineIndex++}</td>
-                          <td><span class="role-badge" style="margin-left:0; background:var(--accent-light); color:var(--accent-dark); border-color:rgba(176,125,46,.4); font-size:0.65rem;">${l.roomName}</span></td>
-                          <td>${l.itemName}</td>
-                          <td>${l.material}</td>
-                          <td>${l.size}</td>
-                          <td class="num">${l.sqft}</td>
-                          ${showRate ? `<td class="num">₹${l.rate.toFixed(2)}</td>` : ''}
-                          <td class="num">₹${l.amount.toFixed(2)}</td>
-                          <td><button class="del-btn" onclick="deleteLine(${l.id})" title="Remove">✕</button></td>
+                          <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
+                          <td style="vertical-align:top; padding-top:10px;"><strong>${l.itemName}</strong></td>
+                          <td style="vertical-align:top; padding-top:10px;">
+                            ${accMaterialCellContent}
+                          </td>
+                          <td style="vertical-align:top; padding-top:10px;">${l.size}</td>
+                          ${showSqFt ? `<td class="num" style="vertical-align:top; padding-top:10px;">${l.sqft}</td>` : ''}
+                          ${(showSqFt && showRate) ? `<td class="num" style="vertical-align:top; padding-top:10px;">₹${l.rate.toFixed(2)}</td>` : ''}
+                          <td class="num" style="vertical-align:top; padding-top:10px;">₹${l.amount.toFixed(2)}</td>
+                          <td style="vertical-align:top; padding-top:10px;"><button class="del-btn" onclick="deleteLine(${l.id})" title="Remove">✕</button></td>
                         </tr>
                     `;
                 });
 
                 html += `
-                    <tr class="subtotal-row" style="background: rgba(255, 255, 255, 0.03); font-weight: 600; border-bottom: 2px solid var(--border);">
-                      <td colspan="5" style="text-align: right; color: var(--muted); font-size: 0.85rem;">Accessories Subtotal</td>
-                      <td class="num"></td>
-                      ${showRate ? '<td></td>' : ''}
+                    <tr class="subtotal-row" style="background: rgba(255,255,255,0.03); font-weight: 600; border-bottom: 2px solid var(--border);">
+                      <td colspan="${totalCols - 2}" style="text-align: right; color: var(--muted); font-size: 0.85rem;">Accessories Subtotal</td>
                       <td class="num" style="color: var(--text);">₹${accessoryTotal.toFixed(2)}</td>
                       <td></td>
                     </tr>
                 `;
             }
 
+            // ── Grand Total ──
             html += `
                 <tr style="background: var(--accent-light); font-weight: 700; color: var(--accent-dark); border-top: 2px solid var(--accent);">
-                    <td colspan="${showRate ? 7 : 6}" style="text-align:right;">Grand Total (Rooms + Accessories)</td>
+                    <td colspan="${totalCols - 2}" style="text-align:right;">Grand Total</td>
                     <td class="num" id="grandTotal">₹${grandTotal.toFixed(2)}</td>
                     <td></td>
                 </tr>
             `;
 
             body.innerHTML = html;
-
-            // Display dynamic specs
-            const defaultSpecs = "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
-            document.getElementById('uiSpecsText').textContent = (localStorage.getItem('pks_material_specs') || defaultSpecs).toUpperCase();
         }
 
         function deleteLine(id) {
@@ -2201,9 +2344,7 @@
             document.getElementById('printCustPhone').textContent = document.getElementById('custPhone').value || '—';
             document.getElementById('printCustAddress').textContent = document.getElementById('custAddress').value || '—';
 
-            // Populate print specs and terms
-            const defaultSpecs = "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
-            document.getElementById('printSpecsText').textContent = (localStorage.getItem('pks_material_specs') || defaultSpecs).toUpperCase();
+            // Populate print payment terms
             document.getElementById('printPayAdvance').textContent = document.getElementById('payAdvance').value || '—';
             document.getElementById('printPaySecond').textContent = document.getElementById('paySecond').value || '—';
             document.getElementById('printPayFinal').textContent = document.getElementById('payFinal').value || '—';
