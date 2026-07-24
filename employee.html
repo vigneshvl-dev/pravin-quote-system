@@ -1094,59 +1094,98 @@
         ];
 
         const MP_LAM_ACR_WPC_BOX_DOOR_ONLY = [
-            { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Marine Ply – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "Marine Ply – Acrylic (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "Marine Ply – Acrylic (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
-            { label: "WPC (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "WPC (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
+            {
+                label: "Marine Ply – Lamination (Box Type)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Hettich"
+            },
+            {
+                label: "Marine Ply – Lamination (Door Only)",
+                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
+                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Hettich"
+            },
+            {
+                label: "Marine Ply – Acrylic (Box Type)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Inner Finish: Fabric / Off-White | outer Finish: German Acrylic | Soft Closing Hinges: Sleek / Hettich"
+            },
+            {
+                label: "Marine Ply – Acrylic (Door Only)",
+                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
+                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Inner Finish: Fabric / Off-White | outer Finish: German Acrylic | Soft Closing Hinges: Sleek / Hettich"
+            },
+            {
+                label: "WPC (Box Type)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Freelam | Soft Closing Hinges: Hettich / Sleek"
+            },
+            {
+                label: "WPC (Door Only)",
+                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Freelam | Soft Closing Hinges: Hettich / Sleek"
+            },
         ];
 
         const KITCHEN_BOTTOM_OPTS = [
             {
                 label: "Marine Ply – Lamination (Box Type)",
                 fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Back Panel: WPC – 8mm Thickness | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Silent"
+                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Back Panel: WPC – 8mm Thickness | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Hettich"
             },
             {
                 label: "Marine Ply – Lamination (Partition Type)",
                 fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Silent"
+                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Hettich"
             },
             {
                 label: "Marine Ply – Lamination (Door Only)",
                 fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Silent"
+                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Hettich"
             },
             {
                 label: "Marine Ply – Acrylic (Box Type)",
                 fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Back Panel: WPC – 8mm Thickness | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Silent"
+                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Back Panel: WPC – 8mm Thickness | Inner Finish: Fabric / Off-White | outer Finish: German Acrylic | Soft Closing Hinges: Sleek / Hettich"
             },
             {
                 label: "Marine Ply – Acrylic (Partition Type)",
                 fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Silent"
+                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Inner Finish: Fabric / Off-White | outer Finish: German Acrylic | Soft Closing Hinges: Sleek / Hettich"
             },
             {
                 label: "Marine Ply – Acrylic (Door Only)",
                 fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Inner Finish: Fabric / Off-White | outer Finish: Customer Choice Laminates | Soft Closing Hinges: Sleek / Silent"
+                specs: "Marine Ply – 710 grade - 16mm Thickness | Brand: fineply/saburi | Inner Finish: Fabric / Off-White | outer Finish: German Acrylic | Soft Closing Hinges: Sleek / Hettich"
             },
             {
                 label: "WPC (Box Type)",
                 fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Feelam | Soft Closing Hinges: Hitech / Sleek"
+                specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Freelam | Soft Closing Hinges: Hettich / Sleek"
             },
             {
                 label: "WPC (Partition Type)",
                 fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
-                specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Customer Choice Laminates | Soft Closing Hinges: Hitech / Sleek"
+                specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Freelam | Soft Closing Hinges: Hettich / Sleek"
             },
             {
                 label: "WPC (Door Only)",
                 fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
-                specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Customer Choice Laminates | Soft Closing Hinges: Hitech / Sleek"
+                specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Freelam | Soft Closing Hinges: Hettich / Sleek"
+            },
+            {
+                label: "WPC – Lamination (Box Type)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Customer Choice Laminates | Soft Closing Hinges: Hettich / Sleek"
+            },
+            {
+                label: "WPC – Lamination (Partition Type)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Customer Choice Laminates | Soft Closing Hinges: Hettich / Sleek"
+            },
+            {
+                label: "WPC – Lamination (Door Only)",
+                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Customer Choice Laminates | Soft Closing Hinges: Hettich / Sleek"
             },
         ];
 
@@ -2142,7 +2181,15 @@
                     `;
 
                     lines.forEach(l => {
-                        const shortName = shortenItemName(l.itemName, roomName);
+                        let shortName = shortenItemName(l.itemName, roomName);
+                        const typeMatch = l.material ? l.material.match(/\(([^)]+)\)/) : null;
+                        if (typeMatch && typeMatch[1]) {
+                            const typeStr = typeMatch[1].toUpperCase();
+                            if (!shortName.toUpperCase().includes(typeStr)) {
+                                shortName += ` (${typeStr})`;
+                            }
+                        }
+
                         const materialCellContent = l.specs ? `
                             <div style="font-size: 0.75rem; color: var(--text); line-height: 1.45;">
                                 ${l.specs.split('|').map((s, idx) => `<div style="${idx > 0 ? 'margin-top:3px;' : ''}">• ${s.trim()}</div>`).join('')}
@@ -2197,6 +2244,15 @@
                 `;
 
                 accessoryLines.forEach(l => {
+                    let itemDisplayName = l.itemName;
+                    const accTypeMatch = l.material ? l.material.match(/\(([^)]+)\)/) : null;
+                    if (accTypeMatch && accTypeMatch[1]) {
+                        const accTypeStr = accTypeMatch[1].toUpperCase();
+                        if (!itemDisplayName.toUpperCase().includes(accTypeStr)) {
+                            itemDisplayName += ` (${accTypeStr})`;
+                        }
+                    }
+
                     const accMaterialCellContent = l.specs ? `
                         <div style="font-size: 0.75rem; color: var(--text); line-height: 1.45;">
                             ${l.specs.split('|').map((s, idx) => `<div style="${idx > 0 ? 'margin-top:3px;' : ''}">• ${s.trim()}</div>`).join('')}
@@ -2205,7 +2261,7 @@
                     html += `
                         <tr>
                           <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
-                          <td style="vertical-align:top; padding-top:10px;"><strong>${l.itemName}</strong></td>
+                          <td style="vertical-align:top; padding-top:10px;"><strong>${itemDisplayName}</strong></td>
                           <td style="vertical-align:top; padding-top:10px;">
                             ${accMaterialCellContent}
                           </td>
