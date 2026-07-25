@@ -1548,18 +1548,18 @@
         // Setup base items list per room
         const ROOM_ITEMS = {
             kitchen: [
-                { id: 1, name: "Kitchen Bottom", options: KITCHEN_BOTTOM_OPTS },
-                { id: 2, name: "Kitchen Top Box", options: MP_LAM_ACR_WPC_BOX_DOOR_ONLY },
-                { id: 3, name: "Kitchen Loft", options: KITCHEN_LOFT_OPTS },
-                { id: 4, name: "Kitchen – Island Cabin", options: MP_LAM_ACR_WPC_BOX_DOOR_ONLY },
-                { id: 5, name: "Kitchen – Breakfast Table", options: MP_LAM_ACR_WPC_BOX_DOOR_ONLY },
+                { id: 1, name: "Bottom", options: KITCHEN_BOTTOM_OPTS },
+                { id: 2, name: "Overhead Cabinets", options: MP_LAM_ACR_WPC_BOX_DOOR_ONLY },
+                { id: 3, name: "Loft", options: KITCHEN_LOFT_OPTS },
+                { id: 4, name: "Island Cabin", options: MP_LAM_ACR_WPC_BOX_DOOR_ONLY },
+                { id: 5, name: "Breakfast Table", options: MP_LAM_ACR_WPC_BOX_DOOR_ONLY },
                 { id: 6, name: "Breakfast Table – Wall Panelling", options: BREAKFAST_WALL_PANEL },
                 { id: 7, name: "Breakfast Table – Beam Covering", options: BEAM },
                 { id: 8, name: "Breakfast Table – Open Box", options: BREAKFAST_OPEN_BOX_OPTS },
                 { id: 9, name: "Spice Rack", options: SPICE },
                 { id: 10, name: "Ledge", options: LEDGE },
-                { id: 11, name: "Kitchen Side Storage Cabinet", options: KITCHEN_SIDE_STORAGE_OPTS },
-                { id: 12, name: "Kitchen & Dining Partition", options: PARTITION },
+                { id: 11, name: "Side Storage Cabinet", options: KITCHEN_SIDE_STORAGE_OPTS },
+                { id: 12, name: "Dining Partition", options: PARTITION },
             ],
             living_room: [
                 { id: 16, name: "Tv Unit – Wall Panelling", options: WALL_PANEL },
@@ -1625,18 +1625,18 @@
 
         const ROOM_ITEMS_ECONOMY = {
             kitchen: [
-                { id: 1, name: "Kitchen Bottom", options: [...KITCHEN_BOTTOM_OPTS, ...ENG_WOOD_BOX_DOOR] },
-                { id: 2, name: "Kitchen Top Box", options: [...MP_LAM_ACR_WPC_BOX_DOOR_ONLY, ...ENG_WOOD_BOX_DOOR] },
-                { id: 3, name: "Kitchen Loft", options: [...KITCHEN_LOFT_OPTS, ...ENG_WOOD_BOX_DOOR] },
-                { id: 4, name: "Kitchen – Island Cabin", options: [...MP_LAM_ACR_WPC_BOX_DOOR_ONLY, ...ENG_WOOD_BOX_DOOR] },
-                { id: 5, name: "Kitchen – Breakfast Table", options: [...MP_LAM_ACR_WPC_BOX_DOOR_ONLY, ...ENG_WOOD_BOX_DOOR] },
+                { id: 1, name: "Bottom", options: [...KITCHEN_BOTTOM_OPTS, ...ENG_WOOD_BOX_DOOR] },
+                { id: 2, name: "Overhead Cabinets", options: [...MP_LAM_ACR_WPC_BOX_DOOR_ONLY, ...ENG_WOOD_BOX_DOOR] },
+                { id: 3, name: "Loft", options: [...KITCHEN_LOFT_OPTS, ...ENG_WOOD_BOX_DOOR] },
+                { id: 4, name: "Island Cabin", options: [...MP_LAM_ACR_WPC_BOX_DOOR_ONLY, ...ENG_WOOD_BOX_DOOR] },
+                { id: 5, name: "Breakfast Table", options: [...MP_LAM_ACR_WPC_BOX_DOOR_ONLY, ...ENG_WOOD_BOX_DOOR] },
                 { id: 6, name: "Breakfast Table – Wall Panelling", options: [...BREAKFAST_WALL_PANEL, ...ENG_WOOD_ONLY] },
                 { id: 7, name: "Breakfast Table – Beam Covering", options: [...BEAM, ...ENG_WOOD_ONLY] },
                 { id: 8, name: "Breakfast Table – Open Box", options: [...BREAKFAST_OPEN_BOX_OPTS, ...ENG_WOOD_ONLY] },
                 { id: 9, name: "Spice Rack", options: [...SPICE, ...ENG_WOOD_ONLY] },
                 { id: 10, name: "Ledge", options: [...LEDGE, ...ENG_WOOD_ONLY] },
-                { id: 11, name: "Kitchen Side Storage Cabinet", options: [...KITCHEN_SIDE_STORAGE_OPTS, ...ENG_WOOD_BOX_DOOR] },
-                { id: 12, name: "Kitchen & Dining Partition", options: [...PARTITION, ...ENG_WOOD_PARTITION] }
+                { id: 11, name: "Side Storage Cabinet", options: [...KITCHEN_SIDE_STORAGE_OPTS, ...ENG_WOOD_BOX_DOOR] },
+                { id: 12, name: "Dining Partition", options: [...PARTITION, ...ENG_WOOD_PARTITION] }
             ],
             living_room: [
                 { id: 16, name: "Tv Unit – Wall Panelling", options: WALL_PANEL },
@@ -2007,6 +2007,37 @@
             }
         }
 
+        function getMatchingSpecifications(roomId, materialLabel) {
+            const defaultSpecs = "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
+            const specsTextRaw = localStorage.getItem('pks_material_specs') || defaultSpecs;
+            let specsList = [];
+            try {
+                const parsed = JSON.parse(specsTextRaw);
+                if (Array.isArray(parsed)) {
+                    specsList = parsed.map(item => ({
+                        text: item.text || item.TEXT || '',
+                        room: item.room || item.ROOM || 'all',
+                        material: item.material || item.MATERIAL || 'all'
+                    }));
+                } else {
+                    throw new Error();
+                }
+            } catch (e) {
+                specsList = specsTextRaw.split(',').map(s => s.trim()).filter(s => s.length > 0).map(s => ({
+                    text: s,
+                    room: 'all',
+                    material: 'all'
+                }));
+            }
+
+            const cleanMaterial = (materialLabel || '').toLowerCase();
+            return specsList.filter(spec => {
+                const roomMatch = (spec.room === 'all' || spec.room === roomId);
+                const materialMatch = (spec.material === 'all' || cleanMaterial.includes(spec.material.toLowerCase()));
+                return roomMatch && materialMatch;
+            }).map(spec => spec.text);
+        }
+
         function openSizePanel(buildId, itemId, optIdx) {
             const item = ITEMS.find(i => i.id === itemId);
             const opt = item.options[optIdx];
@@ -2014,14 +2045,31 @@
 
             const defaultRate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode);
 
+            const matchedGeneralSpecs = isEconomyMode ? [] : getMatchingSpecifications(selectedRoom, opt.label);
+            const allSpecsArray = [];
+            matchedGeneralSpecs.forEach(s => {
+                const ts = s.trim();
+                if (ts) {
+                    if (ts.includes('|')) {
+                        ts.split('|').forEach(sub => {
+                            const tsub = sub.trim();
+                            if (tsub && !allSpecsArray.includes(tsub)) {
+                                allSpecsArray.push(tsub);
+                            }
+                        });
+                    } else {
+                        if (!allSpecsArray.includes(ts)) {
+                            allSpecsArray.push(ts);
+                        }
+                    }
+                }
+            });
 
-
-            const specsHtml = (!isEconomyMode && opt.specs) ? `
+            const specsHtml = (!isEconomyMode && allSpecsArray.length > 0) ? `
                 <div style="background: var(--accent-light); border: 1px solid rgba(176,125,46,0.35); border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 0.77rem; line-height: 1.65; color: var(--accent-dark);">
                     <strong style="display:block; margin-bottom:5px; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.6px;">📋 Specifications</strong>
-                    ${opt.specs.split('|').map(s => {
-                        const t = s.trim();
-                        return `<div style="padding:1px 0;">▸ ${t}</div>`;
+                    ${allSpecsArray.map(s => {
+                        return `<div style="padding:1px 0;">▸ ${s}</div>`;
                     }).join('')}
                 </div>
             ` : '';
@@ -2173,13 +2221,22 @@
                 }
             }
 
+            const matchedGeneralSpecs = isEconomyMode ? [] : getMatchingSpecifications(selectedRoom, opt.label);
+            const allSpecsArray = [];
+            matchedGeneralSpecs.forEach(s => {
+                const ts = s.trim();
+                if (ts && !allSpecsArray.includes(ts)) {
+                    allSpecsArray.push(ts);
+                }
+            });
+
             quoteLines.push({
                 id: lineIdCounter++,
                 roomId: selectedRoom,
                 roomName: getFullRoomLabel(),
                 itemName: item.name,
                 material: opt.label,
-                specs: isEconomyMode ? '' : (opt.specs || ''),
+                specs: allSpecsArray.join(' | '),
                 size: sizeDesc,
                 sqft, rate, amount
             });
@@ -2202,12 +2259,22 @@
                 rate = sqft > 0 ? amount / sqft : 0;
             }
 
+            const matchedGeneralSpecs = isEconomyMode ? [] : getMatchingSpecifications(selectedRoom, desc);
+            const allSpecsArray = [];
+            matchedGeneralSpecs.forEach(s => {
+                const ts = s.trim();
+                if (ts && !allSpecsArray.includes(ts)) {
+                    allSpecsArray.push(ts);
+                }
+            });
+
             quoteLines.push({
                 id: lineIdCounter++,
                 roomId: selectedRoom,
                 roomName: getFullRoomLabel(),
                 itemName: item.name,
                 material: desc,
+                specs: allSpecsArray.join(' | '),
                 size: '—',
                 sqft, rate, amount
             });
@@ -2726,7 +2793,39 @@
 
             // Specs and Payment Terms HTML for PDF
             const defaultSpecs = "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
-            const specsText = (localStorage.getItem('pks_material_specs') || defaultSpecs).toUpperCase();
+            const specsTextRaw = localStorage.getItem('pks_material_specs') || defaultSpecs;
+            let specsList = [];
+            try {
+                const parsed = JSON.parse(specsTextRaw);
+                if (Array.isArray(parsed)) {
+                    specsList = parsed.map(item => ({
+                        text: item.text || item.TEXT || '',
+                        room: item.room || item.ROOM || 'all',
+                        material: item.material || item.MATERIAL || 'all'
+                    }));
+                } else {
+                    throw new Error();
+                }
+            } catch (e) {
+                specsList = specsTextRaw.split(',').map(s => s.trim()).filter(s => s.length > 0).map(s => ({
+                    text: s,
+                    room: 'all',
+                    material: 'all'
+                }));
+            }
+
+            // Get active room IDs and materials from current quote lines
+            const activeRoomIds = new Set(quoteLines.map(l => l.roomId));
+            const activeMaterials = quoteLines.map(l => (l.material || '').toLowerCase());
+
+            // Filter specs based on rooms and materials in the quote
+            const filteredSpecs = specsList.filter(spec => {
+                const roomMatch = (spec.room === 'all' || activeRoomIds.has(spec.room));
+                const materialMatch = (spec.material === 'all' || activeMaterials.some(m => m.includes(spec.material.toLowerCase())));
+                return roomMatch && materialMatch;
+            }).map(spec => spec.text.toUpperCase());
+
+            const specsText = filteredSpecs.join(', ');
             const payAdvance = document.getElementById('payAdvance').value || '';
             const paySecond = document.getElementById('paySecond').value || '';
             const payFinal = document.getElementById('payFinal').value || '';
@@ -3074,6 +3173,108 @@
             }
         }
 
+        function initializeDefaultSpecsIfNeeded() {
+            const current = localStorage.getItem('pks_material_specs');
+            const defaultSpecsList = [
+                { text: "MARINE PLY THICKNESS-16MM", room: "all", material: "all" },
+                { text: "LAMINATION THICKNESS 0.8MM", room: "all", material: "all" },
+                { text: "HINGES-BRAND SLEEK", room: "all", material: "all" },
+                { text: "KITCHEN HINGES SOFT CLOSING", room: "kitchen", material: "all" },
+                { text: "KITCHEN HANDLE PROFILE", room: "kitchen", material: "all" },
+                { text: "ROOM HINGES NOT SOFT CLOSING", room: "bedroom", material: "all" },
+                { text: "ROOM HANDLE SS", room: "bedroom", material: "all" },
+
+                // Lamination specifications
+                { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "lamination" },
+                { text: "Brand: fineply/saburi", room: "all", material: "lamination" },
+                { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "lamination" },
+                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "lamination" },
+                { text: "outer Finish: Customer Choice Laminates", room: "all", material: "lamination" },
+                { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "lamination" },
+
+                // Acrylic specifications
+                { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "acrylic" },
+                { text: "Brand: fineply/saburi", room: "all", material: "acrylic" },
+                { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "acrylic" },
+                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "acrylic" },
+                { text: "outer Finish: German Acrylic", room: "all", material: "acrylic" },
+                { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "acrylic" },
+
+                // WPC specifications
+                { text: "WPC – 0.7 Density – 17mm Thickness", room: "all", material: "wpc" },
+                { text: "Back Panel: WPC", room: "all", material: "wpc" },
+                { text: "Finish: Freelam", room: "all", material: "wpc" },
+                { text: "Soft Closing Hinges: Hettich / Sleek", room: "kitchen", material: "wpc" },
+
+                // PVC, Charcoal, Wood
+                { text: "Super Premium PVC Panel", room: "all", material: "pvc" },
+                { text: "Super Premium Charcoal Panel – Korea", room: "all", material: "charcoal" },
+                { text: "Engineering Wood – 18mm Thickness", room: "all", material: "engineering wood" },
+                { text: "Finish: Pre-laminated", room: "all", material: "engineering wood" }
+            ];
+
+            let needsReset = !current;
+            if (current) {
+                try {
+                    const parsed = JSON.parse(current);
+                    if (Array.isArray(parsed)) {
+                        if (parsed.some(item => (item.text || '').includes('|'))) {
+                            needsReset = true;
+                        }
+                    } else {
+                        needsReset = true;
+                    }
+                } catch(e) {
+                    needsReset = true;
+                }
+            }
+
+            if (needsReset) {
+                localStorage.setItem('pks_material_specs', JSON.stringify(defaultSpecsList));
+            } else {
+                try {
+                    let parsed = JSON.parse(current);
+                    if (!Array.isArray(parsed)) {
+                        parsed = [];
+                    }
+                    
+                    defaultSpecsList.forEach(item => {
+                        const exists = parsed.some(p => 
+                            (p.text || '').toUpperCase() === item.text.toUpperCase() && 
+                            (p.room || 'all').toLowerCase() === item.room.toLowerCase() && 
+                            (p.material || 'all').toLowerCase() === item.material.toLowerCase()
+                        );
+                        if (!exists) {
+                            parsed.push(item);
+                        }
+                    });
+                    
+                    localStorage.setItem('pks_material_specs', JSON.stringify(parsed));
+                } catch(e) {
+                    let parsed = current.split(',').map(s => s.trim()).filter(s => s.length > 0).map(s => ({
+                        text: s,
+                        room: 'all',
+                        material: 'all'
+                    }));
+                    
+                    defaultSpecsList.forEach(item => {
+                        const exists = parsed.some(p => 
+                            (p.text || '').toUpperCase() === item.text.toUpperCase() && 
+                            (p.room || 'all').toLowerCase() === item.room.toLowerCase() && 
+                            (p.material || 'all').toLowerCase() === item.material.toLowerCase()
+                        );
+                        if (!exists) {
+                            parsed.push(item);
+                        }
+                    });
+                    localStorage.setItem('pks_material_specs', JSON.stringify(parsed));
+                }
+            }
+        }
+
         // Initialize customer auto-fill logic
         initCustomerAutofill();
+
+        // Run default specs initialization
+        initializeDefaultSpecsIfNeeded();
     </script>
