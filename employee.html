@@ -2055,13 +2055,13 @@
                     filtered = filtered.filter(text => !text.toLowerCase().includes('back panel') && !text.toLowerCase().includes('backpanel'));
                 }
 
-                // 2. Wall panelling, beam coverings, ledges: remove Inner Finish and Hinges
-                if (lowerItem.includes('panel') || lowerItem.includes('covering') || lowerItem.includes('ledge')) {
+                // 2. Wall panelling, beam coverings, ledges, open boxes: remove Inner Finish and Hinges
+                if (lowerItem.includes('panel') || lowerItem.includes('covering') || lowerItem.includes('ledge') || lowerItem.includes('open box') || lowerItem.includes('openbox')) {
                     filtered = filtered.filter(text => !text.toLowerCase().includes('inner finish') && !text.toLowerCase().includes('hinges'));
                 }
 
-                // 3. Rename "outer Finish" to "Finish" for panels, coverings, ledges
-                if (lowerItem.includes('panel') || lowerItem.includes('covering') || lowerItem.includes('ledge')) {
+                // 3. Rename "outer Finish" to "Finish" for panels, coverings, ledges, open boxes
+                if (lowerItem.includes('panel') || lowerItem.includes('covering') || lowerItem.includes('ledge') || lowerItem.includes('open box') || lowerItem.includes('openbox')) {
                     filtered = filtered.map(text => {
                         if (text.toLowerCase().startsWith('outer finish:')) {
                             return text.replace(/outer\s+finish:/i, 'Finish:');
