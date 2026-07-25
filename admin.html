@@ -2753,8 +2753,7 @@
             } else if (tabId === 'add-div') {
                 renderDivisionsList();
             } else if (tabId === 'settings') {
-                const defaultSpecs = "MARINE PLY THICKNESS-16MM,LAMINATION THICKNESS 0.8MM,HINGES-BRAND SLEEK,KITCHEN HINGES SOFT CLOSING,KITCHEN HANDLE PROFILE,ROOM HINGES NOT SOFT CLOSING,ROOM HANDLE SS";
-                document.getElementById('materialSpecsInput').value = localStorage.getItem('pks_material_specs') || defaultSpecs;
+                document.getElementById('materialSpecsInput').value = localStorage.getItem('pks_material_specs') || '';
                 renderSpecsList();
                 updateSpecMaterialsDropdown();
             } else if (tabId === 'quotes-folder') {
@@ -2765,14 +2764,6 @@
         function initializeDefaultSpecsIfNeeded() {
             const current = localStorage.getItem('pks_material_specs');
             const defaultSpecsList = [
-                { text: "MARINE PLY THICKNESS-16MM", room: "all", material: "all" },
-                { text: "LAMINATION THICKNESS 0.8MM", room: "all", material: "all" },
-                { text: "HINGES-BRAND SLEEK", room: "all", material: "all" },
-                { text: "KITCHEN HINGES SOFT CLOSING", room: "kitchen", material: "all" },
-                { text: "KITCHEN HANDLE PROFILE", room: "kitchen", material: "all" },
-                { text: "ROOM HINGES NOT SOFT CLOSING", room: "bedroom", material: "all" },
-                { text: "ROOM HANDLE SS", room: "bedroom", material: "all" },
-
                 // Lamination specifications
                 { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "lamination" },
                 { text: "Brand: fineply/saburi", room: "all", material: "lamination" },
@@ -2807,7 +2798,8 @@
                 try {
                     const parsed = JSON.parse(current);
                     if (Array.isArray(parsed)) {
-                        if (parsed.some(item => (item.text || '').includes('|'))) {
+                        // Reset if it contains any of the third image details
+                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM'))) {
                             needsReset = true;
                         }
                     } else {
