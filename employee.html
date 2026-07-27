@@ -528,12 +528,19 @@
         }
 
         @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
             @page {
                 margin: 0;
             }
 
             body {
                 margin: 0;
+                background: #fff;
+                color: #000;
             }
 
             .print-content-wrapper {
@@ -612,13 +619,31 @@
             }
 
             table.quote-table th {
-                background: #f0f0f0;
-                color: #000;
-                border-bottom: 2px solid #000;
+                background: #1c2820 !important;
+                color: #b07d2e !important;
+                border-bottom: 2px solid #b07d2e !important;
+                font-weight: 700 !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.5px !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
 
             table.quote-table td {
                 border-bottom: 1px solid #ddd;
+            }
+
+            table.quote-table tr.room-group-row td,
+            table.quote-table .room-group-row td,
+            .room-group-row td {
+                background: #1c2820 !important;
+                color: #b07d2e !important;
+                font-weight: 700 !important;
+                font-size: 0.85rem !important;
+                padding: 7px 14px !important;
+                border-bottom: 1px solid #b07d2e !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
 
             tfoot td {
@@ -2781,8 +2806,8 @@
 
                     // Room group header row
                     html += `
-                        <tr style="background: var(--header);">
-                            <td colspan="${totalCols}" style="padding: 7px 14px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); border-bottom: 1px solid var(--border);">
+                        <tr class="room-group-row" style="background: #1c2820 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
+                            <td colspan="${totalCols}" style="padding: 7px 14px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #b07d2e !important; background: #1c2820 !important; border-bottom: 1px solid #b07d2e; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
                                 🏠 ${roomName}
                             </td>
                         </tr>
@@ -2806,7 +2831,10 @@
                         html += `
                             <tr>
                               <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
-                              <td style="vertical-align:top; padding-top:10px;"><strong>${shortName}</strong></td>
+                              <td style="vertical-align:top; padding-top:10px;">
+                                  <div style="font-size:0.7rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">${roomName}</div>
+                                  <strong>${shortName}</strong>
+                              </td>
                               <td style="vertical-align:top; padding-top:10px;">
                                   ${materialCellContent}
                               </td>
@@ -2844,8 +2872,8 @@
             // ── Accessories group ──
             if (accessoryLines.length > 0) {
                 html += `
-                    <tr style="background: var(--header);">
-                        <td colspan="${totalCols}" style="padding: 7px 14px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); border-bottom: 1px solid var(--border);">
+                    <tr class="room-group-row" style="background: #1c2820 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
+                        <td colspan="${totalCols}" style="padding: 7px 14px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #b07d2e !important; background: #1c2820 !important; border-bottom: 1px solid #b07d2e; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
                             ✨ Accessories
                         </td>
                     </tr>
@@ -2871,7 +2899,10 @@
                     html += `
                         <tr>
                           <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
-                          <td style="vertical-align:top; padding-top:10px;"><strong>${itemDisplayName}</strong></td>
+                          <td style="vertical-align:top; padding-top:10px;">
+                              <div style="font-size:0.7rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">${l.roomName || 'Accessories'}</div>
+                              <strong>${itemDisplayName}</strong>
+                          </td>
                           <td style="vertical-align:top; padding-top:10px;">
                             ${accMaterialCellContent}
                           </td>
@@ -3050,7 +3081,6 @@
             }
             preparePrint();
         }
-
         let currentShareText = '';
         let currentPdfFile = null;
 
@@ -3073,37 +3103,90 @@
                 const roomTotal      = roomLines.reduce((s, l) => s + l.amount, 0);
                 const accessoryTotal = accessoryLines.reduce((s, l) => s + l.amount, 0);
                 const grandTotal     = roomTotal + accessoryTotal;
-                const cols           = showRate ? 8 : 7;
 
-                const makeRow = (l, idx) => `
-                    <tr style="border-bottom:1px solid #e8ddd0;">
-                        <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx}</td>
-                        <td style="padding:6px 7px;font-size:10.5px;">
-                            <span style="background:#fdf3e3;color:#8f6320;padding:2px 6px;border-radius:3px;font-size:9.5px;font-weight:700;">${l.roomName}</span>
-                        </td>
-                        <td style="padding:6px 7px;font-size:10.5px;font-weight:600;">${l.itemName}</td>
-                        <td style="padding:6px 7px;font-size:10.5px;color:#666;">${l.material}</td>
-                        <td style="padding:6px 7px;font-size:9.5px;color:#666;font-family:monospace;">${l.size}</td>
-                        <td style="padding:6px 7px;font-size:10.5px;text-align:right;">${l.sqft}</td>
-                        ${showRate ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">₹${l.rate.toFixed(2)}</td>` : ''}
-                        <td style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:600;">₹${l.amount.toFixed(2)}</td>
-                    </tr>`;
+                const showSqFt = (typeof showSqftRate !== 'undefined') ? showSqftRate : true;
+                const cols = 4 + (showSqFt ? 1 : 0) + (showRate ? 1 : 0) + 1; // S.NO + Item + Material + Size + Amount (+SqFt, +Rate)
 
                 let rowsHTML = '';
                 let idx = 1;
-                roomLines.forEach(l => { rowsHTML += makeRow(l, idx++); });
+
+                // Group room lines by roomName
                 if (roomLines.length > 0) {
-                    rowsHTML += `<tr style="background:#fdfaf6;">
-                        <td colspan="${cols-1}" style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:600;color:#777;">Rooms Subtotal</td>
-                        <td style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:700;color:#b07d2e;">₹${roomTotal.toFixed(2)}</td>
-                    </tr>`;
+                    const roomOrder = [];
+                    const roomMap = {};
+                    roomLines.forEach(l => {
+                        if (!roomMap[l.roomName]) {
+                            roomMap[l.roomName] = [];
+                            roomOrder.push(l.roomName);
+                        }
+                        roomMap[l.roomName].push(l);
+                    });
+
+                    roomOrder.forEach(roomName => {
+                        const lines = roomMap[roomName];
+                        const roomSubTotal = lines.reduce((s, l) => s + l.amount, 0);
+
+                        // Room Header Row
+                        rowsHTML += `
+                            <tr style="background:#1c2820;">
+                                <td colspan="${cols}" style="padding:6px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#b07d2e;">
+                                    🏠 ${roomName}
+                                </td>
+                            </tr>`;
+
+                        lines.forEach(l => {
+                            rowsHTML += `
+                                <tr style="border-bottom:1px solid #e8ddd0;">
+                                    <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
+                                    <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
+                                        <div style="font-size:8.5px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px;">${roomName}</div>
+                                        ${l.itemName}
+                                    </td>
+                                    <td style="padding:6px 7px;font-size:10.5px;color:#666;">${l.material}</td>
+                                    <td style="padding:6px 7px;font-size:9.5px;color:#666;font-family:monospace;">${l.size}</td>
+                                    ${showSqFt ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">${l.sqft}</td>` : ''}
+                                    ${showRate ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">₹${l.rate.toFixed(2)}</td>` : ''}
+                                    <td style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:600;">₹${l.amount.toFixed(2)}</td>
+                                </tr>`;
+                        });
+
+                        rowsHTML += `
+                            <tr style="background:#fdfaf6;border-bottom:1px solid #e8ddd0;">
+                                <td colspan="${cols-1}" style="padding:5px 7px;font-size:10px;text-align:right;font-weight:600;color:#777;">Subtotal — ${roomName}</td>
+                                <td style="padding:5px 7px;font-size:10px;text-align:right;font-weight:700;color:#b07d2e;">₹${roomSubTotal.toFixed(2)}</td>
+                            </tr>`;
+                    });
                 }
-                accessoryLines.forEach(l => { rowsHTML += makeRow(l, idx++); });
+
                 if (accessoryLines.length > 0) {
-                    rowsHTML += `<tr style="background:#fdfaf6;">
-                        <td colspan="${cols-1}" style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:600;color:#777;">Accessories Subtotal</td>
-                        <td style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:700;color:#b07d2e;">₹${accessoryTotal.toFixed(2)}</td>
-                    </tr>`;
+                    rowsHTML += `
+                        <tr style="background:#1c2820;">
+                            <td colspan="${cols}" style="padding:6px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#b07d2e;">
+                                ✨ Accessories
+                            </td>
+                        </tr>`;
+
+                    accessoryLines.forEach(l => {
+                        rowsHTML += `
+                            <tr style="border-bottom:1px solid #e8ddd0;">
+                                <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
+                                <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
+                                    <div style="font-size:8.5px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px;">${l.roomName || 'Accessories'}</div>
+                                    ${l.itemName}
+                                </td>
+                                <td style="padding:6px 7px;font-size:10.5px;color:#666;">${l.material}</td>
+                                <td style="padding:6px 7px;font-size:9.5px;color:#666;font-family:monospace;">${l.size}</td>
+                                ${showSqFt ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">${l.sqft}</td>` : ''}
+                                ${showRate ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">₹${l.rate.toFixed(2)}</td>` : ''}
+                                <td style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:600;">₹${l.amount.toFixed(2)}</td>
+                            </tr>`;
+                    });
+
+                    rowsHTML += `
+                        <tr style="background:#fdfaf6;border-bottom:1px solid #e8ddd0;">
+                            <td colspan="${cols-1}" style="padding:5px 7px;font-size:10px;text-align:right;font-weight:600;color:#777;">Accessories Subtotal</td>
+                            <td style="padding:5px 7px;font-size:10px;text-align:right;font-weight:700;color:#b07d2e;">₹${accessoryTotal.toFixed(2)}</td>
+                        </tr>`;
                 }
 
                 const specsRaw = localStorage.getItem('pks_material_specs') || '[]';
@@ -3170,15 +3253,14 @@
                     <div style="font-size:13px;font-weight:600;color:#b07d2e;border-bottom:1px solid #e8ddd0;padding-bottom:4px;margin-bottom:6px;">Quote Summary</div>
                     <table style="width:100%;border-collapse:collapse;">
                         <thead>
-                            <tr style="background:#fdfaf6;border-bottom:2px solid #b07d2e;">
-                                <th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:center;width:5%;">#</th>
-                                <th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:left;width:13%;">Room</th>
-                                <th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:left;width:19%;">Item</th>
-                                <th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:left;width:24%;">Material</th>
-                                <th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:left;width:15%;">Size</th>
-                                <th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:right;width:8%;">Sq.Ft</th>
-                                ${showRate ? '<th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:right;width:8%;">Rate</th>' : ''}
-                                <th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:right;width:${showRate?'8':'16'}%;">Amount</th>
+                            <tr style="background:#1c2820;border-bottom:2px solid #b07d2e;color:#b07d2e;">
+                                <th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:center;width:6%;color:#b07d2e;">S.NO</th>
+                                <th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:left;width:24%;color:#b07d2e;">ITEM</th>
+                                <th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:left;width:30%;color:#b07d2e;">MATERIAL</th>
+                                <th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:left;width:18%;color:#b07d2e;">SIZE</th>
+                                ${showSqFt ? '<th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:right;width:8%;color:#b07d2e;">SQ.FT</th>' : ''}
+                                ${showRate ? '<th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:right;width:8%;color:#b07d2e;">RATE</th>' : ''}
+                                <th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:right;width:14%;color:#b07d2e;">AMOUNT</th>
                             </tr>
                         </thead>
                         <tbody>
