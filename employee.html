@@ -2264,10 +2264,26 @@
                     filtered = filtered.filter(text => !text.toLowerCase().includes('back panel') && !text.toLowerCase().includes('backpanel') && !text.toLowerCase().includes('hinges'));
                     // Only append if it's lamination
                     if (cleanMaterial.includes('lamination')) {
-                        filtered.push("headrest-fabric/lamination");
+                        filtered.push("Headrest Fabric / Lamination");
                     }
                 }
             }
+
+            // Capitalize the first letter of every spec string
+            filtered = filtered.map(text => {
+                const trimmed = text.trim();
+                if (!trimmed) return '';
+                return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+            });
+
+            // Remove duplicates (case-insensitive)
+            const seen = new Set();
+            filtered = filtered.filter(text => {
+                const lower = text.toLowerCase().trim();
+                if (seen.has(lower)) return false;
+                seen.add(lower);
+                return true;
+            });
 
             return filtered;
         }
@@ -3414,7 +3430,7 @@
                 { text: "Brand: fineply/saburi", room: "all", material: "lamination" },
                 { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "lamination" },
                 { text: "Inner Finish: Fabric / Off-White", room: "all", material: "lamination" },
-                { text: "outer Finish: Customer Choose Laminates", room: "all", material: "lamination" },
+                { text: "Outer Finish: Customer Choose Laminates", room: "all", material: "lamination" },
                 { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "lamination" },
 
                 // Acrylic specifications
@@ -3422,7 +3438,7 @@
                 { text: "Brand: fineply/saburi", room: "all", material: "acrylic" },
                 { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "acrylic" },
                 { text: "Inner Finish: Fabric / Off-White", room: "all", material: "acrylic" },
-                { text: "outer Finish: German Acrylic", room: "all", material: "acrylic" },
+                { text: "Outer Finish: German Acrylic", room: "all", material: "acrylic" },
                 { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "acrylic" },
 
                 // WPC specifications
@@ -3435,14 +3451,14 @@
                 { text: "WPC – 0.7 Density – 17mm Thickness", room: "all", material: "wpc – lamination" },
                 { text: "Back Panel: WPC", room: "all", material: "wpc – lamination" },
                 { text: "Inner Finish: Fabric / Off-White", room: "all", material: "wpc – lamination" },
-                { text: "outer Finish: Customer Choose Laminates", room: "all", material: "wpc – lamination" },
+                { text: "Outer Finish: Customer Choose Laminates", room: "all", material: "wpc – lamination" },
                 { text: "Soft Closing Hinges: Hettich / Sleek", room: "kitchen", material: "wpc – lamination" },
 
                 // PVC, Charcoal, Wood
                 { text: "Super Premium PVC Panel", room: "all", material: "pvc" },
                 { text: "Super Premium Charcoal Panel – Korea", room: "all", material: "charcoal" },
-                { text: "engineering wood(particle board -10 year warrenty )", room: "all", material: "engineering wood" },
-                { text: "finish freelamp", room: "all", material: "engineering wood" }
+                { text: "Engineering Wood(Particle Board - 10 Year Warrenty)", room: "all", material: "engineering wood" },
+                { text: "Finish Freelamp", room: "all", material: "engineering wood" }
             ];
 
             let needsReset = !current;
