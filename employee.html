@@ -996,23 +996,30 @@
                 <div style="display: flex; gap: 14px; flex-wrap: wrap;">
                     <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
                         <label
-                            style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Advance
-                            Payment</label>
-                        <input type="text" id="payAdvance" placeholder="e.g. 50% Advance"
+                            style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Token
+                            Advance</label>
+                        <input type="text" id="payToken" value="10% Token Advance" placeholder="e.g. 10% Token"
                             style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
                     </div>
                     <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
                         <label
-                            style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Second
+                            style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Advance
                             Payment</label>
-                        <input type="text" id="paySecond" placeholder="e.g. 45% Delivery"
+                        <input type="text" id="payAdvance" value="50% Advance" placeholder="e.g. 50% Advance"
+                            style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
+                    </div>
+                    <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
+                        <label
+                            style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Part
+                            Payment</label>
+                        <input type="text" id="paySecond" value="35% Part Payment" placeholder="e.g. 35% Part Payment"
                             style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
                     </div>
                     <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
                         <label
                             style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Final
                             Payment</label>
-                        <input type="text" id="payFinal" placeholder="e.g. 5% Handover"
+                        <input type="text" id="payFinal" value="5% Final Payment" placeholder="e.g. 5% Handover"
                             style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
                     </div>
                 </div>
@@ -1025,8 +1032,9 @@
                     <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Payment
                         Terms:</strong>
                     <ul style="margin: 0; padding-left: 15px; list-style-type: square; color: #333;">
+                        <li><strong>Token Advance:</strong> <span id="printPayToken"></span></li>
                         <li><strong>Advance Payment:</strong> <span id="printPayAdvance"></span></li>
-                        <li><strong>Second Payment:</strong> <span id="printPaySecond"></span></li>
+                        <li><strong>Part Payment:</strong> <span id="printPaySecond"></span></li>
                         <li><strong>Final Payment:</strong> <span id="printPayFinal"></span></li>
                     </ul>
                 </div>
@@ -2944,9 +2952,10 @@
                 document.getElementById('custAddress').value = '';
                 document.getElementById('quoteDate').valueAsDate = new Date();
 
-                document.getElementById('payAdvance').value = '';
-                document.getElementById('paySecond').value = '';
-                document.getElementById('payFinal').value = '';
+                document.getElementById('payToken').value = '10% Token Advance';
+                document.getElementById('payAdvance').value = '50% Advance';
+                document.getElementById('paySecond').value = '35% Part Payment';
+                document.getElementById('payFinal').value = '5% Final Payment';
 
                 // Reset docType
                 document.getElementById('docType').value = 'Quotation';
@@ -2999,6 +3008,7 @@
             document.getElementById('printCustAddress').textContent = document.getElementById('custAddress').value || '—';
 
             // Populate print payment terms
+            document.getElementById('printPayToken').textContent = document.getElementById('payToken').value || '—';
             document.getElementById('printPayAdvance').textContent = document.getElementById('payAdvance').value || '—';
             document.getElementById('printPaySecond').textContent = document.getElementById('paySecond').value || '—';
             document.getElementById('printPayFinal').textContent = document.getElementById('payFinal').value || '—';
@@ -3204,6 +3214,7 @@
             }).map(spec => spec.text.toUpperCase());
 
             const specsText = filteredSpecs.join(', ');
+            const payToken = document.getElementById('payToken').value || '';
             const payAdvance = document.getElementById('payAdvance').value || '';
             const paySecond = document.getElementById('paySecond').value || '';
             const payFinal = document.getElementById('payFinal').value || '';
@@ -3216,9 +3227,10 @@
                 <div style="margin-top: 12px; padding: 10px; background: #fdfaf6; border: 1px solid #e0d6c8; border-radius: 6px; font-size: 0.78rem; color: #1a1714; line-height: 1.4; page-break-inside: avoid; break-inside: avoid;">
                     <strong style="color: #b07d2e; display: block; margin-bottom: 4px;">Payment Terms:</strong>
                     <ul style="margin: 0; padding-left: 15px; list-style-type: square; color: #1a1714;">
+                        <li><strong>Token Advance:</strong> ${payToken || '—'}</li>
                         <li><strong>Advance Payment:</strong> ${payAdvance || '—'}</li>
-                        <li><strong>Second Stage:</strong> ${paySecond || '—'}</li>
-                        <li><strong>Third Stage:</strong> ${payFinal || '—'}</li>
+                        <li><strong>Part Payment:</strong> ${paySecond || '—'}</li>
+                        <li><strong>Final Payment:</strong> ${payFinal || '—'}</li>
                     </ul>
                 </div>
             `;
@@ -3315,6 +3327,7 @@
                 economyMode: isEconomyMode,
                 totalAmount,
                 quoteLines: [...quoteLines],
+                payToken: document.getElementById('payToken').value,
                 payAdvance: document.getElementById('payAdvance').value,
                 paySecond: document.getElementById('paySecond').value,
                 payFinal: document.getElementById('payFinal').value,
@@ -3442,6 +3455,7 @@
             document.getElementById('custAddress').value = quote.custAddress || '';
             document.getElementById('quoteDate').value = quote.quoteDate || '';
 
+            document.getElementById('payToken').value = quote.payToken !== undefined ? quote.payToken : '10% Token Advance';
             document.getElementById('payAdvance').value = quote.payAdvance || '';
             document.getElementById('paySecond').value = quote.paySecond || '';
             document.getElementById('payFinal').value = quote.payFinal || '';
