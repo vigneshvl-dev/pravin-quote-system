@@ -1928,7 +1928,7 @@
             const deletedMats = getDeletedStandardMaterials();
             const list = BASE_ITEMS.map(item => {
                 const rawOptions = item.options ? [...item.options] : [];
-                const filteredOptions = isEconomyMode ? rawOptions : rawOptions.filter(opt => !deletedMats.includes(`${item.id}-${opt}`));
+                const filteredOptions = rawOptions.filter(opt => !deletedMats.includes(`${item.id}-${opt.label || opt}`));
                 return {
                     id: item.id,
                     name: item.name.toUpperCase(),
@@ -1936,10 +1936,6 @@
                     custom: item.custom
                 };
             });
-
-            if (isEconomyMode) {
-                return list;
-            }
 
             const customMats = getCustomMaterials();
 
