@@ -2798,8 +2798,8 @@
                 // PVC, Charcoal, Wood
                 { text: "Super Premium PVC Panel", room: "all", material: "pvc" },
                 { text: "Super Premium Charcoal Panel – Korea", room: "all", material: "charcoal" },
-                { text: "Engineering Wood – 18mm Thickness", room: "all", material: "engineering wood" },
-                { text: "Finish: Pre-laminated", room: "all", material: "engineering wood" }
+                { text: "engineering wood(particle board -10 year warrenty )", room: "all", material: "engineering wood" },
+                { text: "finish freelamp", room: "all", material: "engineering wood" }
             ];
 
             let needsReset = !current;
@@ -2816,7 +2816,11 @@
                             const mat = (item.material || '').toLowerCase();
                             return mat === 'lamination' && (item.text || '').toLowerCase().includes('inner finish');
                         });
-                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam || !hasInnerFinishForLam) {
+                        const hasEngWoodWarranty = parsed.some(item => {
+                            const mat = (item.material || '').toLowerCase();
+                            return mat === 'engineering wood' && (item.text || '').toLowerCase().includes('warrenty');
+                        });
+                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam || !hasInnerFinishForLam || !hasEngWoodWarranty) {
                             needsReset = true;
                         }
                     } else {
