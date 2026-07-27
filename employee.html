@@ -1388,10 +1388,7 @@
         const SITOUT_CEILING_OPTS = [
             { label: "PVC", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
             { label: "Lamination", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
-            { label: "Charcoal", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
-            { label: "Wood finishing", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
-            { label: "Veneer finishing", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
-            { label: "PU Paint", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
+            { label: "Charcoal", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
         ];
 
         const ENG_WOOD_BOX_DOOR = [
@@ -2092,6 +2089,7 @@
             const isBookShelfDoor = itemName && itemName.toLowerCase().includes('shelf') && (cleanMaterial.includes('door') || cleanMaterial.includes('only'));
             const isTopBoxDoor = itemName && itemName.toLowerCase().includes('top box') && (cleanMaterial.includes('door') || cleanMaterial.includes('only'));
             const isStudyOrComputerTable = itemName && (itemName.toLowerCase().includes('study table') || itemName.toLowerCase().includes('computer table'));
+            const isChappalStandDoor = itemName && itemName.toLowerCase().includes('chappal stand') && (cleanMaterial.includes('door') || cleanMaterial.includes('only'));
             const isWpcLamDoor = cleanMaterial.includes('wpc') && cleanMaterial.includes('lamination') && (cleanMaterial.includes('door') || cleanMaterial.includes('only'));
             const isBypassInnerOuterFilter = (
                 roomId === 'prayer_unit' ||
@@ -2102,10 +2100,10 @@
                 isMusical ||
                 isWashBasin ||
                 isCrockery ||
-                isBookShelfDoor ||
                 isTopBoxDoor ||
                 isStudyOrComputerTable ||
-                isWpcLamDoor
+                isWpcLamDoor ||
+                isChappalStandDoor
             );
 
             // Material-specific filters
@@ -2128,16 +2126,19 @@
                 });
             }
 
-            // Rename outer finish to Finish for Box Type Acrylic and Box Type WPC Lamination
+            // Rename outer finish to Finish for Box Type Acrylic and Box Type WPC Lamination only if inner finish is not present
             const isAcrylicBox = cleanMaterial.includes('acrylic') && !cleanMaterial.includes('door') && !cleanMaterial.includes('only');
             const isWpcLamBox = cleanMaterial.includes('wpc') && cleanMaterial.includes('lamination') && !cleanMaterial.includes('door') && !cleanMaterial.includes('only');
             if (isAcrylicBox || isWpcLamBox) {
-                filtered = filtered.map(text => {
-                    if (text.toLowerCase().startsWith('outer finish:')) {
-                        return text.replace(/outer\s+finish:/i, 'Finish:');
-                    }
-                    return text;
-                });
+                const hasInnerFinish = filtered.some(text => text.toLowerCase().includes('inner finish'));
+                if (!hasInnerFinish) {
+                    filtered = filtered.map(text => {
+                        if (text.toLowerCase().startsWith('outer finish:')) {
+                            return text.replace(/outer\s+finish:/i, 'Finish:');
+                        }
+                        return text;
+                    });
+                }
             }
 
             if (cleanMaterial.includes('wpc') && !cleanMaterial.includes('lamination')) {
@@ -2146,6 +2147,22 @@
 
             if (itemName) {
                 const lowerItem = itemName.toLowerCase();
+
+                // Specific override for Study Table & Computer Table (excluding top box): remove inner finish, rename outer finish to Finish
+                if ((lowerItem.includes('study table') || lowerItem.includes('computer table')) && !lowerItem.includes('top box')) {
+                    filtered = filtered.filter(text => !text.toLowerCase().includes('inner finish'));
+                    filtered = filtered.map(text => {
+                        if (text.toLowerCase().startsWith('outer finish:')) {
+                            return text.replace(/outer\s+finish:/i, 'Finish:');
+                        }
+                        return text;
+                    });
+                    
+                    // Add hinges for study table & computer table
+                    if (lowerItem === 'study table' || lowerItem === 'computer table') {
+                        filtered.push("Hinges: Sleek / Hettich");
+                    }
+                }
 
                 // Specific override for TV Unit Side Show Wall Cabinet: remove inner finish, rename outer finish to Finish
                 if (lowerItem.includes('side show')) {
@@ -2203,6 +2220,7 @@
                     lowerItem.includes('top box') ||
                     lowerItem.includes('study table') ||
                     lowerItem.includes('computer table') ||
+                    lowerItem.includes('basin') ||
                     isPrayerUnitLamination
                 ) {
                     filtered = filtered.filter(text => !text.toLowerCase().includes('back panel') && !text.toLowerCase().includes('backpanel'));
@@ -2261,7 +2279,9 @@
 
             const defaultRate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode);
 
-            const matchedGeneralSpecs = isEconomyMode ? [] : getMatchingSpecifications(selectedRoom, opt.label, item.name);
+            const bypassIds = [16, 17, 18, 20, 27, 32, 33, 34, 70, 71, 74, 75];
+            const isBypassEconomySpecs = (selectedRoom === 'kitchen' || bypassIds.includes(item.id));
+            const matchedGeneralSpecs = (isEconomyMode && !isBypassEconomySpecs) ? [] : getMatchingSpecifications(selectedRoom, opt.label, item.name);
             const allSpecsArray = [];
             matchedGeneralSpecs.forEach(s => {
                 const ts = s.trim();
@@ -2281,7 +2301,7 @@
                 }
             });
 
-            const specsHtml = (!isEconomyMode && allSpecsArray.length > 0) ? `
+            const specsHtml = ((!isEconomyMode || isBypassEconomySpecs) && allSpecsArray.length > 0) ? `
                 <div style="background: var(--accent-light); border: 1px solid rgba(176,125,46,0.35); border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 0.77rem; line-height: 1.65; color: var(--accent-dark);">
                     <strong style="display:block; margin-bottom:5px; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.6px;">📋 Specifications</strong>
                     ${allSpecsArray.map(s => {
@@ -2437,7 +2457,9 @@
                 }
             }
 
-            const matchedGeneralSpecs = isEconomyMode ? [] : getMatchingSpecifications(selectedRoom, opt.label, item.name);
+            const bypassIds = [16, 17, 18, 20, 27, 32, 33, 34, 70, 71, 74, 75];
+            const isBypassEconomySpecs = (selectedRoom === 'kitchen' || bypassIds.includes(item.id));
+            const matchedGeneralSpecs = (isEconomyMode && !isBypassEconomySpecs) ? [] : getMatchingSpecifications(selectedRoom, opt.label, item.name);
             const allSpecsArray = [];
             matchedGeneralSpecs.forEach(s => {
                 const ts = s.trim();
@@ -2475,7 +2497,9 @@
                 rate = sqft > 0 ? amount / sqft : 0;
             }
 
-            const matchedGeneralSpecs = isEconomyMode ? [] : getMatchingSpecifications(selectedRoom, desc, item.name);
+            const bypassIds = [16, 17, 18, 20, 27, 32, 33, 34, 70, 71, 74, 75];
+            const isBypassEconomySpecs = (selectedRoom === 'kitchen' || bypassIds.includes(item.id));
+            const matchedGeneralSpecs = (isEconomyMode && !isBypassEconomySpecs) ? [] : getMatchingSpecifications(selectedRoom, desc, item.name);
             const allSpecsArray = [];
             matchedGeneralSpecs.forEach(s => {
                 const ts = s.trim();
@@ -3389,14 +3413,16 @@
                 { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "lamination" },
                 { text: "Brand: fineply/saburi", room: "all", material: "lamination" },
                 { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "lamination" },
-                { text: "Finish: Customer Choose Laminates", room: "all", material: "lamination" },
+                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "lamination" },
+                { text: "outer Finish: Customer Choose Laminates", room: "all", material: "lamination" },
                 { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "lamination" },
 
                 // Acrylic specifications
                 { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "acrylic" },
                 { text: "Brand: fineply/saburi", room: "all", material: "acrylic" },
                 { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "acrylic" },
-                { text: "Finish: German Acrylic", room: "all", material: "acrylic" },
+                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "acrylic" },
+                { text: "outer Finish: German Acrylic", room: "all", material: "acrylic" },
                 { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "acrylic" },
 
                 // WPC specifications
@@ -3408,7 +3434,8 @@
                 // WPC Lamination specifications
                 { text: "WPC – 0.7 Density – 17mm Thickness", room: "all", material: "wpc – lamination" },
                 { text: "Back Panel: WPC", room: "all", material: "wpc – lamination" },
-                { text: "Finish: Customer Choose Laminates", room: "all", material: "wpc – lamination" },
+                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "wpc – lamination" },
+                { text: "outer Finish: Customer Choose Laminates", room: "all", material: "wpc – lamination" },
                 { text: "Soft Closing Hinges: Hettich / Sleek", room: "kitchen", material: "wpc – lamination" },
 
                 // PVC, Charcoal, Wood
@@ -3423,13 +3450,16 @@
                 try {
                     const parsed = JSON.parse(current);
                     if (Array.isArray(parsed)) {
-                        // Reset if it contains any of the third image details, old spelling Choice, misses WPC Lamination, or has old 'outer Finish' format
+                        // Reset if it contains any of the third image details, old spelling Choice, misses WPC Lamination, or misses the new Inner Finish details for lamination
                         const hasWpcLam = parsed.some(item => {
                             const mat = (item.material || '').toLowerCase();
                             return mat.includes('wpc') && mat.includes('lamination');
                         });
-                        const hasOuterFinish = parsed.some(item => (item.text || '').toLowerCase().includes('outer finish'));
-                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam || hasOuterFinish) {
+                        const hasInnerFinishForLam = parsed.some(item => {
+                            const mat = (item.material || '').toLowerCase();
+                            return mat === 'lamination' && (item.text || '').toLowerCase().includes('inner finish');
+                        });
+                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam || !hasInnerFinishForLam) {
                             needsReset = true;
                         }
                     } else {

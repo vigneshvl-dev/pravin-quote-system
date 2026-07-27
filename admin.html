@@ -1441,7 +1441,7 @@
             ],
             sitout: [
                 { id: 46, name: "Chappal stand", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Type)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Type)", "WPC (Box Type)", "WPC (Door Type)"] },
-                { id: 47, name: "Sit out area ceiling", options: ["PVC", "Lamination", "Charcoal", "Wood finishing", "Veneer finishing", "PU Paint"] }
+                { id: 47, name: "Sit out area ceiling", options: ["PVC", "Lamination", "Charcoal"] }
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_LIST }
@@ -2770,14 +2770,16 @@
                 { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "lamination" },
                 { text: "Brand: fineply/saburi", room: "all", material: "lamination" },
                 { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "lamination" },
-                { text: "Finish: Customer Choose Laminates", room: "all", material: "lamination" },
+                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "lamination" },
+                { text: "outer Finish: Customer Choose Laminates", room: "all", material: "lamination" },
                 { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "lamination" },
 
                 // Acrylic specifications
                 { text: "Marine Ply – 710 grade - 16mm Thickness", room: "all", material: "acrylic" },
                 { text: "Brand: fineply/saburi", room: "all", material: "acrylic" },
                 { text: "Back Panel: WPC – 8mm Thickness", room: "all", material: "acrylic" },
-                { text: "Finish: German Acrylic", room: "all", material: "acrylic" },
+                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "acrylic" },
+                { text: "outer Finish: German Acrylic", room: "all", material: "acrylic" },
                 { text: "Soft Closing Hinges: Sleek / Hettich", room: "kitchen", material: "acrylic" },
 
                 // WPC specifications
@@ -2789,7 +2791,8 @@
                 // WPC Lamination specifications
                 { text: "WPC – 0.7 Density – 17mm Thickness", room: "all", material: "wpc – lamination" },
                 { text: "Back Panel: WPC", room: "all", material: "wpc – lamination" },
-                { text: "Finish: Customer Choose Laminates", room: "all", material: "wpc – lamination" },
+                { text: "Inner Finish: Fabric / Off-White", room: "all", material: "wpc – lamination" },
+                { text: "outer Finish: Customer Choose Laminates", room: "all", material: "wpc – lamination" },
                 { text: "Soft Closing Hinges: Hettich / Sleek", room: "kitchen", material: "wpc – lamination" },
 
                 // PVC, Charcoal, Wood
@@ -2804,13 +2807,16 @@
                 try {
                     const parsed = JSON.parse(current);
                     if (Array.isArray(parsed)) {
-                        // Reset if it contains any of the third image details, old spelling Choice, misses WPC Lamination, or has old 'outer Finish' format
+                        // Reset if it contains any of the third image details, old spelling Choice, misses WPC Lamination, or misses the new Inner Finish details for lamination
                         const hasWpcLam = parsed.some(item => {
                             const mat = (item.material || '').toLowerCase();
                             return mat.includes('wpc') && mat.includes('lamination');
                         });
-                        const hasOuterFinish = parsed.some(item => (item.text || '').toLowerCase().includes('outer finish'));
-                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam || hasOuterFinish) {
+                        const hasInnerFinishForLam = parsed.some(item => {
+                            const mat = (item.material || '').toLowerCase();
+                            return mat === 'lamination' && (item.text || '').toLowerCase().includes('inner finish');
+                        });
+                        if (parsed.some(item => (item.text || '').toUpperCase().includes('MARINE PLY THICKNESS-16MM') || (item.text || '').includes('Choice')) || !hasWpcLam || !hasInnerFinishForLam) {
                             needsReset = true;
                         }
                     } else {
