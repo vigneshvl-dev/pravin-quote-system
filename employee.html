@@ -1543,8 +1543,31 @@
         // Default Rates lookup (fallback if not in localStorage)
         const DEFAULT_RATES = {
             "Marine Ply – Lamination": 450,
+            "Marine Ply – Lamination (Box Type)": 450,
+            "Marine Ply – Lamination (Door Type)": 450,
+            "Marine Ply – Lamination (Door Only)": 450,
+            "Marine Ply – Lamination (Partition Type)": 450,
+            "Marine Ply – Lamination (Framed)": 450,
+            "Marine Ply – Lamination (Box)": 450,
+            "Marine Ply (Box Type)": 450,
+            "Marine Ply (Door Type)": 450,
+
             "Marine Ply – Acrylic": 650,
+            "Marine Ply – Acrylic (Box Type)": 650,
+            "Marine Ply – Acrylic (Door Type)": 650,
+            "Marine Ply – Acrylic (Door Only)": 650,
+            "Marine Ply – Acrylic (Partition Type)": 650,
+            "Marine Ply – Acrylic (Framed)": 650,
+            "Marine Ply – Acrylic (Box)": 650,
+
             "WPC": 550,
+            "WPC (Box Type)": 550,
+            "WPC (Door Type)": 550,
+            "WPC (Door Only)": 550,
+            "WPC (Partition Type)": 550,
+            "WPC (Framed)": 550,
+            "WPC (Box)": 550,
+
             "PVC": 300,
             "Lamination": 250,
             "Charcoal": 400,
@@ -1653,6 +1676,15 @@
             if (stored) {
                 try {
                     cachedRates = JSON.parse(stored);
+                    if (cachedRates["WPC"] === 0 || cachedRates["Marine Ply – Lamination"] === 0) {
+                        cachedRates = { ...DEFAULT_RATES, ...cachedRates };
+                        Object.keys(DEFAULT_RATES).forEach(key => {
+                            if (DEFAULT_RATES[key] > 0 && (cachedRates[key] === 0 || cachedRates[key] === undefined)) {
+                                cachedRates[key] = DEFAULT_RATES[key];
+                            }
+                        });
+                        localStorage.setItem('pks_rates', JSON.stringify(cachedRates));
+                    }
                     return cachedRates;
                 } catch (e) { }
             }
