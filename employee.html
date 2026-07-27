@@ -603,8 +603,11 @@
                 display: none !important;
             }
 
-            .print-only-specs-terms {
+            .print-only-specs-terms,
+            .print-only-specs-terms > div {
                 display: block !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
             }
 
             body {
@@ -616,6 +619,17 @@
                 background: #fff;
                 box-shadow: none;
                 color: #000;
+            }
+
+            table.quote-table thead {
+                display: table-row-group !important;
+            }
+
+            table.quote-table tr,
+            .quote-table tr,
+            tr {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
             }
 
             table.quote-table th {
@@ -833,7 +847,7 @@
                     </div>
                 </div>
                 <p style="font-size: 0.82rem; line-height: 1.4; color: #555; margin-top: 5px;">
-                    Address: Pravin Modular Kitchens,<br>
+                    Address: Pravin Kitchens &amp; Interiors,<br>
                     Tvm Main Road, Azhagiamandapam,<br>
                     Mulagumoodu Post - 629167, T.N.<br>
                     Mobile: +91 9787769970
@@ -1047,9 +1061,9 @@
                 </div>
 
                 <!-- Print-Only Payment Terms (shown only during browser print) -->
-                <div class="print-only-specs-terms" style="display: none; margin-top: 20px;">
+                <div class="print-only-specs-terms" style="display: none; margin-top: 20px; page-break-inside: avoid; break-inside: avoid;">
                     <div
-                        style="padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px;">
+                        style="padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px; page-break-inside: avoid; break-inside: avoid;">
                         <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Payment
                             Terms:</strong>
                         <ul id="printPayList"
@@ -2913,7 +2927,7 @@
                     let accMaterialCellContent = l.specs ? `
                         <div style="font-size: 0.75rem; color: var(--text); line-height: 1.45;">
                             ${l.specs.split('|').map((s, idx) => `<div style="${idx > 0 ? 'margin-top:3px;' : ''}">• ${s.trim()}</div>`).join('')}
-                        </div>` : `<strong style="color:var(--text);">${l.material}</strong>`;
+                        </div>` : ``;
 
                     accMaterialCellContent += getAccessoryImagesHTML(l.material, 'var(--border)');
 
@@ -2922,7 +2936,7 @@
                           <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
                           <td style="vertical-align:top; padding-top:10px;">
                               <div style="font-size:0.7rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">${l.roomName || 'Accessories'}</div>
-                              <strong>${itemDisplayName}</strong>
+                              <strong>${l.material}</strong>
                           </td>
                           <td style="vertical-align:top; padding-top:10px;">
                             ${accMaterialCellContent}
@@ -3149,7 +3163,7 @@
 
                         // Room Header Row
                         rowsHTML += `
-                            <tr style="background:#1c2820;">
+                            <tr style="background:#1c2820;page-break-inside:avoid;break-inside:avoid;">
                                 <td colspan="${cols}" style="padding:6px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#b07d2e;">
                                     🏠 ${roomName}
                                 </td>
@@ -3157,7 +3171,7 @@
 
                         lines.forEach(l => {
                             rowsHTML += `
-                                <tr style="border-bottom:1px solid #e8ddd0;">
+                                <tr style="border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                                     <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
                                     <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
                                         <div style="font-size:8.5px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px;">${roomName}</div>
@@ -3172,7 +3186,7 @@
                         });
 
                         rowsHTML += `
-                            <tr style="background:#fdfaf6;border-bottom:1px solid #e8ddd0;">
+                            <tr style="background:#fdfaf6;border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                                 <td colspan="${cols - 1}" style="padding:5px 7px;font-size:10px;text-align:right;font-weight:600;color:#777;">Subtotal — ${roomName}</td>
                                 <td style="padding:5px 7px;font-size:10px;text-align:right;font-weight:700;color:#b07d2e;">₹${roomSubTotal.toFixed(2)}</td>
                             </tr>`;
@@ -3181,7 +3195,7 @@
 
                 if (accessoryLines.length > 0) {
                     rowsHTML += `
-                        <tr style="background:#1c2820;">
+                        <tr style="background:#1c2820;page-break-inside:avoid;break-inside:avoid;">
                             <td colspan="${cols}" style="padding:6px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#b07d2e;">
                                 ✨ Accessories
                             </td>
@@ -3189,13 +3203,13 @@
 
                     accessoryLines.forEach(l => {
                         rowsHTML += `
-                            <tr style="border-bottom:1px solid #e8ddd0;">
+                            <tr style="border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                                 <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
                                 <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
-                                    <div style="font-size:8.5px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px;">${l.roomName || 'Accessories'}</div>
-                                    ${l.itemName}
+                                    ${l.material}
+                                    <div style="font-size:8px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">Accessories</div>
                                 </td>
-                                <td style="padding:6px 7px;font-size:10.5px;color:#666;">${l.material}</td>
+                                <td style="padding:6px 7px;font-size:10.5px;color:#666;">${l.specs || '—'}</td>
                                 <td style="padding:6px 7px;font-size:9.5px;color:#666;font-family:monospace;">${l.size}</td>
                                 ${showSqFt ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">${l.sqft}</td>` : ''}
                                 ${showRate ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">₹${l.rate.toFixed(2)}</td>` : ''}
@@ -3204,7 +3218,7 @@
                     });
 
                     rowsHTML += `
-                        <tr style="background:#fdfaf6;border-bottom:1px solid #e8ddd0;">
+                        <tr style="background:#fdfaf6;border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                             <td colspan="${cols - 1}" style="padding:5px 7px;font-size:10px;text-align:right;font-weight:600;color:#777;">Accessories Subtotal</td>
                             <td style="padding:5px 7px;font-size:10px;text-align:right;font-weight:700;color:#b07d2e;">₹${accessoryTotal.toFixed(2)}</td>
                         </tr>`;
@@ -3257,7 +3271,7 @@
                                 <div><div style="font-size:17px;font-weight:700;color:#b07d2e;">Pravin Kitchens &amp; Interiors</div></div>
                             </div>
                             <div style="font-size:10.5px;line-height:1.55;color:#666;">
-                                Address: Pravin Modular Kitchens,<br>Tvm Main Road, Azhagiamandapam,<br>Mulagumoodu Post - 629167, T.N.<br>Mobile: +91 9787769970
+                                Address: Pravin Kitchens &amp; Interiors,<br>Tvm Main Road, Azhagiamandapam,<br>Mulagumoodu Post - 629167, T.N.<br>Mobile: +91 9787769970
                             </div>
                         </div>
                         <div style="width:44%;text-align:right;">
@@ -3273,7 +3287,7 @@
                     </div>
                     <div style="font-size:13px;font-weight:600;color:#b07d2e;border-bottom:1px solid #e8ddd0;padding-bottom:4px;margin-bottom:6px;">Quote Summary</div>
                     <table style="width:100%;border-collapse:collapse;">
-                        <thead>
+                        <tbody>
                             <tr style="background:#1c2820;border-bottom:2px solid #b07d2e;color:#b07d2e;">
                                 <th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:center;width:6%;color:#b07d2e;">S.NO</th>
                                 <th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:left;width:24%;color:#b07d2e;">ITEM</th>
@@ -3283,21 +3297,21 @@
                                 ${showRate ? '<th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:right;width:8%;color:#b07d2e;">RATE</th>' : ''}
                                 <th style="padding:7px 7px;font-size:10.5px;font-weight:700;text-align:right;width:14%;color:#b07d2e;">AMOUNT</th>
                             </tr>
-                        </thead>
+                        </tbody>
                         <tbody>
                             ${rowsHTML}
-                            <tr style="background:#fdfaf6;border-top:2px solid #b07d2e;">
+                            <tr style="background:#fdfaf6;border-top:2px solid #b07d2e;page-break-inside:avoid;break-inside:avoid;">
                                 <td colspan="${cols - 1}" style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;">Grand Total</td>
                                 <td style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">₹${grandTotal.toFixed(2)}</td>
                             </tr>
                         </tbody>
                     </table>
                     ${specsText || payItems ? `
-                    <div style="margin-top:16px;display:flex;gap:12px;">
+                    <div style="margin-top:16px;display:flex;gap:12px;page-break-inside:avoid;break-inside:avoid;">
                         ${specsText ? `<div style="flex:1;padding:8px 10px;background:#fdfaf6;border:1px solid #e8ddd0;border-radius:4px;font-size:10px;"><strong style="color:#b07d2e;display:block;margin-bottom:4px;">Material Specifications</strong>${specsText}</div>` : ''}
                         ${payItems ? `<div style="flex:1;padding:8px 10px;background:#fdfaf6;border:1px solid #e8ddd0;border-radius:4px;font-size:10px;"><strong style="color:#b07d2e;display:block;margin-bottom:4px;">Payment Terms</strong><ul style="margin:0;padding-left:13px;">${payItems}</ul></div>` : ''}
                     </div>` : ''}
-                    <div style="margin-top:36px;display:flex;justify-content:space-between;align-items:flex-end;">
+                    <div style="margin-top:36px;display:flex;justify-content:space-between;align-items:flex-end;page-break-inside:avoid;break-inside:avoid;">
                         <div style="width:55%;font-size:9.5px;color:#666;">
                             <strong style="color:#1c2820;display:block;margin-bottom:3px;">Terms &amp; Conditions:</strong>
                             <ol style="margin:0;padding-left:13px;line-height:1.55;">
@@ -3312,7 +3326,7 @@
                             <div style="font-size:9px;color:#777;margin-top:2px;">Pravin Kitchens &amp; Interiors</div>
                         </div>
                     </div>
-                    <div style="margin-top:24px;border-top:1px solid #e8ddd0;padding-top:8px;text-align:center;font-size:9.5px;color:#777;">
+                    <div style="margin-top:24px;border-top:1px solid #e8ddd0;padding-top:8px;text-align:center;font-size:9.5px;color:#777;page-break-inside:avoid;break-inside:avoid;">
                         Thank you for your business! Design is not just what it looks like — it's how it works.
                     </div>`;
                 container.appendChild(contentDiv);
@@ -3350,7 +3364,7 @@
                     image: { type: 'jpeg', quality: 0.97 },
                     html2canvas: { scale: 2, useCORS: true, allowTaint: true, letterRendering: true, backgroundColor: '#ffffff', logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'] }
+                    pagebreak: { mode: ['avoid-all', 'css', 'legacy'], avoid: ['tr'] }
                 };
 
                 waitForImages(container).then(() => {
