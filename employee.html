@@ -1027,34 +1027,46 @@
                     <div
                         style="font-weight: 700; font-size: 0.85rem; color: var(--accent-dark); text-transform: uppercase; letter-spacing: 0.5px;">
                         Payment Terms</div>
-                    <div style="display: flex; gap: 14px; flex-wrap: wrap;">
-                        <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
-                            <label
-                                style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Token
-                                Advance</label>
-                            <input type="text" id="payToken" placeholder="e.g. 10% Token Advance"
-                                style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--surface); padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border); flex-wrap: wrap;">
+                            <span style="font-size: 0.85rem; color: var(--text); flex: 1; min-width: 280px;">
+                                <strong style="color: var(--accent-dark);">10% Token :</strong> Commencement of 3D design on receipt of token.
+                            </span>
+                            <div style="display: flex; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; width: 160px;">
+                                <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-dark); margin-right: 6px;">₹</span>
+                                <input type="text" id="payToken" placeholder="Enter amount"
+                                    style="background: transparent; border: none; padding: 6px 0; font-size: 0.82rem; color: var(--text); outline: none; width: 100%;">
+                            </div>
                         </div>
-                        <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
-                            <label
-                                style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Advance
-                                Payment</label>
-                            <input type="text" id="payAdvance" placeholder="e.g. 50% Advance"
-                                style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--surface); padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border); flex-wrap: wrap;">
+                            <span style="font-size: 0.85rem; color: var(--text); flex: 1; min-width: 280px;">
+                                <strong style="color: var(--accent-dark);">50% Advance :</strong> Drawing will be sent for production on receipt of advance.
+                            </span>
+                            <div style="display: flex; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; width: 160px;">
+                                <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-dark); margin-right: 6px;">₹</span>
+                                <input type="text" id="payAdvance" placeholder="Enter amount"
+                                    style="background: transparent; border: none; padding: 6px 0; font-size: 0.82rem; color: var(--text); outline: none; width: 100%;">
+                            </div>
                         </div>
-                        <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
-                            <label
-                                style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Part
-                                Payment</label>
-                            <input type="text" id="paySecond" placeholder="e.g. 35% Part Payment"
-                                style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--surface); padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border); flex-wrap: wrap;">
+                            <span style="font-size: 0.85rem; color: var(--text); flex: 1; min-width: 280px;">
+                                <strong style="color: var(--accent-dark);">35% Part Payment :</strong> After the completion of frame work.
+                            </span>
+                            <div style="display: flex; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; width: 160px;">
+                                <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-dark); margin-right: 6px;">₹</span>
+                                <input type="text" id="paySecond" placeholder="Enter amount"
+                                    style="background: transparent; border: none; padding: 6px 0; font-size: 0.82rem; color: var(--text); outline: none; width: 100%;">
+                            </div>
                         </div>
-                        <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
-                            <label
-                                style="font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;">Final
-                                Payment</label>
-                            <input type="text" id="payFinal" placeholder="e.g. 5% Final Payment"
-                                style="background: var(--surface); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text); outline: none;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--surface); padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border); flex-wrap: wrap;">
+                            <span style="font-size: 0.85rem; color: var(--text); flex: 1; min-width: 280px;">
+                                <strong style="color: var(--accent-dark);">5% Final Payment :</strong> The last day of work completion in site.
+                            </span>
+                            <div style="display: flex; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; width: 160px;">
+                                <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-dark); margin-right: 6px;">₹</span>
+                                <input type="text" id="payFinal" placeholder="Enter amount"
+                                    style="background: transparent; border: none; padding: 6px 0; font-size: 0.82rem; color: var(--text); outline: none; width: 100%;">
+                            </div>
                         </div>
                     </div>
 
@@ -1065,18 +1077,13 @@
                     style="display: none; margin-top: 20px; page-break-inside: avoid; break-inside: avoid;">
                     <div
                         style="padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px; page-break-inside: avoid; break-inside: avoid;">
-                        <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Payment
-                            Terms:</strong>
+                        <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Payment Terms:</strong>
                         <ul id="printPayList"
                             style="margin: 0; padding-left: 15px; list-style-type: square; color: #333;">
-                            <li id="printPayTokenLi"><strong>Token Advance:</strong> <span id="printPayToken"></span>
-                            </li>
-                            <li id="printPayAdvanceLi"><strong>Advance Payment:</strong> <span
-                                    id="printPayAdvance"></span></li>
-                            <li id="printPaySecondLi"><strong>Part Payment:</strong> <span id="printPaySecond"></span>
-                            </li>
-                            <li id="printPayFinalLi"><strong>Final Payment:</strong> <span id="printPayFinal"></span>
-                            </li>
+                            <li id="printPayTokenLi"><strong>10% Token:</strong> Commencement of 3D design on receipt of token.<span id="printPayToken"></span></li>
+                            <li id="printPayAdvanceLi"><strong>50% Advance:</strong> Drawing will be sent for production on receipt of advance.<span id="printPayAdvance"></span></li>
+                            <li id="printPaySecondLi"><strong>35% Part Payment:</strong> After the completion of frame work.<span id="printPaySecond"></span></li>
+                            <li id="printPayFinalLi"><strong>5% Final Payment:</strong> The last day of work completion in site.<span id="printPayFinal"></span></li>
                         </ul>
 
                     </div>
@@ -3091,6 +3098,11 @@
                 quoteRefInput.style.display = 'none';
                 quoteRefInput.value = '';
             }
+        function formatPayAmount(val) {
+            if (!val || !val.trim()) return '';
+            val = val.trim();
+            if (val.startsWith('₹')) return val;
+            return `₹${val}`;
         }
 
         function populatePrintDOM() {
@@ -3116,23 +3128,15 @@
             document.getElementById('printCustAddress').textContent = document.getElementById('custAddress').value || '—';
 
             // Populate print payment terms
-            const tokenVal = document.getElementById('payToken').value;
-            const advVal = document.getElementById('payAdvance').value;
-            const partVal = document.getElementById('paySecond').value;
-            const finalVal = document.getElementById('payFinal').value;
+            const tokenVal = formatPayAmount(document.getElementById('payToken').value);
+            const advVal = formatPayAmount(document.getElementById('payAdvance').value);
+            const partVal = formatPayAmount(document.getElementById('paySecond').value);
+            const finalVal = formatPayAmount(document.getElementById('payFinal').value);
 
-
-            document.getElementById('printPayToken').textContent = tokenVal || '—';
-            document.getElementById('printPayTokenLi').style.display = tokenVal ? '' : 'none';
-
-            document.getElementById('printPayAdvance').textContent = advVal || '—';
-            document.getElementById('printPayAdvanceLi').style.display = advVal ? '' : 'none';
-
-            document.getElementById('printPaySecond').textContent = partVal || '—';
-            document.getElementById('printPaySecondLi').style.display = partVal ? '' : 'none';
-
-            document.getElementById('printPayFinal').textContent = finalVal || '—';
-            document.getElementById('printPayFinalLi').style.display = finalVal ? '' : 'none';
+            document.getElementById('printPayToken').textContent = tokenVal ? ` — ${tokenVal}` : '';
+            document.getElementById('printPayAdvance').textContent = advVal ? ` — ${advVal}` : '';
+            document.getElementById('printPaySecond').textContent = partVal ? ` — ${partVal}` : '';
+            document.getElementById('printPayFinal').textContent = finalVal ? ` — ${finalVal}` : '';
         }
 
         function preparePrint() {
@@ -3273,16 +3277,16 @@
                 }).map(s => (s.text || s.TEXT || '').toUpperCase());
                 const specsText = filteredSpecs.join(', ');
 
-                const payToken = document.getElementById('payToken') ? document.getElementById('payToken').value : '';
-                const payAdvance = document.getElementById('payAdvance') ? document.getElementById('payAdvance').value : '';
-                const paySecond = document.getElementById('paySecond') ? document.getElementById('paySecond').value : '';
-                const payFinal = document.getElementById('payFinal') ? document.getElementById('payFinal').value : '';
+                const payToken = formatPayAmount(document.getElementById('payToken') ? document.getElementById('payToken').value : '');
+                const payAdvance = formatPayAmount(document.getElementById('payAdvance') ? document.getElementById('payAdvance').value : '');
+                const paySecond = formatPayAmount(document.getElementById('paySecond') ? document.getElementById('paySecond').value : '');
+                const payFinal = formatPayAmount(document.getElementById('payFinal') ? document.getElementById('payFinal').value : '');
 
                 let payItems = '';
-                if (payToken) payItems += `<li>Token Advance: ${payToken}</li>`;
-                if (payAdvance) payItems += `<li>Advance Payment: ${payAdvance}</li>`;
-                if (paySecond) payItems += `<li>Part Payment: ${paySecond}</li>`;
-                if (payFinal) payItems += `<li>Final Payment: ${payFinal}</li>`;
+                payItems += `<li style="margin-bottom:3px;"><strong>10% Token:</strong> Commencement of 3D design on receipt of token.${payToken ? ` — <strong>${payToken}</strong>` : ''}</li>`;
+                payItems += `<li style="margin-bottom:3px;"><strong>50% Advance:</strong> Drawing will be sent for production on receipt of advance.${payAdvance ? ` — <strong>${payAdvance}</strong>` : ''}</li>`;
+                payItems += `<li style="margin-bottom:3px;"><strong>35% Part Payment:</strong> After the completion of frame work.${paySecond ? ` — <strong>${paySecond}</strong>` : ''}</li>`;
+                payItems += `<li><strong>5% Final Payment:</strong> The last day of work completion in site.${payFinal ? ` — <strong>${payFinal}</strong>` : ''}</li>`;
 
                 const container = document.createElement('div');
                 container.style.cssText = 'position:fixed;left:-9999px;top:0;width:794px;background:#fff;margin:0;padding:0;';
