@@ -978,6 +978,7 @@
 
             <div class="items-grid" id="itemsGrid"></div>
 
+
             <div class="quote-wrap">
                 <div class="quote-title">
                     <h2>Quote Summary</h2>
@@ -1164,12 +1165,13 @@
         const isEconomyMode = (sessionStorage.getItem('pks_economy_mode') || localStorage.getItem('pks_economy_mode')) === 'true';
 
         // Render division badge in header
-        document.getElementById('divisionBadge').textContent = selectedDivisionName + (isEconomyMode ? ' (Economy)' : ' (Premium)');
-
-        const role = sessionStorage.getItem('pks_role');
-        if (!role) {
-            location.href = 'index.html';
+        const divBadgeEl = document.getElementById('divisionBadge');
+        if (divBadgeEl) {
+            divBadgeEl.textContent = selectedDivisionName + (isEconomyMode ? ' (Economy)' : ' (Premium)');
         }
+
+        let role = sessionStorage.getItem('pks_role') || localStorage.getItem('pks_role') || 'employee';
+        sessionStorage.setItem('pks_role', role);
         const showRate = (role === 'admin');
 
         // Local caching of storage values to optimize dynamic calculations
@@ -1196,7 +1198,8 @@
 
         const ROOMS = allRooms;
 
-        let selectedRoom = sessionStorage.getItem('pks_selected_room') || localStorage.getItem('pks_selected_room') || 'kitchen';
+        let rawSelectedRoom = sessionStorage.getItem('pks_selected_room') || localStorage.getItem('pks_selected_room') || 'kitchen';
+        let selectedRoom = ROOMS.some(r => r.id === rawSelectedRoom) ? rawSelectedRoom : 'kitchen';
         let selectedRoomName = sessionStorage.getItem('pks_selected_room_name') || localStorage.getItem('pks_selected_room_name') || 'Kitchen';
 
         let FIELD_LABELS = {
@@ -1756,24 +1759,30 @@
             return cachedRates;
         }
         function getCustomMaterials() {
-            if (cachedCustomMaterials !== null) return cachedCustomMaterials;
+            if (cachedCustomMaterials !== null && typeof cachedCustomMaterials === 'object' && !Array.isArray(cachedCustomMaterials)) return cachedCustomMaterials;
             const stored = localStorage.getItem('pks_custom_materials');
             if (stored) {
                 try {
-                    cachedCustomMaterials = JSON.parse(stored);
-                    return cachedCustomMaterials;
+                    const parsed = JSON.parse(stored);
+                    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+                        cachedCustomMaterials = parsed;
+                        return cachedCustomMaterials;
+                    }
                 } catch (e) { }
             }
             cachedCustomMaterials = {};
             return cachedCustomMaterials;
         }
         function getCustomItems() {
-            if (cachedCustomItems !== null) return cachedCustomItems;
+            if (cachedCustomItems !== null && Array.isArray(cachedCustomItems)) return cachedCustomItems;
             const stored = localStorage.getItem('pks_custom_items');
             if (stored) {
                 try {
-                    cachedCustomItems = JSON.parse(stored);
-                    return cachedCustomItems;
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed)) {
+                        cachedCustomItems = parsed;
+                        return cachedCustomItems;
+                    }
                 } catch (e) { }
             }
             cachedCustomItems = [];
@@ -1964,10 +1973,10 @@
             cachedDeletedStandardItems = [];
             return cachedDeletedStandardItems;
         }
-        const itemsSource = isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS;
-        const initialRawItems = itemsSource[selectedRoom] || itemsSource.kitchen;
-        const initialDeleted = getDeletedStandardItems();
-        let BASE_ITEMS = initialRawItems.filter(item => !initialDeleted.includes(item.id));
+        const itemsSource = (isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS) || ROOM_ITEMS;
+        const initialRawItems = (itemsSource && itemsSource[selectedRoom]) ? itemsSource[selectedRoom] : (itemsSource ? itemsSource.kitchen : []);
+        const initialDeleted = getDeletedStandardItems() || [];
+        let BASE_ITEMS = (initialRawItems || []).filter(item => item && !initialDeleted.includes(item.id));
 
         function getDeletedStandardMaterials() {
             if (cachedDeletedStandardMaterials !== null) return cachedDeletedStandardMaterials;
@@ -1990,24 +1999,27 @@
         // Combine base items with admin customizations
         function getFullItemsList() {
             const deletedMats = getDeletedStandardMaterials();
-            const list = BASE_ITEMS.map(item => {
+            const list = (BASE_ITEMS || []).map(item => {
+                if (!item) return null;
                 const rawOptions = item.options ? [...item.options] : [];
-                const filteredOptions = rawOptions.filter(opt => !deletedMats.includes(`${item.id}-${opt.label || opt}`));
+                const filteredOptions = rawOptions.filter(opt => opt && !deletedMats.includes(`${item.id}-${opt.label || opt}`));
                 return {
                     id: item.id,
-                    name: item.name.toUpperCase(),
+                    name: (item.name || '').toUpperCase(),
                     options: filteredOptions,
                     custom: item.custom
                 };
-            });
+            }).filter(Boolean);
 
             const customMats = getCustomMaterials();
 
             // Append custom materials to standard items
             list.forEach(item => {
+                if (!item) return;
                 const isAccessoryCard = [15, 23, 40, 50].includes(item.id);
-                if (!isAccessoryCard && !item.custom && customMats[item.id]) {
+                if (!isAccessoryCard && !item.custom && customMats && customMats[item.id] && Array.isArray(customMats[item.id])) {
                     customMats[item.id].forEach(m => {
+                        if (!m) return;
                         let formula;
                         if (m.formulaType === "L*H") formula = v => (v.L * v.H) / 144;
                         else if (m.formulaType === "L*W") formula = v => (v.L * v.W) / 144;
@@ -2015,10 +2027,10 @@
                         else formula = v => ((v.L + v.W) * v.H) / 144;
 
                         item.options.push({
-                            label: m.label,
-                            fields: m.fields,
+                            label: m.label || '',
+                            fields: m.fields || [],
                             formula: formula,
-                            note: m.note
+                            note: m.note || ''
                         });
                     });
                 }
@@ -2027,28 +2039,32 @@
             // Append admin created completely custom items
             if (selectedRoom !== 'accessories') {
                 const customItems = getCustomItems();
-                customItems.forEach(item => {
-                    const processedOptions = item.options.map(opt => {
-                        let formula;
-                        if (opt.formulaType === "L*H") formula = v => (v.L * v.H) / 144;
-                        else if (opt.formulaType === "L*W") formula = v => (v.L * v.W) / 144;
-                        else if (opt.formulaType === "SQFT") formula = v => v.SQFT;
-                        else formula = v => ((v.L + v.W) * v.H) / 144;
+                if (Array.isArray(customItems)) {
+                    customItems.forEach(item => {
+                        if (!item || !item.options || !Array.isArray(item.options)) return;
+                        const processedOptions = item.options.map(opt => {
+                            if (!opt) return null;
+                            let formula;
+                            if (opt.formulaType === "L*H") formula = v => (v.L * v.H) / 144;
+                            else if (opt.formulaType === "L*W") formula = v => (v.L * v.W) / 144;
+                            else if (opt.formulaType === "SQFT") formula = v => v.SQFT;
+                            else formula = v => ((v.L + v.W) * v.H) / 144;
 
-                        return {
-                            label: opt.label,
-                            fields: opt.fields,
-                            formula: formula,
-                            note: opt.note
-                        };
-                    });
+                            return {
+                                label: opt.label || '',
+                                fields: opt.fields || [],
+                                formula: formula,
+                                note: opt.note || ''
+                            };
+                        }).filter(Boolean);
 
-                    list.push({
-                        id: item.id,
-                        name: item.name.toUpperCase(),
-                        options: processedOptions
+                        list.push({
+                            id: item.id,
+                            name: (item.name || '').toUpperCase(),
+                            options: processedOptions
+                        });
                     });
-                });
+                }
             }
 
             return list;
@@ -2069,45 +2085,63 @@
         }
 
         function updateRoomState(roomId, roomName) {
-            selectedRoom = roomId;
-            selectedRoomName = roomName;
-            sessionStorage.setItem('pks_selected_room', roomId);
-            sessionStorage.setItem('pks_selected_room_name', roomName);
-            localStorage.setItem('pks_selected_room', roomId);
-            localStorage.setItem('pks_selected_room_name', roomName);
+            try {
+                const validRoom = ROOMS.find(r => r.id === roomId);
+                if (validRoom) {
+                    selectedRoom = validRoom.id;
+                    selectedRoomName = roomName || validRoom.name;
+                } else {
+                    selectedRoom = 'kitchen';
+                    selectedRoomName = 'Kitchen';
+                }
+                sessionStorage.setItem('pks_selected_room', selectedRoom);
+                sessionStorage.setItem('pks_selected_room_name', selectedRoomName);
+                localStorage.setItem('pks_selected_room', selectedRoom);
+                localStorage.setItem('pks_selected_room_name', selectedRoomName);
 
-            const itemsSource = isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS;
-            const rawItems = itemsSource[selectedRoom] || itemsSource.kitchen;
-            const deleted = getDeletedStandardItems();
-            BASE_ITEMS = rawItems.filter(item => !deleted.includes(item.id));
-            ITEMS = getFullItemsList();
+                const itemsSource = (isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS) || ROOM_ITEMS;
+                const rawItems = (itemsSource && itemsSource[selectedRoom]) ? itemsSource[selectedRoom] : (itemsSource ? itemsSource.kitchen : []);
+                const deleted = getDeletedStandardItems() || [];
+                BASE_ITEMS = (rawItems || []).filter(item => item && !deleted.includes(item.id));
+                ITEMS = getFullItemsList() || [];
 
-            // Update badge in header
-            document.getElementById('roomBadge').textContent = selectedRoomName;
+                // Update badge in header
+                const roomBadge = document.getElementById('roomBadge');
+                if (roomBadge) {
+                    roomBadge.textContent = selectedRoomName;
+                }
 
-            // Toggle Floor and Room selectors ONLY for bedroom
-            const selectorsWrap = document.getElementById('floorSelectorsWrap');
-            if (selectorsWrap) {
-                selectorsWrap.style.display = (roomId === 'bedroom') ? 'flex' : 'none';
+                // Toggle Floor and Room selectors ONLY for bedroom
+                const selectorsWrap = document.getElementById('floorSelectorsWrap');
+                if (selectorsWrap) {
+                    selectorsWrap.style.display = (selectedRoom === 'bedroom') ? 'flex' : 'none';
+                }
+            } catch (err) {
+                console.error("Error updating room state:", err);
+            } finally {
+                renderRoomTabs();
+                renderItemsGrid();
             }
-
-            renderRoomTabs();
-            renderItemsGrid();
         }
 
         /* ---------- render item cards ---------- */
-        const grid = document.getElementById('itemsGrid');
-
         function renderItemsGrid() {
+            const grid = document.getElementById('itemsGrid');
+            if (!grid) return;
             grid.innerHTML = '';
+            if (!Array.isArray(ITEMS) || ITEMS.length === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--muted); padding: 30px; font-style: italic;">No items available for this room.</div>`;
+                return;
+            }
             ITEMS.forEach(item => {
+                if (!item) return;
                 const card = document.createElement('div');
                 card.className = 'item-card';
                 card.id = `card-${item.id}`;
                 card.innerHTML = `
                     <div class="item-head">
                       <span class="item-num">${item.id}</span>
-                      <span class="item-name">${item.name}</span>
+                      <span class="item-name">${item.name || ''}</span>
                     </div>
                     <button class="add-btn" onclick="openBuilder(${item.id})">Click ${item.custom ? 'Custom Line' : 'Me'}</button>
                     <div class="builders" id="builders-${item.id}"></div>
@@ -2118,6 +2152,7 @@
 
         function renderRoomTabs() {
             const tabsEl = document.getElementById('roomTabs');
+            if (!tabsEl) return;
             tabsEl.innerHTML = '';
 
             ROOMS.forEach(room => {
@@ -2144,8 +2179,21 @@
             });
         }
 
-        // Initialize dynamic tabs and list
-        updateRoomState(selectedRoom, selectedRoomName);
+        // Initialize on page load - use multiple strategies to ensure it runs
+        function _doInit() {
+            if (window._appInitialized) return;
+            window._appInitialized = true;
+            try { updateRoomState(selectedRoom, selectedRoomName); } catch(e) {
+                try { renderRoomTabs(); } catch(_) {}
+                try { renderItemsGrid(); } catch(_) {}
+            }
+        }
+        // Strategy 1: DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', _doInit);
+        // Strategy 2: If DOM already loaded, call directly
+        if (document.readyState !== 'loading') { _doInit(); }
+        // Strategy 3: window.onload fallback
+        window.addEventListener('load', _doInit);
 
         // Listen for admin changes in other tabs/windows
         window.addEventListener('storage', (e) => {
@@ -3098,6 +3146,8 @@
                 quoteRefInput.style.display = 'none';
                 quoteRefInput.value = '';
             }
+        }
+
         function formatPayAmount(val) {
             if (!val || !val.trim()) return '';
             val = val.trim();
