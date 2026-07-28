@@ -2862,6 +2862,18 @@
                 list.push({ src: 'IMG_4818.jpg', ratio: '16:9' });
                 list.push({ src: 'IMG_4817.jpg', ratio: '16:9' });
                 list.push({ src: 'IMG_4816.jpg', ratio: '16:9' });
+            } else if (lower.includes('carousel')) {
+                list.push({ src: 'assets/carousel.png', ratio: '16:9' });
+            } else if (lower.includes('gtbt')) {
+                list.push({ src: 'assets/gtbt.png', ratio: '16:9' });
+            } else if (lower.includes('dustbin')) {
+                list.push({ src: 'assets/dustbin.png', ratio: '16:9' });
+            } else if (lower.includes('detergent')) {
+                list.push({ src: 'assets/detergent.png', ratio: '16:9' });
+            } else if (lower.includes('shutter')) {
+                list.push({ src: 'assets/shutter.png', ratio: '9:16' });
+            } else if (lower.includes('magic corner')) {
+                list.push({ src: 'assets/magic_corner.png', ratio: '16:9' });
             }
 
             if (list.length === 0) return '';
@@ -3300,7 +3312,10 @@
                                     ${l.material}
                                     <div style="font-size:8px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">Accessories</div>
                                 </td>
-                                <td style="padding:6px 7px;font-size:10.5px;color:#666;">${l.specs || '—'}</td>
+                                <td style="padding:6px 7px;font-size:10.5px;color:#666;">
+                                    ${l.specs || '—'}
+                                    ${getAccessoryImagesHTML(l.material, '#e8ddd0')}
+                                </td>
                                 <td style="padding:6px 7px;font-size:9.5px;color:#666;font-family:monospace;">${l.size}</td>
                                 ${showSqFt ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">${l.sqft}</td>` : ''}
                                 ${showRate ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">₹${l.rate.toFixed(2)}</td>` : ''}
