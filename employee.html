@@ -1936,6 +1936,12 @@
             });
         }
 
+        for (const room in ROOM_ITEMS_ECONOMY) {
+            ROOM_ITEMS_ECONOMY[room].forEach(item => {
+                if (item.name) item.name = item.name.toUpperCase();
+            });
+        }
+
         function getDeletedStandardItems() {
             if (cachedDeletedStandardItems !== null) return cachedDeletedStandardItems;
             const stored = localStorage.getItem('pks_deleted_standard_items');
@@ -1951,7 +1957,8 @@
             cachedDeletedStandardItems = [];
             return cachedDeletedStandardItems;
         }
-        const initialRawItems = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+        const itemsSource = isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS;
+        const initialRawItems = itemsSource[selectedRoom] || itemsSource.kitchen;
         const initialDeleted = getDeletedStandardItems();
         let BASE_ITEMS = initialRawItems.filter(item => !initialDeleted.includes(item.id));
 
@@ -2062,7 +2069,8 @@
             localStorage.setItem('pks_selected_room', roomId);
             localStorage.setItem('pks_selected_room_name', roomName);
 
-            const rawItems = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+            const itemsSource = isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS;
+            const rawItems = itemsSource[selectedRoom] || itemsSource.kitchen;
             const deleted = getDeletedStandardItems();
             BASE_ITEMS = rawItems.filter(item => !deleted.includes(item.id));
             ITEMS = getFullItemsList();
@@ -2763,16 +2771,10 @@
                 'KITCHEN ',
                 'LIVING ROOM ',
                 'LIVING AND ',
-                'BREAKFAST TABLE – ',
-                'BREAKFAST TABLE - ',
-                'TV UNIT – ',
-                'TV UNIT-',
-                'DRESSING UNIT ',
                 'TOILET AREA ',
                 'STORE ROOM ',
                 'PRAYER UNIT ',
                 'DINING ROOM ',
-                'WASH BASIN UNIT ',
                 'SIT OUT AREA ',
             ];
             let name = fullName.trim();
