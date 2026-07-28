@@ -1361,6 +1361,16 @@
                 fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
                 specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Freelam | Soft Closing Hinges: Hettich / Sleek"
             },
+            {
+                label: "WPC – Lamination (Box Type)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Customer Choice Laminates | Soft Closing Hinges: Hettich / Sleek"
+            },
+            {
+                label: "WPC – Lamination (Door Type)",
+                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Customer Choice Laminates | Soft Closing Hinges: Hettich / Sleek"
+            },
         ];
 
         const MP_LAM_ACR_WPC_BOX_DOOR_ONLY = [
@@ -1393,6 +1403,16 @@
                 label: "WPC (Door Only)",
                 fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
                 specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Freelam | Soft Closing Hinges: Hettich / Sleek"
+            },
+            {
+                label: "WPC – Lamination (Box Type)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Customer Choice Laminates | Soft Closing Hinges: Hettich / Sleek"
+            },
+            {
+                label: "WPC – Lamination (Door Only)",
+                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Customer Choice Laminates | Soft Closing Hinges: Hettich / Sleek"
             },
         ];
 
@@ -1459,8 +1479,6 @@
             },
         ];
 
-
-
         const KITCHEN_LOFT_OPTS = [
             {
                 label: "Marine Ply – Lamination (Box Type)",
@@ -1507,6 +1525,21 @@
                 fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
                 specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Freelam | Soft Closing Hinges: Hettich / Sleek"
             },
+            {
+                label: "WPC – Lamination (Box Type)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Customer Choice Laminates | Soft Closing Hinges: Hettich / Sleek"
+            },
+            {
+                label: "WPC – Lamination (Framed)",
+                fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Back Panel: WPC | Finish: Customer Choice Laminates | Soft Closing Hinges: Hettich / Sleek"
+            },
+            {
+                label: "WPC – Lamination (Door Only)",
+                fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144",
+                specs: "WPC – 0.7 Density – 17mm Thickness | Finish: Customer Choice Laminates | Soft Closing Hinges: Hettich / Sleek"
+            },
         ];
 
         const BED_OPTS = [
@@ -1517,7 +1550,8 @@
         const DRESSING_BOTTOM_OPTS = [
             { label: "Marine Ply – Lamination (Box)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "Marine Ply – Acrylic (Box)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
-            { label: "WPC (Box)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" }
+            { label: "WPC (Box)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "WPC – Lamination (Box)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" }
         ];
 
         const GLASS_PARTITION_OPTS = [
@@ -1582,6 +1616,14 @@
             "WPC (Partition Type)": 550,
             "WPC (Framed)": 550,
             "WPC (Box)": 550,
+
+            "WPC – Lamination": 550,
+            "WPC – Lamination (Box Type)": 550,
+            "WPC – Lamination (Door Type)": 550,
+            "WPC – Lamination (Door Only)": 550,
+            "WPC – Lamination (Partition Type)": 550,
+            "WPC – Lamination (Framed)": 550,
+            "WPC – Lamination (Box)": 550,
 
             "PVC": 300,
             "Lamination": 250,
@@ -1894,12 +1936,6 @@
             });
         }
 
-        for (const room in ROOM_ITEMS_ECONOMY) {
-            ROOM_ITEMS_ECONOMY[room].forEach(item => {
-                if (item.name) item.name = item.name.toUpperCase();
-            });
-        }
-
         function getDeletedStandardItems() {
             if (cachedDeletedStandardItems !== null) return cachedDeletedStandardItems;
             const stored = localStorage.getItem('pks_deleted_standard_items');
@@ -1915,8 +1951,7 @@
             cachedDeletedStandardItems = [];
             return cachedDeletedStandardItems;
         }
-        const itemsSource = isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS;
-        const initialRawItems = itemsSource[selectedRoom] || itemsSource.kitchen;
+        const initialRawItems = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
         const initialDeleted = getDeletedStandardItems();
         let BASE_ITEMS = initialRawItems.filter(item => !initialDeleted.includes(item.id));
 
@@ -2027,8 +2062,7 @@
             localStorage.setItem('pks_selected_room', roomId);
             localStorage.setItem('pks_selected_room_name', roomName);
 
-            const itemsSource = isEconomyMode ? ROOM_ITEMS_ECONOMY : ROOM_ITEMS;
-            const rawItems = itemsSource[selectedRoom] || itemsSource.kitchen;
+            const rawItems = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
             const deleted = getDeletedStandardItems();
             BASE_ITEMS = rawItems.filter(item => !deleted.includes(item.id));
             ITEMS = getFullItemsList();
