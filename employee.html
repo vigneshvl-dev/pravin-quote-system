@@ -1565,7 +1565,14 @@
             },
         ];
 
-        const BED_OPTS = [
+        const KING_BED_OPTS = [
+            { label: "King Size Bed (Direct Price)", fields: [], formula: v => 1, note: "direct price" },
+            { label: "Marine Ply – Lamination", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
+            { label: "Marine Ply – Acrylic", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
+        ];
+
+        const QUEEN_BED_OPTS = [
+            { label: "Queen Size Bed (Direct Price)", fields: [], formula: v => 1, note: "direct price" },
             { label: "Marine Ply – Lamination", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" },
             { label: "Marine Ply – Acrylic", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
         ];
@@ -1608,7 +1615,13 @@
             { label: "Engineering Wood", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
         ];
 
-        const ENG_WOOD_BED = [
+        const ENG_WOOD_KING_BED = [
+            { label: "King Size Bed (Direct Price)", fields: [], formula: v => 1, note: "direct price" },
+            { label: "Engineering Wood", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
+        ];
+
+        const ENG_WOOD_QUEEN_BED = [
+            { label: "Queen Size Bed (Direct Price)", fields: [], formula: v => 1, note: "direct price" },
             { label: "Engineering Wood", fields: ["L", "W"], formula: v => (v.L * v.W) / 144, note: "L×W/144" }
         ];
 
@@ -1844,8 +1857,8 @@
             bedroom: [
                 { id: 25, name: "Wardrobe", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 27, name: "Bed back wall paneling", options: WALL_PANEL },
-                { id: 28, name: "King Size Bed", options: BED_OPTS },
-                { id: 280, name: "Queen Size Bed", options: BED_OPTS },
+                { id: 28, name: "King Size Bed", options: KING_BED_OPTS },
+                { id: 280, name: "Queen Size Bed", options: QUEEN_BED_OPTS },
                 { id: 29, name: "Bay window", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 30, name: "Dressing unit wall paneling", options: WALL_PANEL },
                 { id: 31, name: "Dressing unit bottom cabinet", options: DRESSING_BOTTOM_OPTS },
@@ -1922,30 +1935,30 @@
             bedroom: [
                 { id: 25, name: "Wardrobe", options: ENG_WOOD_ONLY },
                 { id: 27, name: "Bed back wall paneling", options: WALL_PANEL },
-                { id: 28, name: "King Size Bed", options: ENG_WOOD_BED },
-                { id: 280, name: "Queen Size Bed", options: ENG_WOOD_BED },
-                { id: 29, name: "Bay Window", options: ENG_WOOD_ONLY },
+                { id: 28, name: "King Size Bed", options: ENG_WOOD_KING_BED },
+                { id: 280, name: "Queen Size Bed", options: ENG_WOOD_QUEEN_BED },
+                { id: 29, name: "Bay Window", options: ENG_WOOD_BOX_DOOR },
                 { id: 30, name: "Dressing unit wall paneling", options: ENG_WOOD_WALL_PANEL },
-                { id: 31, name: "Dressing unit bottom cabinet", options: ENG_WOOD_BOX_DOOR },
+                { id: 31, name: "Dressing unit bottom cabinet", options: ENG_WOOD_BOX_ONLY },
                 { id: 32, name: "Tv unit-wall paneling", options: WALL_PANEL },
                 { id: 33, name: "Tv unit-bottom cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 34, name: "Tv unit-SIDE SHOW WALL CABINET", options: MP_LAM_ACR_WPC_BOX_DOOR },
-                { id: 65, name: "Side Cabinet", options: ENG_WOOD_ONLY },
-                { id: 66, name: "Cupboard 1", options: ENG_WOOD_ONLY },
-                { id: 67, name: "Cupboard 2", options: ENG_WOOD_ONLY },
-                { id: 68, name: "Loft 1", options: ENG_WOOD_ONLY },
-                { id: 69, name: "Loft 2", options: ENG_WOOD_ONLY },
+                { id: 65, name: "Side Cabinet", options: ENG_WOOD_BOX_DOOR },
+                { id: 66, name: "Cupboard 1", options: ENG_WOOD_BOX_DOOR },
+                { id: 67, name: "Cupboard 2", options: ENG_WOOD_BOX_DOOR },
+                { id: 68, name: "Loft 1", options: ENG_WOOD_BOX_DOOR },
+                { id: 69, name: "Loft 2", options: ENG_WOOD_BOX_DOOR },
                 { id: 70, name: "Wall Panneling", options: WALL_PANEL },
                 { id: 71, name: "Wall Panneling With Hidden Door", options: WALL_PANEL }
             ],
             dining_room: [
                 { id: 37, name: "Wash basin unit bottom cabinet", options: ENG_WOOD_BOX_DOOR },
-                { id: 38, name: "Wash basin unit wall paneling", options: ENG_WOOD_ONLY },
+                { id: 38, name: "Wash basin unit wall paneling", options: WALL_PANEL },
                 { id: 39, name: "Dining room crockery unit", options: ENG_WOOD_BOX_DOOR },
                 { id: 40, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             musical_room: [
-                { id: 80, name: "Wall Panel", options: ENG_WOOD_ONLY },
+                { id: 80, name: "Wall Panel", options: WALL_PANEL },
                 { id: 81, name: "Musical Table", options: ENG_WOOD_BOX_ONLY }
             ],
             study_room: [
@@ -2300,7 +2313,7 @@
 
             const item = ITEMS.find(i => i.id === itemId);
             const opt = item.options[optIdx];
-            if (opt.label === "Soft Closing Hinges" || opt.label === "Profile Handle") {
+            if (opt.label === "Soft Closing Hinges" || opt.label === "Profile Handle" || opt.label.includes("(Direct Price)")) {
                 confirmMaterial(buildId, itemId, optIdx);
             } else {
                 openSizePanel(buildId, itemId, optIdx);
@@ -2744,6 +2757,8 @@
             let sizeDesc = '';
             if (opt.fields.includes('QTY')) {
                 sizeDesc = `QT:${v.QTY || sqft || 1}`;
+            } else if (opt.label.includes("(Direct Price)")) {
+                sizeDesc = '—';
             } else {
                 sizeDesc = opt.fields.map(f => `${f}:${v[f]}`).join(' × ');
                 if (!sizeDesc || sizeDesc.includes('undefined')) {
