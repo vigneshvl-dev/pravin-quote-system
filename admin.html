@@ -1539,7 +1539,7 @@
             ],
             sitout: [
                 { id: 46, name: "Chappal stand", options: ["Marine Ply – Lamination (Box Type)", "Marine Ply – Lamination (Door Only)", "Marine Ply – Acrylic (Box Type)", "Marine Ply – Acrylic (Door Only)", "WPC (Box Type)", "WPC (Door Only)", "WPC – Lamination (Box Type)", "WPC – Lamination (Door Only)"] },
-                { id: 47, name: "Sit out area ceiling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] }
+                { id: 47, name: "Sit out area wall panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] }
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_LIST }
@@ -1617,7 +1617,7 @@
             ],
             sitout: [
                 { id: 46, name: "Chappal stand", options: ["Engineering Wood (Box Type)", "Engineering Wood (Door Only)"] },
-                { id: 47, name: "Sit out area ceiling", options: ["Engineering Wood"] }
+                { id: 47, name: "Sit out area wall panelling", options: ["Wall Panel PVC", "Wall Panel Lamination", "Wall Panel Charcoal"] }
             ],
             accessories: [
                 { id: 50, name: "Accessories", options: ACCESSORY_LIST }
@@ -1637,7 +1637,7 @@
         }
 
         const isEconomyMode = (sessionStorage.getItem('pks_economy_mode') || localStorage.getItem('pks_economy_mode')) === 'true';
-        let BASE_ITEMS = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+        let BASE_ITEMS = ROOM_ITEMS[selectedRoom] || [];
 
         /* ---------- Data Loaders ---------- */
         function getStoredRoomRates() {
@@ -2016,7 +2016,7 @@
 
 
 
-                BASE_ITEMS = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+                BASE_ITEMS = ROOM_ITEMS[selectedRoom] || [];
                 customMaterials = {};
                 customItems = [];
                 divisionsList = getDivisions();
@@ -2281,8 +2281,8 @@
                 nameUpper.includes("CAROUSEL") || nameUpper.includes("SWING")) {
                 return { formulaType: "QTY", fields: ["QTY"], note: "qty" };
             }
-            // L*W formulas (Ledge, Sit out ceiling)
-            if (itemId === 10 || itemId === 47 || name === "Wood finishing" ||
+            // L*W formulas (Ledge)
+            if (itemId === 10 || name === "Wood finishing" ||
                 name === "Veneer finishing" || name === "PU Paint") {
                 return { formulaType: "L*W", fields: ["L", "W"], note: "L×W" };
             }
@@ -2290,11 +2290,11 @@
             if (itemId === 9) {
                 return { formulaType: "SQFT", fields: ["SQFT"], note: "direct sq.ft" };
             }
-            // L*H (Wall panel, Beam, Door Only)
+            // L*H (Wall panel, Beam, Door Only, Sit out panelling)
             if (nameUpper.includes("DOOR ONLY") || nameUpper.includes("Door Only") ||
                 name === "Glass" || itemId === 6 || itemId === 7 || itemId === 16 ||
                 itemId === 20 || itemId === 27 || itemId === 30 || itemId === 32 ||
-                itemId === 38 || itemId === 70 || itemId === 71 || itemId === 80) {
+                itemId === 38 || itemId === 70 || itemId === 71 || itemId === 80 || itemId === 47) {
                 return { formulaType: "L*H", fields: ["L", "H"], note: "L×H" };
             }
             // Default: (L+W)*H
@@ -2405,7 +2405,7 @@
                 localStorage.setItem('pks_deleted_standard_items', JSON.stringify(deletedStandardItems));
 
                 // Refresh base items
-                const rawItems = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+                const rawItems = ROOM_ITEMS[selectedRoom] || [];
                 BASE_ITEMS = rawItems.filter(item => !deletedStandardItems.includes(item.id));
 
                 renderItemsDropdown();
@@ -2463,7 +2463,7 @@
             localStorage.setItem('pks_selected_room', roomId);
             localStorage.setItem('pks_selected_room_name', roomName);
 
-            const rawItems = ROOM_ITEMS[selectedRoom] || ROOM_ITEMS.kitchen;
+            const rawItems = ROOM_ITEMS[selectedRoom] || [];
             BASE_ITEMS = rawItems.filter(item => !deletedStandardItems.includes(item.id));
             currentRates = getRates();
             customMaterials = getCustomMaterials();
