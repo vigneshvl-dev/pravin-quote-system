@@ -2292,10 +2292,10 @@
 
             document.getElementById('roomBadge').textContent = selectedRoomName;
 
-            // Toggle Floor and Room selectors ONLY for bedroom
+            // Toggle Floor and Room selectors for all rooms
             const selectorsWrap = document.getElementById('floorSelectorsWrap');
             if (selectorsWrap) {
-                selectorsWrap.style.display = (roomId === 'bedroom') ? 'flex' : 'none';
+                selectorsWrap.style.display = 'flex';
             }
 
             renderRoomTabs();

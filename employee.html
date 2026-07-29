@@ -2087,13 +2087,9 @@
         let lineIdCounter = 1;
 
         function getFullRoomLabel() {
-            if (selectedRoom === 'bedroom') {
-                const floor = document.getElementById('floorSelector').value;
-                const roomNo = document.getElementById('roomNoSelector').value;
-                return `${floor} - ${selectedRoomName} ${roomNo}`;
-            } else {
-                return selectedRoomName;
-            }
+            const floor = document.getElementById('floorSelector').value;
+            const roomNo = document.getElementById('roomNoSelector').value;
+            return `${floor} - ${selectedRoomName} ${roomNo}`;
         }
 
         function updateRoomState(roomId, roomName) {
@@ -2123,10 +2119,10 @@
                     roomBadge.textContent = selectedRoomName;
                 }
 
-                // Toggle Floor and Room selectors ONLY for bedroom
+                // Toggle Floor and Room selectors for all rooms
                 const selectorsWrap = document.getElementById('floorSelectorsWrap');
                 if (selectorsWrap) {
-                    selectorsWrap.style.display = (selectedRoom === 'bedroom') ? 'flex' : 'none';
+                    selectorsWrap.style.display = 'flex';
                 }
             } catch (err) {
                 console.error("Error updating room state:", err);
