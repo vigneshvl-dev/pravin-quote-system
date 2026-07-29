@@ -948,6 +948,7 @@
             <button class="tab-btn" onclick="switchTab('add-opt', this)">Manage Materials</button>
             <button class="tab-btn" onclick="switchTab('add-item', this)">Manage Items</button>
             <button class="tab-btn" onclick="switchTab('add-div', this)">Manage Divisions</button>
+            <button class="tab-btn" onclick="switchTab('add-room', this)">Manage Rooms</button>
             <button class="tab-btn" onclick="switchTab('settings', this)">Settings &amp; Specs</button>
             <button class="tab-btn" onclick="switchTab('quotes-folder', this)">Saved Quotes</button>
         </div>
@@ -1064,6 +1065,33 @@
 
                 <h3 style="margin-top: 30px; font-size: 1rem; color: var(--accent);">Current Divisions</h3>
                 <div class="item-list-container" id="currentDivisionsList">
+                    <!-- populated by JS -->
+                </div>
+            </div>
+
+            <!-- Manage Rooms Tab -->
+            <div id="add-room" class="tab-panel">
+                <h2>Manage Rooms</h2>
+                <div class="sub-form" style="background: none; border: none; padding: 0;">
+                    <div class="form-group">
+                        <label for="newRoomId">Room ID (lowercase, alphanumeric, e.g. 'guest_room')</label>
+                        <input type="text" id="newRoomId" placeholder="e.g. guest_room">
+                    </div>
+                    <div class="form-group">
+                        <label for="newRoomName">Room Name</label>
+                        <input type="text" id="newRoomName" placeholder="e.g. Guest Room">
+                    </div>
+                    <div class="form-group">
+                        <label for="newRoomIcon">Room Icon (Emoji)</label>
+                        <input type="text" id="newRoomIcon" placeholder="e.g. 🛌">
+                    </div>
+                    <div class="action-row">
+                        <button class="btn-primary" onclick="addRoom()">Create Room</button>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 30px; font-size: 1rem; color: var(--accent);">Current Rooms</h3>
+                <div class="item-list-container" id="currentRoomsList">
                     <!-- populated by JS -->
                 </div>
             </div>
@@ -1269,7 +1297,7 @@
         }
         let deletedStandardMaterials = getDeletedStandardMaterials();
 
-        const ROOMS = [
+        const DEFAULT_ROOMS = [
             { id: 'kitchen', name: 'Kitchen', icon: '🍳', active: true },
             { id: 'living_room', name: 'Living Room', icon: '🛋️', active: true },
             { id: 'prayer_unit', name: 'Prayer Unit', icon: '🪔', active: true },
@@ -1282,6 +1310,22 @@
             { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
             { id: 'accessories', name: 'Accessories', icon: '✨', active: true }
         ];
+
+        function getRooms() {
+            const stored = localStorage.getItem('pks_rooms');
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                } catch (e) {
+                    console.error("Error parsing rooms, using defaults", e);
+                }
+            }
+            localStorage.setItem('pks_rooms', JSON.stringify(DEFAULT_ROOMS));
+            return DEFAULT_ROOMS;
+        }
+
+        let ROOMS = getRooms();
 
         let selectedRoom = sessionStorage.getItem('pks_selected_room') || localStorage.getItem('pks_selected_room') || 'kitchen';
         let selectedRoomName = sessionStorage.getItem('pks_selected_room_name') || localStorage.getItem('pks_selected_room_name') || 'Kitchen';
@@ -1702,7 +1746,7 @@
             // Hide room tabs when managing divisions or settings (it's a global action, not room-specific)
             const roomTabsEl = document.getElementById('roomTabs');
             const roomBadgeEl = document.getElementById('roomBadge');
-            if (tabId === 'add-div' || tabId === 'settings' || tabId === 'quotes-folder') {
+            if (tabId === 'add-div' || tabId === 'add-room' || tabId === 'settings' || tabId === 'quotes-folder') {
                 if (roomTabsEl) roomTabsEl.style.display = 'none';
                 if (roomBadgeEl) roomBadgeEl.style.display = 'none';
             } else {
@@ -1777,6 +1821,9 @@
                 localStorage.removeItem('pks_custom_materials');
                 localStorage.removeItem('pks_custom_items');
                 localStorage.removeItem('pks_divisions');
+                localStorage.removeItem('pks_rooms');
+                ROOMS = getRooms();
+                renderRoomTabs();
                 localStorage.removeItem('pks_deleted_standard_items');
                 deletedStandardItems = [];
                 localStorage.removeItem('pks_deleted_standard_materials');
@@ -1800,6 +1847,9 @@
                 renderCustomItemsList();
                 if (document.getElementById('add-div').classList.contains('active')) {
                     renderDivisionsList();
+                }
+                if (document.getElementById('add-room').classList.contains('active')) {
+                    renderRoomsList();
                 }
                 showToast("All settings reset. Rates set to zero.");
             }
@@ -2332,6 +2382,87 @@
             }
         }
 
+        /* ---------- Manage Rooms Actions ---------- */
+        function renderRoomsList() {
+            const container = document.getElementById('currentRoomsList');
+            if (!container) return;
+            container.innerHTML = '';
+
+            ROOMS.forEach((room, index) => {
+                const card = document.createElement('div');
+                card.className = 'item-manage-card';
+                const isDefault = DEFAULT_ROOMS.some(dr => dr.id === room.id);
+                const deleteBtn = isDefault ? 
+                    `<span style="font-size:0.75rem; color:var(--muted);">Standard Room</span>` : 
+                    `<button class="btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteRoom(${index})">Delete</button>`;
+
+                card.innerHTML = `
+                    <div class="item-manage-card-header">
+                        <div class="item-manage-card-title">${room.icon} ${room.name} <span style="font-size:0.75rem; color:var(--muted); font-weight:normal;">(ID: ${room.id})</span></div>
+                        ${deleteBtn}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function addRoom() {
+            const id = document.getElementById('newRoomId').value.trim().toLowerCase();
+            const name = document.getElementById('newRoomName').value.trim();
+            const icon = document.getElementById('newRoomIcon').value.trim() || '🚪';
+
+            if (!id || !name) {
+                alert("Please fill in the Room ID and Room Name.");
+                return;
+            }
+
+            if (!/^[a-z0-9_]+$/.test(id)) {
+                alert("Room ID must be lowercase alphanumeric and underscores only.");
+                return;
+            }
+
+            if (ROOMS.some(r => r.id === id)) {
+                alert("A room with this ID already exists.");
+                return;
+            }
+
+            ROOMS.push({ id, name, icon, active: true });
+            localStorage.setItem('pks_rooms', JSON.stringify(ROOMS));
+
+            document.getElementById('newRoomId').value = '';
+            document.getElementById('newRoomName').value = '';
+            document.getElementById('newRoomIcon').value = '';
+
+            renderRoomsList();
+            renderRoomTabs();
+            showToast("New room added successfully!");
+        }
+
+        function deleteRoom(index) {
+            const room = ROOMS[index];
+            const isDefault = DEFAULT_ROOMS.some(dr => dr.id === room.id);
+            if (isDefault) {
+                alert("Standard rooms cannot be deleted.");
+                return;
+            }
+
+            if (confirm(`Are you sure you want to delete the room "${room.name}"?`)) {
+                ROOMS.splice(index, 1);
+                localStorage.setItem('pks_rooms', JSON.stringify(ROOMS));
+
+                if (room.id === selectedRoom) {
+                    selectedRoom = ROOMS[0].id;
+                    selectedRoomName = ROOMS[0].name;
+                    sessionStorage.setItem('pks_selected_room', selectedRoom);
+                    sessionStorage.setItem('pks_selected_room_name', selectedRoomName);
+                }
+
+                renderRoomsList();
+                renderRoomTabs();
+                showToast("Room deleted.");
+            }
+        }
+
         function cleanupExpiredQuotes() {
             const stored = localStorage.getItem('pks_saved_quotes');
             if (stored) {
@@ -2432,6 +2563,8 @@
         }
 
         function getRoomLabel(roomKey) {
+            const found = ROOMS.find(r => r.id === roomKey);
+            if (found) return found.name;
             const map = {
                 kitchen: "Kitchen",
                 living_room: "Living Room",
@@ -2446,6 +2579,32 @@
                 accessories: "Accessories"
             };
             return map[roomKey] || roomKey;
+        }
+
+        function updateSpecRoomsDropdown() {
+            const roomSelect = document.getElementById('newSpecRoom');
+            if (!roomSelect) return;
+
+            const prevSelected = roomSelect.value;
+            roomSelect.innerHTML = '';
+
+            const allOpt = document.createElement('option');
+            allOpt.value = 'all';
+            allOpt.textContent = 'Global (All Rooms)';
+            roomSelect.appendChild(allOpt);
+
+            ROOMS.forEach(room => {
+                const opt = document.createElement('option');
+                opt.value = room.id;
+                opt.textContent = room.name;
+                roomSelect.appendChild(opt);
+            });
+
+            if (Array.from(roomSelect.options).some(o => o.value === prevSelected)) {
+                roomSelect.value = prevSelected;
+            } else {
+                roomSelect.value = 'all';
+            }
         }
 
         function updateSpecMaterialsDropdown() {
@@ -2773,8 +2932,11 @@
                 renderCustomItemsList();
             } else if (tabId === 'add-div') {
                 renderDivisionsList();
+            } else if (tabId === 'add-room') {
+                renderRoomsList();
             } else if (tabId === 'settings') {
                 document.getElementById('materialSpecsInput').value = localStorage.getItem('pks_material_specs') || '';
+                updateSpecRoomsDropdown();
                 renderSpecsList();
                 updateSpecMaterialsDropdown();
             } else if (tabId === 'quotes-folder') {

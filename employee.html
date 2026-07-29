@@ -1182,21 +1182,33 @@
         let cachedDeletedStandardItems = null;
         let cachedDeletedStandardMaterials = null;
 
-        const allRooms = [
-            { id: 'kitchen', name: 'Kitchen', icon: '🍳', active: true },
-            { id: 'living_room', name: 'Living Room', icon: '🛋️', active: true },
-            { id: 'prayer_unit', name: 'Prayer Unit', icon: '🪔', active: true },
-            { id: 'bedroom', name: 'Bedroom', icon: '🛏️', active: true },
-            { id: 'dining_room', name: 'Dining Room', icon: '🍽️', active: true },
-            { id: 'musical_room', name: 'Musical Room', icon: '🎵', active: true },
-            { id: 'study_room', name: 'Study Room', icon: '📚', active: true },
-            { id: 'sitout', name: 'Sitout', icon: '🌿', active: true },
-            { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
-            { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
-            { id: 'accessories', name: 'Accessories', icon: '✨', active: true }
-        ];
+        function getRooms() {
+            const defaultRooms = [
+                { id: 'kitchen', name: 'Kitchen', icon: '🍳', active: true },
+                { id: 'living_room', name: 'Living Room', icon: '🛋️', active: true },
+                { id: 'prayer_unit', name: 'Prayer Unit', icon: '🪔', active: true },
+                { id: 'bedroom', name: 'Bedroom', icon: '🛏️', active: true },
+                { id: 'dining_room', name: 'Dining Room', icon: '🍽️', active: true },
+                { id: 'musical_room', name: 'Musical Room', icon: '🎵', active: true },
+                { id: 'study_room', name: 'Study Room', icon: '📚', active: true },
+                { id: 'sitout', name: 'Sitout', icon: '🌿', active: true },
+                { id: 'store_room', name: 'Store Room', icon: '📦', active: true },
+                { id: 'toilet_area', name: 'Toilet Area', icon: '🚿', active: true },
+                { id: 'accessories', name: 'Accessories', icon: '✨', active: true }
+            ];
+            const stored = localStorage.getItem('pks_rooms');
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                } catch (e) {
+                    console.error("Error parsing rooms, using defaults", e);
+                }
+            }
+            return defaultRooms;
+        }
 
-        const ROOMS = allRooms;
+        const ROOMS = getRooms();
 
         let rawSelectedRoom = sessionStorage.getItem('pks_selected_room') || localStorage.getItem('pks_selected_room') || 'kitchen';
         let selectedRoom = ROOMS.some(r => r.id === rawSelectedRoom) ? rawSelectedRoom : 'kitchen';
