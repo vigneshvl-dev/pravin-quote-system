@@ -1720,7 +1720,7 @@
             return rawName.replace(/\s*\((Box Type|Partition Type|Door Only|Door Only|Framed|Box)\)/gi, '').trim();
         }
 
-        function getRateForMaterial(materialLabel, roomId, divisionId, isEco) {
+        function getRateForMaterial(materialLabel, roomId, divisionId, isEco, itemId) {
             const divId = (divisionId || selectedDivision || sessionStorage.getItem('pks_selected_division') || 'marketing').toLowerCase();
             const eco = (isEco !== undefined ? isEco : isEconomyMode);
             const room = roomId || selectedRoom || 'kitchen';
@@ -1730,24 +1730,34 @@
             const specificKey = `${divId}_${modeStr}_${room}`;
             const roomRatesObj = allRoomRates[specificKey] || {};
 
-            // 1. Direct match in room rates
+            // 1. Item-specific match (itemId::materialLabel) — highest priority
+            if (itemId !== undefined && itemId !== null) {
+                const itemKey = `${itemId}::${materialLabel}`;
+                if (roomRatesObj[itemKey] !== undefined) return roomRatesObj[itemKey];
+                const cleanLbl = getCleanMaterialName(materialLabel);
+                const itemCleanKey = `${itemId}::${cleanLbl}`;
+                if (roomRatesObj[itemCleanKey] !== undefined) return roomRatesObj[itemCleanKey];
+            }
+
+            // 2. Room-level flat match (backward compat with old saved data)
             if (roomRatesObj[materialLabel] !== undefined) {
                 return roomRatesObj[materialLabel];
             }
 
-            // 2. Clean base material match in room rates
+            // 3. Clean base material room-level match
             const cleanLabel = getCleanMaterialName(materialLabel);
             if (roomRatesObj[cleanLabel] !== undefined) {
                 return roomRatesObj[cleanLabel];
             }
 
-            // 3. Fallback to default rates (customizable)
+            // 4. Fallback to default rates
             const ratesObj = getRates();
             if (ratesObj[materialLabel] !== undefined) return ratesObj[materialLabel];
             if (ratesObj[cleanLabel] !== undefined) return ratesObj[cleanLabel];
 
             return 0;
         }
+
 
         function getRates() {
             if (cachedRates !== null) return cachedRates;
@@ -2560,7 +2570,7 @@
             const opt = item.options[optIdx];
             const sizeArea = document.getElementById(`${buildId}-sizeArea`);
 
-            const defaultRate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode);
+            const defaultRate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode, item.id);
 
             const bypassIds = [16, 17, 18, 20, 27, 32, 33, 34, 70, 71, 74, 75];
             const isBypassEconomySpecs = (selectedRoom === 'kitchen' || opt.label.toLowerCase().includes('engineering') || bypassIds.includes(item.id));
@@ -2648,7 +2658,7 @@
             if (rateEl) {
                 rate = parseFloat(rateEl.value) || 0;
             } else {
-                rate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode);
+                rate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode, item.id);
             }
 
             let sqft = 0;
@@ -2708,7 +2718,7 @@
             if (rateEl) {
                 rate = parseFloat(rateEl.value) || 0;
             } else {
-                rate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode);
+                rate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode, item.id);
             }
 
             let sqft = 0;
