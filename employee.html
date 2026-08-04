@@ -830,7 +830,8 @@
 
     <!-- Cover Page for Printing/PDF (Visible only during print) -->
     <div class="print-cover-page">
-        <img src="https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/pravin_front.png" alt="Cover Page">
+        <img src="https://raw.githubusercontent.com/vigneshvl-dev/pravin-quote-system/main/pravin_front.png"
+            alt="Cover Page">
     </div>
 
     <div class="print-content-wrapper">
@@ -905,16 +906,25 @@
                 </div>
 
                 <!-- Top Right Page Actions -->
-                <div style="display: flex; gap: 10px; align-items: center;">
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end;">
+                    <div id="lastQuoteBadge" title="Last given quotation number. Click to use next quotation number"
+                        onclick="useNextQuoteNo()"
+                        style="display: flex; align-items: center; gap: 6px; background: rgba(176, 125, 46, 0.18); border: 1px solid var(--accent); border-radius: 20px; padding: 6px 14px; font-size: 0.78rem; font-weight: 700; color: #e5b869; cursor: pointer; transition: all 0.2s;"
+                        onmouseover="this.style.background='rgba(176, 125, 46, 0.3)'"
+                        onmouseout="this.style.background='rgba(176, 125, 46, 0.18)'">
+                        <span>📋 Last Quote:</span>
+                        <span id="lastQuoteNoText"
+                            style="color: #ffffff; font-family: var(--mono); font-size: 0.85rem;">—</span>
+                    </div>
                     <button class="back-btn"
                         style="background: var(--accent); border: none; padding: 0; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 50%; width: 40px; height: 40px; min-width: 40px;"
                         onclick="openSavedQuotesModal()" title="Saved Quotes Folder">📂</button>
                     <button class="back-btn"
                         style="padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #ffffff !important;"
-                        onclick="location.href='rooms.html'">Change Division</button>
+                        onclick="handleBackNavigation('rooms.html')">Change Division</button>
                     <button class="back-btn"
                         style="padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #ffffff !important;"
-                        onclick="location.href='index.html'">Logout</button>
+                        onclick="handleBackNavigation('index.html')">Logout</button>
                 </div>
             </div>
 
@@ -1026,46 +1036,62 @@
                 <!-- Payment Terms Inputs (Screen Only) -->
                 <div class="specs-and-terms-container"
                     style="margin-top: 18px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; display: none; flex-direction: column; gap: 14px;">
-                    <div
+                    <div id="payTermsHeaderLabel"
                         style="font-weight: 700; font-size: 0.85rem; color: var(--accent-dark); text-transform: uppercase; letter-spacing: 0.5px;">
                         Payment Terms</div>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--surface); padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border); flex-wrap: wrap;">
+                        <div
+                            style="display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--surface); padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border); flex-wrap: wrap;">
                             <span style="font-size: 0.85rem; color: var(--text); flex: 1; min-width: 280px;">
-                                <strong style="color: var(--accent-dark);">10% Token :</strong> Commencement of 3D design on receipt of token.
+                                <strong style="color: var(--accent-dark);">10% Token :</strong> Commencement of 3D
+                                design on receipt of token.
                             </span>
-                            <div style="display: flex; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; width: 160px;">
-                                <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-dark); margin-right: 6px;">₹</span>
+                            <div
+                                style="display: flex; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; width: 160px;">
+                                <span
+                                    style="font-size: 0.85rem; font-weight: 700; color: var(--accent-dark); margin-right: 6px;">₹</span>
                                 <input type="text" id="payToken" placeholder="Enter amount"
                                     style="background: transparent; border: none; padding: 6px 0; font-size: 0.82rem; color: var(--text); outline: none; width: 100%;">
                             </div>
                         </div>
-                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--surface); padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border); flex-wrap: wrap;">
+                        <div
+                            style="display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--surface); padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border); flex-wrap: wrap;">
                             <span style="font-size: 0.85rem; color: var(--text); flex: 1; min-width: 280px;">
-                                <strong style="color: var(--accent-dark);">50% Advance :</strong> Drawing will be sent for production on receipt of advance.
+                                <strong style="color: var(--accent-dark);">50% Advance :</strong> Drawing will be sent
+                                for production on receipt of advance.
                             </span>
-                            <div style="display: flex; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; width: 160px;">
-                                <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-dark); margin-right: 6px;">₹</span>
+                            <div
+                                style="display: flex; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; width: 160px;">
+                                <span
+                                    style="font-size: 0.85rem; font-weight: 700; color: var(--accent-dark); margin-right: 6px;">₹</span>
                                 <input type="text" id="payAdvance" placeholder="Enter amount"
                                     style="background: transparent; border: none; padding: 6px 0; font-size: 0.82rem; color: var(--text); outline: none; width: 100%;">
                             </div>
                         </div>
-                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--surface); padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border); flex-wrap: wrap;">
+                        <div
+                            style="display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--surface); padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border); flex-wrap: wrap;">
                             <span style="font-size: 0.85rem; color: var(--text); flex: 1; min-width: 280px;">
-                                <strong style="color: var(--accent-dark);">35% Part Payment :</strong> After the completion of frame work.
+                                <strong style="color: var(--accent-dark);">35% Part Payment :</strong> After the
+                                completion of frame work.
                             </span>
-                            <div style="display: flex; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; width: 160px;">
-                                <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-dark); margin-right: 6px;">₹</span>
+                            <div
+                                style="display: flex; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; width: 160px;">
+                                <span
+                                    style="font-size: 0.85rem; font-weight: 700; color: var(--accent-dark); margin-right: 6px;">₹</span>
                                 <input type="text" id="paySecond" placeholder="Enter amount"
                                     style="background: transparent; border: none; padding: 6px 0; font-size: 0.82rem; color: var(--text); outline: none; width: 100%;">
                             </div>
                         </div>
-                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--surface); padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border); flex-wrap: wrap;">
+                        <div
+                            style="display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--surface); padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border); flex-wrap: wrap;">
                             <span style="font-size: 0.85rem; color: var(--text); flex: 1; min-width: 280px;">
-                                <strong style="color: var(--accent-dark);">5% Final Payment :</strong> The last day of work completion in site.
+                                <strong style="color: var(--accent-dark);">5% Final Payment :</strong> The last day of
+                                work completion in site.
                             </span>
-                            <div style="display: flex; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; width: 160px;">
-                                <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-dark); margin-right: 6px;">₹</span>
+                            <div
+                                style="display: flex; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; width: 160px;">
+                                <span
+                                    style="font-size: 0.85rem; font-weight: 700; color: var(--accent-dark); margin-right: 6px;">₹</span>
                                 <input type="text" id="payFinal" placeholder="Enter amount"
                                     style="background: transparent; border: none; padding: 6px 0; font-size: 0.82rem; color: var(--text); outline: none; width: 100%;">
                             </div>
@@ -1074,20 +1100,44 @@
 
                 </div>
 
+                <!-- Any Requirements Box (Screen Only) -->
+                <div id="requirementsBoxContainer"
+                    style="margin-top: 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; display: none; flex-direction: column; gap: 10px;">
+                    <div style="font-weight: 700; font-size: 0.85rem; color: var(--accent-dark); text-transform: uppercase; letter-spacing: 0.5px;">
+                        Any Requirements</div>
+                    <textarea id="anyRequirements" placeholder="Type any specific customer requirements, custom site notes, or instructions here..."
+                        rows="3"
+                        style="width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; font-size: 0.85rem; color: var(--text); outline: none; font-family: inherit; resize: vertical; box-sizing: border-box; line-height: 1.5;"></textarea>
+                </div>
+
                 <!-- Print-Only Payment Terms (shown only during browser print) -->
                 <div class="print-only-specs-terms"
                     style="display: none; margin-top: 20px; page-break-inside: avoid; break-inside: avoid;">
                     <div
                         style="padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px; page-break-inside: avoid; break-inside: avoid;">
-                        <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Payment Terms:</strong>
+                        <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Payment
+                            Terms:</strong>
                         <ul id="printPayList"
                             style="margin: 0; padding-left: 15px; list-style-type: square; color: #333;">
-                            <li id="printPayTokenLi"><strong>10% Token:</strong> Commencement of 3D design on receipt of token.<span id="printPayToken"></span></li>
-                            <li id="printPayAdvanceLi"><strong>50% Advance:</strong> Drawing will be sent for production on receipt of advance.<span id="printPayAdvance"></span></li>
-                            <li id="printPaySecondLi"><strong>35% Part Payment:</strong> After the completion of frame work.<span id="printPaySecond"></span></li>
-                            <li id="printPayFinalLi"><strong>5% Final Payment:</strong> The last day of work completion in site.<span id="printPayFinal"></span></li>
+                            <li id="printPayTokenLi"><strong>10% Token:</strong> Commencement of 3D design on receipt of
+                                token.<span id="printPayToken"></span></li>
+                            <li id="printPayAdvanceLi"><strong>50% Advance:</strong> Drawing will be sent for production
+                                on receipt of advance.<span id="printPayAdvance"></span></li>
+                            <li id="printPaySecondLi"><strong>35% Part Payment:</strong> After the completion of frame
+                                work.<span id="printPaySecond"></span></li>
+                            <li id="printPayFinalLi"><strong>5% Final Payment:</strong> The last day of work completion
+                                in site.<span id="printPayFinal"></span></li>
                         </ul>
 
+                    </div>
+                </div>
+
+                <!-- Print-Only Any Requirements -->
+                <div id="printRequirementsBox" class="print-only-specs-terms"
+                    style="display: none; margin-top: 12px; page-break-inside: avoid; break-inside: avoid;">
+                    <div style="padding: 10px; border: 1px solid #ccc; font-size: 0.82rem; line-height: 1.4; color: #000; border-radius: 6px;">
+                        <strong style="display: block; margin-bottom: 4px; color: var(--accent-dark);">Any Requirements:</strong>
+                        <div id="printRequirementsText" style="white-space: pre-wrap; color: #333;"></div>
                     </div>
                 </div>
 
@@ -1190,6 +1240,7 @@
         let cachedCustomItems = null;
         let cachedDeletedStandardItems = null;
         let cachedDeletedStandardMaterials = null;
+        let isQuoteDirty = false;
 
         function getRooms() {
             const defaultRooms = [
@@ -1385,6 +1436,10 @@
 
 
         /* ---------- Shared Materials Groups ---------- */
+        const MP_LAM_BOX_DOOR = [
+            { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
+            { label: "Marine Ply – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" }
+        ];
         const MP_LAM_ACR_WPC_BOX_DOOR = [
             { label: "Marine Ply – Lamination (Box Type)", fields: ["L", "W", "H"], formula: v => ((v.L + v.W) * v.H) / 144, note: "(L+W)×H/144" },
             { label: "Marine Ply – Lamination (Door Only)", fields: ["L", "H"], formula: v => (v.L * v.H) / 144, note: "L×H/144" },
@@ -2249,22 +2304,6 @@
             { label: "Soft Closing Handles", fields: ["QTY"], formula: v => v.QTY, note: "qty" }
         ];
 
-        function getStoredRoomRates() {
-            if (cachedRoomRates !== null) return cachedRoomRates;
-            const stored = localStorage.getItem('pks_room_rates');
-            if (stored) {
-                try {
-                    const parsed = JSON.parse(stored);
-                    if (parsed && typeof parsed === 'object') {
-                        cachedRoomRates = parsed;
-                        return cachedRoomRates;
-                    }
-                } catch (e) { }
-            }
-            cachedRoomRates = {};
-            return cachedRoomRates;
-        }
-
         function getKitchenTotalExcludingAccessories() {
             if (!Array.isArray(quoteLines)) return 0;
             return quoteLines
@@ -2288,6 +2327,15 @@
                     if (cleanMat === 'hinges' || cleanMat === 'soft closing hinges' || cleanMat === 'soft closing handles') {
                         l.rate = dynamicRate;
                         l.amount = (l.sqft || 1) * dynamicRate;
+                    } else {
+                        const currentRate = (l.rate !== undefined && l.rate !== null) ? l.rate : 0;
+                        if (currentRate === 0) {
+                            const newRate = getRateForMaterial(l.material, l.roomId, selectedDivision, isEconomyMode, l.id);
+                            if (newRate > 0) {
+                                l.rate = newRate;
+                                l.amount = (l.sqft || 1) * newRate;
+                            }
+                        }
                     }
                 });
             }
@@ -2296,6 +2344,59 @@
         function getCleanMaterialName(rawName) {
             if (!rawName || typeof rawName !== 'string') return rawName;
             return rawName.replace(/\s*\((Box Type|Partition Type|Door Only|Door Only|Framed|Box)\)/gi, '').trim();
+        }
+
+        function getStoredRoomRates() {
+            const stored = localStorage.getItem('pks_room_rates');
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (parsed && typeof parsed === 'object') {
+                        return parsed;
+                    }
+                } catch (e) { }
+            }
+            return {};
+        }
+
+        function normalizeMatString(str) {
+            if (!str || typeof str !== 'string') return '';
+            return str.replace(/–/g, '-').replace(/\s+/g, ' ').toLowerCase().trim();
+        }
+
+        function findRateInObject(ratesObj, itemId, materialLabel) {
+            if (!ratesObj || typeof ratesObj !== 'object') return undefined;
+
+            const normMat = normalizeMatString(materialLabel);
+            const cleanLbl = getCleanMaterialName(materialLabel);
+            const normCleanLbl = normalizeMatString(cleanLbl);
+
+            // 1. Direct item key match with original & normalized variations
+            if (itemId !== undefined && itemId !== null) {
+                if (ratesObj[`${itemId}::${materialLabel}`] !== undefined) return ratesObj[`${itemId}::${materialLabel}`];
+                if (ratesObj[`${itemId}::${cleanLbl}`] !== undefined) return ratesObj[`${itemId}::${cleanLbl}`];
+
+                for (const key in ratesObj) {
+                    if (key.startsWith(`${itemId}::`)) {
+                        const matPart = key.split('::')[1] || '';
+                        if (normalizeMatString(matPart) === normMat || normalizeMatString(matPart) === normCleanLbl) {
+                            return ratesObj[key];
+                        }
+                    }
+                }
+            }
+
+            // 2. Room-level / material-level match
+            if (ratesObj[materialLabel] !== undefined) return ratesObj[materialLabel];
+            if (ratesObj[cleanLbl] !== undefined) return ratesObj[cleanLbl];
+
+            for (const key in ratesObj) {
+                if (normalizeMatString(key) === normMat || normalizeMatString(key) === normCleanLbl) {
+                    return ratesObj[key];
+                }
+            }
+
+            return undefined;
         }
 
         function getRateForMaterial(materialLabel, roomId, divisionId, isEco, itemId) {
@@ -2313,44 +2414,67 @@
 
             const divId = (divisionId || selectedDivision || sessionStorage.getItem('pks_selected_division') || 'marketing').toLowerCase();
             const eco = (isEco !== undefined ? isEco : isEconomyMode);
-            const room = roomId || selectedRoom || 'kitchen';
+            const room = (roomId || selectedRoom || 'kitchen').toLowerCase();
 
             const allRoomRates = getStoredRoomRates();
             const modeStr = eco ? 'economy' : 'premium';
-            const specificKey = `${divId}_${modeStr}_${room}`;
-            const roomRatesObj = allRoomRates[specificKey] || {};
+            const otherModeStr = eco ? 'premium' : 'economy';
 
-            // 1. Item-specific match (itemId::materialLabel) — highest priority
-            if (itemId !== undefined && itemId !== null) {
-                const itemKey = `${itemId}::${materialLabel}`;
-                if (roomRatesObj[itemKey] !== undefined) return roomRatesObj[itemKey];
-                const cleanLbl = getCleanMaterialName(materialLabel);
-                const itemCleanKey = `${itemId}::${cleanLbl}`;
-                if (roomRatesObj[itemCleanKey] !== undefined) return roomRatesObj[itemCleanKey];
+            const candidateKeys = [
+                `${divId}_${modeStr}_${room}`,
+                `${divId}_${otherModeStr}_${room}`,
+                `marketing_${modeStr}_${room}`,
+                `marketing_${otherModeStr}_${room}`
+            ];
+
+            const aliases = [room];
+            if (room === 'dining_room' || room === 'dinning_room') aliases.push('dining_room', 'dinning_room', 'dining', 'dinning');
+            if (room === 'profile_glass_door') aliases.push('profile_glass_door', 'profile_glass', 'profile_door');
+            if (room === 'false_celling') aliases.push('false_celling', 'false_ceiling', 'celling', 'ceiling');
+
+            aliases.forEach(rAlias => {
+                if (!candidateKeys.includes(`${divId}_${modeStr}_${rAlias}`)) candidateKeys.push(`${divId}_${modeStr}_${rAlias}`);
+                if (!candidateKeys.includes(`${divId}_${otherModeStr}_${rAlias}`)) candidateKeys.push(`${divId}_${otherModeStr}_${rAlias}`);
+                if (!candidateKeys.includes(`marketing_${modeStr}_${rAlias}`)) candidateKeys.push(`marketing_${modeStr}_${rAlias}`);
+                if (!candidateKeys.includes(`marketing_${otherModeStr}_${rAlias}`)) candidateKeys.push(`marketing_${otherModeStr}_${rAlias}`);
+            });
+
+            // 1. Search candidate room keys
+            for (const key of candidateKeys) {
+                if (allRoomRates[key]) {
+                    const rate = findRateInObject(allRoomRates[key], itemId, materialLabel);
+                    if (rate !== undefined && rate !== null && !isNaN(parseFloat(rate)) && parseFloat(rate) > 0) {
+                        return parseFloat(rate);
+                    }
+                }
             }
 
-            // 2. Room-level flat match (backward compat with old saved data)
-            if (roomRatesObj[materialLabel] !== undefined) {
-                return roomRatesObj[materialLabel];
+            // 2. Search ANY room key ending in room ID or alias
+            for (const key in allRoomRates) {
+                if (aliases.some(rAlias => key.endsWith(`_${rAlias}`))) {
+                    const rate = findRateInObject(allRoomRates[key], itemId, materialLabel);
+                    if (rate !== undefined && rate !== null && !isNaN(parseFloat(rate)) && parseFloat(rate) > 0) {
+                        return parseFloat(rate);
+                    }
+                }
             }
 
-            // 3. Clean base material room-level match
-            const cleanLabel = getCleanMaterialName(materialLabel);
-            if (roomRatesObj[cleanLabel] !== undefined) {
-                return roomRatesObj[cleanLabel];
+            // 3. Search ALL room keys in allRoomRates for itemId::materialLabel or materialLabel match > 0
+            for (const key in allRoomRates) {
+                if (allRoomRates[key] && typeof allRoomRates[key] === 'object') {
+                    const rate = findRateInObject(allRoomRates[key], itemId, materialLabel);
+                    if (rate !== undefined && rate !== null && !isNaN(parseFloat(rate)) && parseFloat(rate) > 0) {
+                        return parseFloat(rate);
+                    }
+                }
             }
 
             // 4. Fallback to default rates
             const ratesObj = getRates();
-            if (itemId !== undefined && itemId !== null) {
-                const itemKey = `${itemId}::${materialLabel}`;
-                if (ratesObj[itemKey] !== undefined) return ratesObj[itemKey];
-                const cleanLbl = getCleanMaterialName(materialLabel);
-                const itemCleanKey = `${itemId}::${cleanLbl}`;
-                if (ratesObj[itemCleanKey] !== undefined) return ratesObj[itemCleanKey];
+            const defaultRate = findRateInObject(ratesObj, itemId, materialLabel);
+            if (defaultRate !== undefined && defaultRate !== null && !isNaN(parseFloat(defaultRate))) {
+                return parseFloat(defaultRate);
             }
-            if (ratesObj[materialLabel] !== undefined) return ratesObj[materialLabel];
-            if (ratesObj[cleanLabel] !== undefined) return ratesObj[cleanLabel];
 
             return 0;
         }
@@ -2463,6 +2587,7 @@
                 { id: 37, name: "Wash basin unit bottom cabinet", options: MP_LAM_ACR_WPC_BOX_DOOR },
                 { id: 38, name: "Wash basin unit wall paneling", options: WALL_PANEL },
                 { id: 39, name: "Dining room crockery unit", options: MP_LAM_ACR_WPC_BOX_DOOR },
+                { id: 370, name: "Beam Covering", options: BEAM },
                 { id: 40, name: "Accessories", options: ACCESSORY_OPTS },
             ],
             musical_room: [
@@ -2559,9 +2684,10 @@
                 { id: 72, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             dining_room: [
-                { id: 37, name: "Wash basin unit bottom cabinet", options: ENG_WOOD_BOX_DOOR },
+                { id: 37, name: "Wash basin unit bottom cabinet", options: MP_LAM_BOX_DOOR },
                 { id: 38, name: "Wash basin unit wall paneling", options: WALL_PANEL },
                 { id: 39, name: "Dining room crockery unit", options: ENG_WOOD_BOX_DOOR },
+                { id: 370, name: "Beam Covering", options: BEAM },
                 { id: 40, name: "Accessories", options: ACCESSORY_OPTS }
             ],
             musical_room: [
@@ -2582,7 +2708,7 @@
                 { id: 44, name: "Store Room Cupboard", options: ENG_WOOD_ONLY }
             ],
             toilet_area: [
-                { id: 41, name: "Toilet Area Washbasin Cabinet", options: ENG_WOOD_BOX_DOOR }
+                { id: 41, name: "Toilet Area Washbasin Cabinet", options: MP_LAM_BOX_DOOR }
             ],
             false_celling: [
                 { id: 90, name: "Kitchen -celling", options: FALSE_CELLING_OPTS },
@@ -2682,16 +2808,20 @@
                     customMats[item.id].forEach(m => {
                         if (!m) return;
                         let formula;
-                        if (m.formulaType === "L*H") formula = v => (v.L * v.H) / 144;
-                        else if (m.formulaType === "L*W") formula = v => (v.L * v.W) / 144;
-                        else if (m.formulaType === "SQFT") formula = v => v.SQFT;
+                        let fields = m.fields || [];
+                        let note = m.note || '';
+                        const isFalseCelling = selectedRoom === 'false_celling' || [90, 91, 92, 93, 94, 95, 96, 97, 98, 99].includes(item.id);
+
+                        if (m.formulaType === "L*H") { formula = v => (v.L * v.H) / 144; }
+                        else if (m.formulaType === "L*W" || isFalseCelling) { formula = v => (v.L * v.W) / 144; if (isFalseCelling && (!fields || fields.length === 0)) { fields = ["L", "W"]; note = "L×W/144"; } }
+                        else if (m.formulaType === "SQFT") { formula = v => v.SQFT; }
                         else formula = v => ((v.L + v.W) * v.H) / 144;
 
                         item.options.push({
                             label: m.label || '',
-                            fields: m.fields || [],
+                            fields: fields,
                             formula: formula,
-                            note: m.note || ''
+                            note: note
                         });
                     });
                 }
@@ -2706,16 +2836,20 @@
                         const processedOptions = item.options.map(opt => {
                             if (!opt) return null;
                             let formula;
-                            if (opt.formulaType === "L*H") formula = v => (v.L * v.H) / 144;
-                            else if (opt.formulaType === "L*W") formula = v => (v.L * v.W) / 144;
-                            else if (opt.formulaType === "SQFT") formula = v => v.SQFT;
+                            let fields = opt.fields || [];
+                            let note = opt.note || '';
+                            const isFalseCelling = selectedRoom === 'false_celling' || [90, 91, 92, 93, 94, 95, 96, 97, 98, 99].includes(item.id);
+
+                            if (opt.formulaType === "L*H") { formula = v => (v.L * v.H) / 144; }
+                            else if (opt.formulaType === "L*W" || isFalseCelling) { formula = v => (v.L * v.W) / 144; if (isFalseCelling && (!fields || fields.length === 0)) { fields = ["L", "W"]; note = "L×W/144"; } }
+                            else if (opt.formulaType === "SQFT") { formula = v => v.SQFT; }
                             else formula = v => ((v.L + v.W) * v.H) / 144;
 
                             return {
                                 label: opt.label || '',
-                                fields: opt.fields || [],
+                                fields: fields,
                                 formula: formula,
-                                note: opt.note || ''
+                                note: note
                             };
                         }).filter(Boolean);
 
@@ -2841,10 +2975,11 @@
         function _doInit() {
             if (window._appInitialized) return;
             window._appInitialized = true;
-            try { updateRoomState(selectedRoom, selectedRoomName); } catch(e) {
-                try { renderRoomTabs(); } catch(_) {}
-                try { renderItemsGrid(); } catch(_) {}
+            try { updateRoomState(selectedRoom, selectedRoomName); } catch (e) {
+                try { renderRoomTabs(); } catch (_) { }
+                try { renderItemsGrid(); } catch (_) { }
             }
+            updateLastQuoteDisplay();
         }
         // Strategy 1: DOMContentLoaded
         document.addEventListener('DOMContentLoaded', _doInit);
@@ -2861,6 +2996,7 @@
             if (e.key === 'pks_custom_items') cachedCustomItems = null;
             if (e.key === 'pks_deleted_standard_items') cachedDeletedStandardItems = null;
             if (e.key === 'pks_deleted_standard_materials') cachedDeletedStandardMaterials = null;
+            if (e.key === 'pks_saved_quotes') updateLastQuoteDisplay();
 
             if (e.key === 'pks_rates' || e.key === 'pks_custom_materials' || e.key === 'pks_custom_items' || e.key === 'pks_deleted_standard_items' || e.key === 'pks_deleted_standard_materials' || e.key === 'pks_room_rates') {
                 ITEMS = getFullItemsList();
@@ -3211,17 +3347,10 @@
             return filtered;
         }
 
-        function openSizePanel(buildId, itemId, optIdx) {
-            const item = ITEMS.find(i => i.id === itemId);
-            const opt = item.options[optIdx];
-            const sizeArea = document.getElementById(`${buildId}-sizeArea`);
-
-            const defaultRate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode, item.id);
-
-            const bypassIds = [16, 17, 18, 20, 27, 32, 33, 34, 70, 71, 74, 75];
-            const isBypassEconomySpecs = (selectedRoom === 'kitchen' || selectedRoom === 'false_celling' || opt.label.toLowerCase().includes('engineering') || bypassIds.includes(item.id));
-            const matchedGeneralSpecs = (isEconomyMode && !isBypassEconomySpecs) ? [] : getMatchingSpecifications(selectedRoom, opt.label, item.name);
+        function getAllMaterialSpecs(roomId, materialLabel, itemName, optSpecs) {
+            const matchedGeneralSpecs = getMatchingSpecifications(roomId, materialLabel, itemName);
             const allSpecsArray = [];
+
             matchedGeneralSpecs.forEach(s => {
                 const ts = s.trim();
                 if (ts) {
@@ -3240,7 +3369,52 @@
                 }
             });
 
-            const specsHtml = ((!isEconomyMode || isBypassEconomySpecs) && allSpecsArray.length > 0) ? `
+            if (optSpecs && typeof optSpecs === 'string') {
+                optSpecs.split('|').forEach(sub => {
+                    const tsub = sub.trim();
+                    if (tsub && !allSpecsArray.includes(tsub)) {
+                        allSpecsArray.push(tsub);
+                    }
+                });
+            }
+
+            // Fallback matching if empty
+            if (allSpecsArray.length === 0 && materialLabel) {
+                const cleanMat = materialLabel.toLowerCase();
+                if (cleanMat.includes('marine') || cleanMat.includes('ply')) {
+                    allSpecsArray.push("Marine Ply – 710 grade - 16mm Thickness");
+                    if (cleanMat.includes('acrylic')) allSpecsArray.push("Outer Finish: German Acrylic");
+                    else allSpecsArray.push("Outer Finish: Customer Choice Laminates");
+                } else if (cleanMat.includes('wpc')) {
+                    allSpecsArray.push("WPC – 0.7 Density – 17mm Thickness");
+                    allSpecsArray.push("Finish: Freelam");
+                } else if (cleanMat.includes('engineering') || cleanMat.includes('wood')) {
+                    allSpecsArray.push("Engineering Wood – 18mm Thickness");
+                    allSpecsArray.push("Finish: Pre-laminated");
+                } else if (cleanMat.includes('pvc')) {
+                    allSpecsArray.push("Super Premium PVC Panel");
+                } else if (cleanMat.includes('charcoal')) {
+                    allSpecsArray.push("Super Premium Charcoal Panel – Korea");
+                } else if (cleanMat.includes('glass') || cleanMat.includes('profile')) {
+                    allSpecsArray.push("Normal profile handle 4mm glasses");
+                } else if (cleanMat.includes('celling') || cleanMat.includes('ceiling') || roomId === 'false_celling') {
+                    allSpecsArray.push("section-ultrasection", "board-gypsum board", "board brand -gyprock");
+                }
+            }
+
+            return allSpecsArray;
+        }
+
+        function openSizePanel(buildId, itemId, optIdx) {
+            const item = ITEMS.find(i => i.id === itemId);
+            const opt = item.options[optIdx];
+            const sizeArea = document.getElementById(`${buildId}-sizeArea`);
+
+            const defaultRate = getRateForMaterial(opt.label, selectedRoom, selectedDivision, isEconomyMode, item.id);
+
+            const allSpecsArray = getAllMaterialSpecs(selectedRoom, opt.label, item.name, opt.specs);
+
+            const specsHtml = (allSpecsArray.length > 0) ? `
                 <div style="background: var(--accent-light); border: 1px solid rgba(176,125,46,0.35); border-radius: 6px; padding: 9px 11px; margin-bottom: 10px; font-size: 0.77rem; line-height: 1.65; color: var(--accent-dark);">
                     <strong style="display:block; margin-bottom:5px; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.6px;">📋 Specifications</strong>
                     ${allSpecsArray.map(s => {
@@ -3258,7 +3432,7 @@
 
             const rateLabel = opt.fields.length === 0 ? 'Price (₹) [Locked]' : 'Rate (₹/sq.ft) [Locked]';
             const defaultLabel = opt.fields.length === 0 ? `Amount: <b>₹${defaultRate.toFixed(2)}</b>` : (opt.fields.includes('QTY') ? 'Qty: <b>0</b>' : 'Sq.Ft: <b>0</b>');
-            const calcLineHtml = opt.fields.length === 0 
+            const calcLineHtml = opt.fields.length === 0
                 ? `Amount: <b>₹${defaultRate.toFixed(2)}</b>`
                 : `${defaultLabel}${showRate ? ' &nbsp;|&nbsp; Amount: <b>₹0</b>' : ''}`;
 
@@ -3366,6 +3540,7 @@
         }
 
         function confirmMaterial(buildId, itemId, optIdx) {
+            isQuoteDirty = true;
             const item = ITEMS.find(i => i.id === itemId);
             const opt = item.options[optIdx];
 
@@ -3409,16 +3584,7 @@
                 }
             }
 
-            const bypassIds = [16, 17, 18, 20, 27, 32, 33, 34, 70, 71, 74, 75];
-            const isBypassEconomySpecs = (selectedRoom === 'kitchen' || selectedRoom === 'false_celling' || opt.label.toLowerCase().includes('engineering') || bypassIds.includes(item.id));
-            const matchedGeneralSpecs = (isEconomyMode && !isBypassEconomySpecs) ? [] : getMatchingSpecifications(selectedRoom, opt.label, item.name);
-            const allSpecsArray = [];
-            matchedGeneralSpecs.forEach(s => {
-                const ts = s.trim();
-                if (ts && !allSpecsArray.includes(ts)) {
-                    allSpecsArray.push(ts);
-                }
-            });
+            const allSpecsArray = getAllMaterialSpecs(selectedRoom, opt.label, item.name, opt.specs);
 
             quoteLines.push({
                 id: lineIdCounter++,
@@ -3436,6 +3602,7 @@
         }
 
         function confirmCustom(buildId, itemId) {
+            isQuoteDirty = true;
             const item = ITEMS.find(i => i.id === itemId);
             const desc = document.getElementById(`${buildId}-desc`).value || 'Custom item';
             const sqft = Math.round(parseFloat(document.getElementById(`${buildId}-sqft`).value) || 0);
@@ -3589,6 +3756,53 @@
             `;
         }
 
+
+        let customFinalAmount = null;
+
+        // ── Kitchen Auto-Accessories ─────────────────────────────────────
+        function getKitchenAutoAccessories(kitchenTotal) {
+            const lakhs = Math.floor(kitchenTotal / 100000);
+            if (lakhs <= 0) return [];
+            return [
+                { label: 'Profile Handle', amount: lakhs * 3000 },
+                { label: 'Hinges', amount: lakhs * 2000 }
+            ];
+        }
+        // ─────────────────────────────────────────────────────────────────
+
+        function getCalculatedOfferTotal() {
+            const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories') || l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling')));
+            const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
+            const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling'));
+
+            const kitchenLines = quoteLines.filter(l => l.roomId === 'kitchen' || (l.roomName && l.roomName.toLowerCase().includes('kitchen')));
+            const kitchenSubTotal = kitchenLines.reduce((s, l) => s + l.amount, 0);
+            const kitchenAutoAccTotal = getKitchenAutoAccessories(kitchenSubTotal).reduce((s, a) => s + a.amount, 0);
+
+            const safeParseOffer = l => (l.offerPrice !== null && l.offerPrice !== '' && !isNaN(parseFloat(l.offerPrice))) ? parseFloat(l.offerPrice) : l.amount;
+            const roomOfferTotal = roomLines.reduce((s, l) => s + safeParseOffer(l), 0);
+            const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + safeParseOffer(l), 0) + kitchenAutoAccTotal;
+            const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + safeParseOffer(l), 0);
+
+            return roomOfferTotal + accessoryOfferTotal + falseCellingOfferTotal;
+        }
+
+        function getEffectiveOfferTotal() {
+            return getCalculatedOfferTotal();
+        }
+
+        function getEffectiveFinalAmount() {
+            if (customFinalAmount !== null && customFinalAmount !== '' && !isNaN(parseFloat(customFinalAmount))) {
+                return parseFloat(customFinalAmount);
+            }
+            return getCalculatedOfferTotal();
+        }
+
+        function updateFinalAmount(val) {
+            customFinalAmount = (val === '' || isNaN(parseFloat(val))) ? null : parseFloat(val);
+            updatePaymentSplits();
+        }
+
         function renderQuote() {
             recalculateDynamicRates();
             const body = document.getElementById('quoteBody');
@@ -3609,9 +3823,13 @@
             if (quoteLines.length === 0) {
                 body.innerHTML = `<tr class="empty-row"><td colspan="${totalCols}">No items added yet — start with any card above.</td></tr>`;
                 document.querySelector('.specs-and-terms-container').style.display = 'none';
+                const reqBox = document.getElementById('requirementsBoxContainer');
+                if (reqBox) reqBox.style.display = 'none';
                 return;
             } else {
                 document.querySelector('.specs-and-terms-container').style.display = 'flex';
+                const reqBox = document.getElementById('requirementsBoxContainer');
+                if (reqBox) reqBox.style.display = 'flex';
             }
 
             // Separate room lines from accessory lines
@@ -3619,17 +3837,23 @@
             const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
             const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling'));
 
+            // ── Kitchen auto-accessories (Profile Handle + Hinges per lakh) ──
+            const kitchenLines = quoteLines.filter(l => l.roomId === 'kitchen' || (l.roomName && l.roomName.toLowerCase().includes('kitchen')));
+            const kitchenSubTotal = kitchenLines.reduce((s, l) => s + l.amount, 0);
+            const kitchenAutoAcc = getKitchenAutoAccessories(kitchenSubTotal);
+            const kitchenAutoAccTotal = kitchenAutoAcc.reduce((s, a) => s + a.amount, 0);
+
             const roomTotal = roomLines.reduce((s, l) => s + l.amount, 0);
-            const accessoryTotal = accessoryLines.reduce((s, l) => s + l.amount, 0);
+            const accessoryTotal = accessoryLines.reduce((s, l) => s + l.amount, 0) + kitchenAutoAccTotal;
             const falseCellingTotal = falseCellingLines.reduce((s, l) => s + l.amount, 0);
             const grandTotal = roomTotal + accessoryTotal + falseCellingTotal;
 
             // Offer price totals (use amount as fallback if no offer price entered)
-            const roomOfferTotal = roomLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
-            const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
-            const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+            const safeParseOffer = l => (l.offerPrice !== null && l.offerPrice !== '' && !isNaN(parseFloat(l.offerPrice))) ? parseFloat(l.offerPrice) : l.amount;
+            const roomOfferTotal = roomLines.reduce((s, l) => s + safeParseOffer(l), 0);
+            const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + safeParseOffer(l), 0) + kitchenAutoAccTotal;
+            const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + safeParseOffer(l), 0);
             const grandOfferTotal = roomOfferTotal + accessoryOfferTotal + falseCellingOfferTotal;
-            const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '' && parseFloat(l.offerPrice) !== l.amount);
 
             let html = '';
             let lineIndex = 1;
@@ -3687,10 +3911,13 @@
                             }
                         }
 
-                        const materialCellContent = l.specs ? `
-                            <div style="font-size: 0.75rem; color: var(--text); line-height: 1.45;">
-                                ${l.specs.split('|').map((s, idx) => `<div style="${idx > 0 ? 'margin-top:3px;' : ''}">• ${renderSpecText(s, 'var(--border)')}</div>`).join('')}
-                            </div>` : `<strong style="color:var(--text);">${renderSpecText(l.material, 'var(--border)')}</strong>`;
+                        const specsStr = l.specs || getAllMaterialSpecs(l.roomId, l.material, l.itemName).join(' | ');
+                        const materialCellContent = `
+                            <strong style="color:var(--text); display:block; margin-bottom:4px;">${renderSpecText(l.material, 'var(--border)')}</strong>
+                            ${specsStr ? `
+                                <div style="font-size: 0.73rem; color: var(--muted); line-height: 1.45;">
+                                    ${specsStr.split('|').map((s, idx) => `<div style="padding:1px 0;">• ${renderSpecText(s, 'var(--border)')}</div>`).join('')}
+                                </div>` : ''}`;
 
                         html += `
                             <tr>
@@ -3716,7 +3943,7 @@
 
 
             // ── Accessories group ──
-            if (accessoryLines.length > 0) {
+            if (accessoryLines.length > 0 || kitchenAutoAcc.length > 0) {
                 html += `
                     <tr class="room-group-row" style="background: #1c2820 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
                         <td colspan="${totalCols}" style="padding: 7px 14px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #b07d2e !important; background: #1c2820 !important; border-bottom: 1px solid #b07d2e; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
@@ -3761,6 +3988,26 @@
                         </tr>
                     `;
                 });
+
+                // Auto kitchen accessories (Profile Handle + Hinges) — Clean rendering without "Auto" text/icon
+                kitchenAutoAcc.forEach(a => {
+                    html += `
+                        <tr>
+                          <td style="color:var(--muted); font-size:0.8rem; vertical-align:top; padding-top:10px;">${lineIndex++}</td>
+                          <td style="vertical-align:top; padding-top:10px;">
+                              <div style="font-size:0.7rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:2px;">Accessories</div>
+                              <strong>${a.label}</strong>
+                          </td>
+                          <td style="vertical-align:top; padding-top:10px; font-size:0.75rem; color:var(--muted);">Included with Kitchen</td>
+                          <td style="vertical-align:top; padding-top:10px;">—</td>
+                          ${showSqFt ? `<td class="num" style="vertical-align:top; padding-top:10px;">—</td>` : ''}
+                          ${(showSqFt && showRate) ? `<td class="num" style="vertical-align:top; padding-top:10px;">—</td>` : ''}
+                          <td class="num" style="vertical-align:top; padding-top:10px;">₹${a.amount.toFixed(2)}</td>
+                          <td class="num" style="vertical-align:top; padding-top:10px; color:var(--muted);">—</td>
+                          <td style="vertical-align:top; padding-top:10px;"></td>
+                        </tr>
+                    `;
+                });
             }
 
 
@@ -3800,10 +4047,13 @@
                             }
                         }
 
-                        const materialCellContent = l.specs ? `
-                            <div style="font-size: 0.75rem; color: var(--text); line-height: 1.45;">
-                                ${l.specs.split('|').map((s, idx) => `<div style="${idx > 0 ? 'margin-top:3px;' : ''}">• ${renderSpecText(s, 'var(--border)')}</div>`).join('')}
-                            </div>` : `<strong style="color:var(--text);">${renderSpecText(l.material, 'var(--border)')}</strong>`;
+                        const specsStr = l.specs || getAllMaterialSpecs(l.roomId, l.material, l.itemName).join(' | ');
+                        const materialCellContent = `
+                            <strong style="color:var(--text); display:block; margin-bottom:4px;">${renderSpecText(l.material, 'var(--border)')}</strong>
+                            ${specsStr ? `
+                                <div style="font-size: 0.73rem; color: var(--text); line-height: 1.45;">
+                                    ${specsStr.split('|').map((s, idx) => `<div style="padding:1px 0;">• ${renderSpecText(s, 'var(--border)')}</div>`).join('')}
+                                </div>` : ''}`;
 
                         html += `
                             <tr>
@@ -3827,25 +4077,13 @@
                 });
             }
 
-            // ── Rooms Subtotal ──
-            if (roomLines.length > 0) {
-                html += `
-                    <tr style="font-weight: 600; color: var(--text); border-top: 1px solid var(--border); font-size: 0.85rem;">
-                        <td colspan="${totalCols - 3}" style="text-align:right;">Rooms Total</td>
-                        <td class="num" id="roomsSubtotal">₹${roomTotal.toFixed(2)}</td>
-                        <td class="num" id="roomsOfferSubtotal" style="color:#b07d2e;">${hasAnyOfferPrice ? '₹' + roomOfferTotal.toFixed(2) : '—'}</td>
-                        <td></td>
-                    </tr>
-                `;
-            }
-
             // ── Accessories Subtotal ──
             if (accessoryLines.length > 0) {
                 html += `
                     <tr style="font-weight: 600; color: var(--text); border-top: 1px solid var(--border); font-size: 0.85rem;">
                         <td colspan="${totalCols - 3}" style="text-align:right;">Accessories Total</td>
                         <td class="num" id="accessoriesSubtotal">₹${accessoryTotal.toFixed(2)}</td>
-                        <td class="num" id="accessoriesOfferSubtotal" style="color:#b07d2e;">${hasAnyOfferPrice ? '₹' + accessoryOfferTotal.toFixed(2) : '—'}</td>
+                        <td class="num" id="accessoriesOfferSubtotal" style="color:#b07d2e;">₹${accessoryOfferTotal.toFixed(2)}</td>
                         <td></td>
                     </tr>
                 `;
@@ -3857,7 +4095,7 @@
                     <tr style="font-weight: 600; color: var(--text); border-top: 1px solid var(--border); font-size: 0.85rem;">
                         <td colspan="${totalCols - 3}" style="text-align:right;">False Ceiling Total</td>
                         <td class="num" id="falseCellingSubtotal">₹${falseCellingTotal.toFixed(2)}</td>
-                        <td class="num" id="falseCellingOfferSubtotal" style="color:#b07d2e;">${hasAnyOfferPrice ? '₹' + falseCellingOfferTotal.toFixed(2) : '—'}</td>
+                        <td class="num" id="falseCellingOfferSubtotal" style="color:#b07d2e;">₹${falseCellingOfferTotal.toFixed(2)}</td>
                         <td></td>
                     </tr>
                 `;
@@ -3868,7 +4106,35 @@
                 <tr style="background: var(--accent-light); font-weight: 700; color: var(--accent-dark); border-top: 2px solid var(--accent);">
                     <td colspan="${totalCols - 3}" style="text-align:right;">Grand Total</td>
                     <td class="num" id="grandTotal">₹${grandTotal.toFixed(2)}</td>
-                    <td class="num" style="color:#b07d2e;">${hasAnyOfferPrice ? '₹' + grandOfferTotal.toFixed(2) : '—'}</td>
+                    <td class="num" style="color:#b07d2e;">₹${grandOfferTotal.toFixed(2)}</td>
+                    <td></td>
+                </tr>
+            `;
+
+            // ── Offer Price Total Row (Below Grand Total) ──
+            html += `
+                <tr style="background: rgba(176, 125, 46, 0.08); font-weight: 700; color: #8f6320; border-top: 1px solid var(--accent);">
+                    <td colspan="${totalCols - 3}" style="text-align:right; font-size: 0.9rem;">Offer Price Total</td>
+                    <td class="num" id="grandOfferTotalRow" colspan="2" style="color:#b07d2e; font-size: 0.95rem; text-align:right; padding-right: 15px;">₹${grandOfferTotal.toFixed(2)}</td>
+                    <td></td>
+                </tr>
+            `;
+
+            // ── Final Amount Row (Below Offer Price Total - Editable) ──
+            const finalAmount = getEffectiveFinalAmount();
+            html += `
+                <tr style="background: rgba(176, 125, 46, 0.16); font-weight: 700; color: #704b12; border-top: 1.5px solid var(--accent);">
+                    <td colspan="${totalCols - 3}" style="text-align:right; font-size: 0.95rem;">Final Amount</td>
+                    <td class="num" colspan="2" style="text-align:right; padding-right: 15px;">
+                        <div style="display:inline-flex; align-items:center; gap:4px;">
+                            <span style="color:#b07d2e; font-size:0.98rem; font-weight:700;">₹</span>
+                            <input type="number" min="0" id="finalAmountInput"
+                                placeholder="${grandOfferTotal.toFixed(2)}"
+                                value="${customFinalAmount !== null ? customFinalAmount : ''}"
+                                oninput="updateFinalAmount(this.value)"
+                                style="width:135px; background:rgba(255,255,255,0.7); border:1.5px solid #b07d2e; border-radius:5px; padding:4px 8px; color:#8f6320; font-size:0.95rem; font-weight:700; outline:none; font-family:var(--mono); text-align:right;">
+                        </div>
+                    </td>
                     <td></td>
                 </tr>
             `;
@@ -3880,23 +4146,7 @@
         function updatePaymentSplits() {
             if (isRestoringQuote) return;
 
-            const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories') || l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling')));
-            const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
-            const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling'));
-
-            const roomTotal = roomLines.reduce((s, l) => s + l.amount, 0);
-            const accessoryTotal = accessoryLines.reduce((s, l) => s + l.amount, 0);
-            const falseCellingTotal = falseCellingLines.reduce((s, l) => s + l.amount, 0);
-            const grandTotal = roomTotal + accessoryTotal + falseCellingTotal;
-
-            const roomOfferTotal = roomLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
-            const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
-            const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
-            const grandOfferTotal = roomOfferTotal + accessoryOfferTotal + falseCellingOfferTotal;
-
-            const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '' && parseFloat(l.offerPrice) !== l.amount);
-
-            const activeTotal = hasAnyOfferPrice ? grandOfferTotal : grandTotal;
+            const activeTotal = getEffectiveFinalAmount();
 
             const payTokenEl = document.getElementById('payToken');
             const payAdvanceEl = document.getElementById('payAdvance');
@@ -3914,68 +4164,110 @@
                 if (paySecondEl) paySecondEl.value = '';
                 if (payFinalEl) payFinalEl.value = '';
             }
+
+            const payHeaderLabel = document.getElementById('payTermsHeaderLabel');
+            if (payHeaderLabel) {
+                payHeaderLabel.textContent = `Payment Terms (Final Amount Split: ₹${activeTotal.toLocaleString('en-IN')})`;
+            }
         }
 
         function deleteLine(id) {
+            isQuoteDirty = true;
             quoteLines = quoteLines.filter(l => l.id !== id);
             renderQuote();
         }
 
         function updateOfferPrice(lineId, val) {
+            isQuoteDirty = true;
             const line = quoteLines.find(l => l.id === lineId);
             if (!line) return;
-            line.offerPrice = val === '' ? null : parseFloat(val);
+            line.offerPrice = (val === '' || isNaN(parseFloat(val))) ? null : parseFloat(val);
 
             const roomLines = quoteLines.filter(l => !(l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories') || l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling')));
             const accessoryLines = quoteLines.filter(l => l.roomId === 'accessories' || l.roomName.toLowerCase().includes('accessories'));
             const falseCellingLines = quoteLines.filter(l => l.roomId === 'false_celling' || l.roomName.toLowerCase().includes('false celling'));
 
-            const roomOfferTotal = roomLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
-            const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
-            const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+            const kitchenLines = quoteLines.filter(l => l.roomId === 'kitchen' || (l.roomName && l.roomName.toLowerCase().includes('kitchen')));
+            const kitchenSubTotal = kitchenLines.reduce((s, l) => s + l.amount, 0);
+            const kitchenAutoAccTotal = getKitchenAutoAccessories(kitchenSubTotal).reduce((s, a) => s + a.amount, 0);
+
+            const safeParseOffer = l => (l.offerPrice !== null && l.offerPrice !== '' && !isNaN(parseFloat(l.offerPrice))) ? parseFloat(l.offerPrice) : l.amount;
+            const roomOfferTotal = roomLines.reduce((s, l) => s + safeParseOffer(l), 0);
+            const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + safeParseOffer(l), 0) + kitchenAutoAccTotal;
+            const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + safeParseOffer(l), 0);
             const grandOfferTotal = roomOfferTotal + accessoryOfferTotal + falseCellingOfferTotal;
 
-            const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '' && parseFloat(l.offerPrice) !== l.amount);
-
-            const roomsOfferSubEl = document.getElementById('roomsOfferSubtotal');
-            if (roomsOfferSubEl) roomsOfferSubEl.textContent = hasAnyOfferPrice ? '₹' + roomOfferTotal.toFixed(2) : '—';
-
             const accOfferSubEl = document.getElementById('accessoriesOfferSubtotal');
-            if (accOfferSubEl) accOfferSubEl.textContent = hasAnyOfferPrice ? '₹' + accessoryOfferTotal.toFixed(2) : '—';
+            if (accOfferSubEl) accOfferSubEl.textContent = '₹' + accessoryOfferTotal.toFixed(2);
 
             const fcOfferSubEl = document.getElementById('falseCellingOfferSubtotal');
-            if (fcOfferSubEl) fcOfferSubEl.textContent = hasAnyOfferPrice ? '₹' + falseCellingOfferTotal.toFixed(2) : '—';
+            if (fcOfferSubEl) fcOfferSubEl.textContent = '₹' + falseCellingOfferTotal.toFixed(2);
 
             const gtEl = document.getElementById('grandTotal');
             if (gtEl && gtEl.parentElement) {
                 const offerCell = gtEl.nextElementSibling;
-                if (offerCell) offerCell.textContent = hasAnyOfferPrice ? '₹' + grandOfferTotal.toFixed(2) : '—';
+                if (offerCell) offerCell.textContent = '₹' + grandOfferTotal.toFixed(2);
             }
+
+            const gotRowEl = document.getElementById('grandOfferTotalRow');
+            if (gotRowEl) gotRowEl.textContent = '₹' + grandOfferTotal.toFixed(2);
+
+            const finalInput = document.getElementById('finalAmountInput');
+            if (finalInput) finalInput.placeholder = grandOfferTotal.toFixed(2);
+
             updatePaymentSplits();
         }
 
         // ── Auto-incrementing Quote Number & Auto-generation ────────────────────
-        function getNextQuoteNo() {
+        function getLastQuoteNoInfo() {
             const stored = localStorage.getItem('pks_saved_quotes');
-            let nextNum = 1;
+            let maxNum = 0;
+            let lastQuoteNo = null;
             if (stored) {
                 try {
                     const saved = JSON.parse(stored);
-                    if (Array.isArray(saved)) {
-                        let maxNum = 0;
+                    if (Array.isArray(saved) && saved.length > 0) {
                         saved.forEach(q => {
-                            if (q.quoteNo && q.quoteNo.startsWith('QT-')) {
-                                const numPart = parseInt(q.quoteNo.replace('QT-', ''), 10);
-                                if (!isNaN(numPart) && numPart > maxNum) {
-                                    maxNum = numPart;
+                            if (q.quoteNo) {
+                                const numMatch = q.quoteNo.match(/(\d+)/);
+                                if (numMatch) {
+                                    const num = parseInt(numMatch[1], 10);
+                                    if (num > maxNum) {
+                                        maxNum = num;
+                                        lastQuoteNo = q.quoteNo;
+                                    }
                                 }
                             }
                         });
-                        nextNum = maxNum + 1;
                     }
                 } catch (e) { }
             }
-            return 'QT-' + String(nextNum).padStart(3, '0');
+            const nextNum = maxNum + 1;
+            const nextQuoteNo = 'QT-' + String(nextNum).padStart(3, '0');
+            return {
+                lastQuoteNo: lastQuoteNo || '—',
+                nextQuoteNo: nextQuoteNo
+            };
+        }
+
+        function updateLastQuoteDisplay() {
+            const info = getLastQuoteNoInfo();
+            const el = document.getElementById('lastQuoteNoText');
+            if (el) {
+                el.innerHTML = `<span style="font-weight:700; color:#fff;">${info.lastQuoteNo}</span> <span style="font-size:0.72rem; color:var(--accent); font-weight:600; margin-left:4px;">(Next: ${info.nextQuoteNo})</span>`;
+            }
+        }
+
+        function useNextQuoteNo() {
+            const info = getLastQuoteNoInfo();
+            const quoteNoInput = document.getElementById('quoteNo');
+            if (quoteNoInput && !quoteNoInput.value.trim()) {
+                quoteNoInput.value = info.nextQuoteNo;
+            }
+        }
+
+        function getNextQuoteNo() {
+            return getLastQuoteNoInfo().nextQuoteNo;
         }
 
         function incrementQuoteNo() {
@@ -3991,7 +4283,9 @@
 
         function resetQuote() {
             if (confirm('Clear the entire quote and customer details? This cannot be undone.')) {
+                isQuoteDirty = false;
                 quoteLines = [];
+                customOverallOfferPrice = null;
 
                 // Clear metadata inputs and set next auto number
                 incrementQuoteNo();
@@ -4003,6 +4297,8 @@
                 document.getElementById('payAdvance').value = '';
                 document.getElementById('paySecond').value = '';
                 document.getElementById('payFinal').value = '';
+                const anyReqEl = document.getElementById('anyRequirements');
+                if (anyReqEl) anyReqEl.value = '';
 
 
                 // Reset docType
@@ -4113,10 +4409,23 @@
                 const roomLines = quoteLines.filter(l => !l.roomName.toLowerCase().includes('accessories') && !l.roomName.toLowerCase().includes('false celling'));
                 const accessoryLines = quoteLines.filter(l => l.roomName.toLowerCase().includes('accessories'));
                 const falseCellingLines = quoteLines.filter(l => l.roomName.toLowerCase().includes('false celling'));
+
+                // ── Kitchen auto-accessories for PDF ──
+                const kitchenLinesForPdf = quoteLines.filter(l => l.roomId === 'kitchen' || (l.roomName && l.roomName.toLowerCase().includes('kitchen')));
+                const kitchenSubTotalForPdf = kitchenLinesForPdf.reduce((s, l) => s + l.amount, 0);
+                const kitchenAutoAccForPdf = getKitchenAutoAccessories(kitchenSubTotalForPdf);
+                const kitchenAutoAccTotalForPdf = kitchenAutoAccForPdf.reduce((s, a) => s + a.amount, 0);
+
                 const roomTotal = roomLines.reduce((s, l) => s + l.amount, 0);
-                const accessoryTotal = accessoryLines.reduce((s, l) => s + l.amount, 0);
+                const accessoryTotal = accessoryLines.reduce((s, l) => s + l.amount, 0) + kitchenAutoAccTotalForPdf;
                 const falseCellingTotal = falseCellingLines.reduce((s, l) => s + l.amount, 0);
                 const grandTotal = roomTotal + accessoryTotal + falseCellingTotal;
+
+                const roomOfferTotal = roomLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+                const accessoryOfferTotal = accessoryLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0) + kitchenAutoAccTotalForPdf;
+                const falseCellingOfferTotal = falseCellingLines.reduce((s, l) => s + (l.offerPrice !== null && l.offerPrice !== '' ? parseFloat(l.offerPrice) : l.amount), 0);
+                const grandOfferTotal = roomOfferTotal + accessoryOfferTotal + falseCellingOfferTotal;
+                const hasAnyOfferPrice = quoteLines.some(l => l.offerPrice !== null && l.offerPrice !== '');
 
                 const showSqFt = (typeof showSqftRate !== 'undefined') ? showSqftRate : true;
                 const cols = 4 + (showSqFt ? 1 : 0) + (showRate ? 1 : 0) + 1; // S.NO + Item + Material + Size + Amount (+SqFt, +Rate)
@@ -4149,6 +4458,15 @@
                             </tr>`;
 
                         lines.forEach(l => {
+                            const specsStr = l.specs || getAllMaterialSpecs(l.roomId, l.material, l.itemName).join(' | ');
+                            const pdfMaterialSpecs = specsStr ? specsStr.split('|').map(s => s.trim()).filter(Boolean) : [];
+                            const pdfMatContent = `
+                                <strong style="color:#1c2820;display:block;margin-bottom:2px;">${renderSpecText(l.material, '#e8ddd0')}</strong>
+                                ${pdfMaterialSpecs.length > 0 ? `
+                                    <div style="font-size:8.5px;color:#555;line-height:1.35;">
+                                        ${pdfMaterialSpecs.map(s => `<div>• ${renderSpecText(s, '#e8ddd0')}</div>`).join('')}
+                                    </div>` : ''}
+                            `;
                             rowsHTML += `
                                 <tr style="border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                                     <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
@@ -4156,7 +4474,7 @@
                                         <div style="font-size:8.5px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:1px;">${roomName}</div>
                                         ${l.itemName}
                                     </td>
-                                    <td style="padding:6px 7px;font-size:10.5px;color:#666;">${renderSpecText(l.material, '#e8ddd0')}</td>
+                                    <td style="padding:6px 7px;font-size:10.5px;color:#666;">${pdfMatContent}</td>
                                     <td style="padding:6px 7px;font-size:9.5px;color:#666;font-family:monospace;">${l.size}</td>
                                     ${showSqFt ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">${l.sqft}</td>` : ''}
                                     ${showRate ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">₹${l.rate.toFixed(2)}</td>` : ''}
@@ -4166,7 +4484,7 @@
                     });
                 }
 
-                if (accessoryLines.length > 0) {
+                if (accessoryLines.length > 0 || kitchenAutoAccForPdf.length > 0) {
                     rowsHTML += `
                         <tr style="background:#1c2820;page-break-inside:avoid;break-inside:avoid;">
                             <td colspan="${cols}" style="padding:6px 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#b07d2e;">
@@ -4193,6 +4511,22 @@
                             </tr>`;
                     });
 
+                    // Auto kitchen accessories in PDF - Clean display without "Auto" text/subtitles
+                    kitchenAutoAccForPdf.forEach(a => {
+                        rowsHTML += `
+                            <tr style="border-bottom:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
+                                <td style="padding:6px 7px;font-size:10.5px;text-align:center;color:#555;">${idx++}</td>
+                                <td style="padding:6px 7px;font-size:10.5px;font-weight:600;color:#1c2820;">
+                                    ${a.label}
+                                    <div style="font-size:8px;font-weight:700;color:#b07d2e;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">Accessories</div>
+                                </td>
+                                <td style="padding:6px 7px;font-size:10.5px;color:#666;">Included with Kitchen</td>
+                                <td style="padding:6px 7px;font-size:9.5px;color:#666;font-family:monospace;">—</td>
+                                ${showSqFt ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">—</td>` : ''}
+                                ${showRate ? `<td style="padding:6px 7px;font-size:10.5px;text-align:right;">—</td>` : ''}
+                                <td style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:600;">₹${a.amount.toFixed(2)}</td>
+                            </tr>`;
+                    });
                 }
 
                 if (falseCellingLines.length > 0) {
@@ -4262,6 +4596,8 @@
                 payItems += `<li style="margin-bottom:3px;"><strong>35% Part Payment:</strong> After the completion of frame work.${paySecond ? ` — <strong>${paySecond}</strong>` : ''}</li>`;
                 payItems += `<li><strong>5% Final Payment:</strong> The last day of work completion in site.${payFinal ? ` — <strong>${payFinal}</strong>` : ''}</li>`;
 
+                const anyReqVal = (document.getElementById('anyRequirements') ? document.getElementById('anyRequirements').value.trim() : '');
+
                 const container = document.createElement('div');
                 container.style.cssText = 'position:fixed;left:-9999px;top:0;width:794px;background:#fff;margin:0;padding:0;';
                 document.body.appendChild(container);
@@ -4315,12 +4651,6 @@
                         </tbody>
                         <tbody>
                             ${rowsHTML}
-                            ${roomLines.length > 0 ? `
-                            <tr style="background:#fdfaf6;border-top:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
-                                <td colspan="${cols - 1}" style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:600;color:#555;">Rooms Total</td>
-                                <td style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:600;color:#1c2820;">₹${roomTotal.toFixed(2)}</td>
-                            </tr>
-                            ` : ''}
                             ${accessoryLines.length > 0 ? `
                             <tr style="background:#fdfaf6;border-top:1px solid #e8ddd0;page-break-inside:avoid;break-inside:avoid;">
                                 <td colspan="${cols - 1}" style="padding:6px 7px;font-size:10.5px;text-align:right;font-weight:600;color:#555;">Accessories Total</td>
@@ -4337,12 +4667,27 @@
                                 <td colspan="${cols - 1}" style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;">Grand Total</td>
                                 <td style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">₹${grandTotal.toFixed(2)}</td>
                             </tr>
+                            <tr style="background:#fffdf8;border-top:1px solid #b07d2e;page-break-inside:avoid;break-inside:avoid;">
+                                <td colspan="${cols - 1}" style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">Offer Price Total</td>
+                                <td style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">₹${getCalculatedOfferTotal().toFixed(2)}</td>
+                            </tr>
+                            <tr style="background:#fff7ec;border-top:1.5px solid #b07d2e;page-break-inside:avoid;break-inside:avoid;">
+                                <td colspan="${cols - 1}" style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#8f6320;">Final Amount</td>
+                                <td style="padding:8px 7px;font-size:11.5px;text-align:right;font-weight:700;color:#b07d2e;">₹${getEffectiveFinalAmount().toFixed(2)}</td>
+                            </tr>
                         </tbody>
                     </table>
-                    ${specsText || payItems ? `
-                    <div style="margin-top:16px;display:flex;gap:12px;page-break-inside:avoid;break-inside:avoid;">
-                        ${specsText ? `<div style="flex:1;padding:8px 10px;background:#fdfaf6;border:1px solid #e8ddd0;border-radius:4px;font-size:10px;"><strong style="color:#b07d2e;display:block;margin-bottom:4px;">Material Specifications</strong>${specsText}</div>` : ''}
-                        ${payItems ? `<div style="flex:1;padding:8px 10px;background:#fdfaf6;border:1px solid #e8ddd0;border-radius:4px;font-size:10px;"><strong style="color:#b07d2e;display:block;margin-bottom:4px;">Payment Terms</strong><ul style="margin:0;padding-left:13px;">${payItems}</ul></div>` : ''}
+                    ${specsText || payItems || anyReqVal ? `
+                    <div style="margin-top:16px;display:flex;flex-direction:column;gap:10px;page-break-inside:avoid;break-inside:avoid;">
+                        <div style="display:flex;gap:12px;">
+                            ${specsText ? `<div style="flex:1;padding:8px 10px;background:#fdfaf6;border:1px solid #e8ddd0;border-radius:4px;font-size:10px;"><strong style="color:#b07d2e;display:block;margin-bottom:4px;">Material Specifications</strong>${specsText}</div>` : ''}
+                            ${payItems ? `<div style="flex:1;padding:8px 10px;background:#fdfaf6;border:1px solid #e8ddd0;border-radius:4px;font-size:10px;"><strong style="color:#b07d2e;display:block;margin-bottom:4px;">Payment Terms</strong><ul style="margin:0;padding-left:13px;">${payItems}</ul></div>` : ''}
+                        </div>
+                        ${anyReqVal ? `
+                        <div style="padding:8px 10px;background:#fdfaf6;border:1px solid #e8ddd0;border-radius:4px;font-size:10px;">
+                            <strong style="color:#b07d2e;display:block;margin-bottom:4px;">Any Requirements</strong>
+                            <div style="white-space:pre-wrap;color:#333;line-height:1.45;">${anyReqVal}</div>
+                        </div>` : ''}
                     </div>` : ''}
                     <div style="margin-top:36px;display:flex;justify-content:space-between;align-items:flex-end;page-break-inside:avoid;break-inside:avoid;">
                         <div style="width:55%;font-size:9.5px;color:#666;">
@@ -4430,15 +4775,27 @@
                 const custName = document.getElementById('custName').value || '—';
                 const custAddress = document.getElementById('custAddress').value || '—';
                 const filename = `${docType}_${quoteNo}_${custName}`.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.pdf';
-                const grandTotal = quoteLines.reduce((s, l) => s + l.amount, 0);
+                const baseGrandTotal = quoteLines.reduce((s, l) => s + l.amount, 0);
+                const shareKitchenLines = quoteLines.filter(l => l.roomId === 'kitchen' || (l.roomName && l.roomName.toLowerCase().includes('kitchen')));
+                const shareKitchenTotal = shareKitchenLines.reduce((s, l) => s + l.amount, 0);
+                const shareAutoAccTotal = getKitchenAutoAccessories(shareKitchenTotal).reduce((s, a) => s + a.amount, 0);
+                const grandTotal = baseGrandTotal + shareAutoAccTotal;
+
+                const calculatedOfferTotal = getCalculatedOfferTotal();
+                const effectiveFinal = getEffectiveFinalAmount();
+
+                const reqText = document.getElementById('anyRequirements') ? document.getElementById('anyRequirements').value.trim() : '';
 
                 currentShareText = `*Pravin Kitchens & Interiors*\n\n` +
                     `📋 *${docType.toUpperCase()} DETAILS*\n` +
                     `• ${docType} No: ${quoteNo}\n` +
                     `• Customer: ${custName}\n` +
                     `• Place: ${custAddress}\n` +
-                    `• Total Amount: ₹${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n\n` +
-                    `Attached is your quotation PDF. Thank you!`;
+                    `• Total Amount: ₹${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` +
+                    `• Offer Price Total: ₹${calculatedOfferTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` +
+                    `• Final Amount: ₹${effectiveFinal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}\n` +
+                    (reqText ? `• Requirements: ${reqText}\n` : '') +
+                    `\nAttached is your quotation PDF. Thank you!`;
 
                 const blob = await generatePdfBlob();
                 const pdfFile = new File([blob], filename, { type: 'application/pdf' });
@@ -4534,7 +4891,7 @@
 
             if (!quoteNo) {
                 alert("Please enter a Quotation/Invoice number before saving.");
-                return;
+                return false;
             }
 
             let totalAmount = quoteLines.reduce((sum, line) => sum + line.amount, 0);
@@ -4553,10 +4910,12 @@
                 economyMode: isEconomyMode,
                 totalAmount,
                 quoteLines: [...quoteLines],
+                customFinalAmount,
                 payToken: document.getElementById('payToken').value,
                 payAdvance: document.getElementById('payAdvance').value,
                 paySecond: document.getElementById('paySecond').value,
                 payFinal: document.getElementById('payFinal').value,
+                anyRequirements: document.getElementById('anyRequirements') ? document.getElementById('anyRequirements').value : '',
 
                 lineIdCounter,
                 timestamp: Date.now()
@@ -4574,18 +4933,25 @@
             }
 
             const existingIdx = savedQuotes.findIndex(q => q.quoteNo === quoteNo && q.docType === docType);
+            let savedSuccess = false;
             if (existingIdx >= 0) {
                 if (confirm(`A quote with number "${quoteNo}" already exists. Overwrite?`)) {
                     savedQuotes[existingIdx] = newQuote;
                     localStorage.setItem('pks_saved_quotes', JSON.stringify(savedQuotes));
                     alert("Quote updated successfully!");
+                    savedSuccess = true;
                 }
             } else {
                 savedQuotes.push(newQuote);
                 localStorage.setItem('pks_saved_quotes', JSON.stringify(savedQuotes));
                 alert("Quote saved successfully!");
+                savedSuccess = true;
             }
             initCustomerAutofill();
+            if (savedSuccess) {
+                isQuoteDirty = false;
+            }
+            return savedSuccess;
         }
 
         function openSavedQuotesModal() {
@@ -4682,10 +5048,15 @@
             document.getElementById('custAddress').value = quote.custAddress || '';
             document.getElementById('quoteDate').value = quote.quoteDate || '';
 
+            customFinalAmount = (quote.customFinalAmount !== undefined && quote.customFinalAmount !== null) ? quote.customFinalAmount : (quote.customOverallOfferPrice !== undefined ? quote.customOverallOfferPrice : null);
+
             document.getElementById('payToken').value = quote.payToken || '';
             document.getElementById('payAdvance').value = quote.payAdvance || '';
             document.getElementById('paySecond').value = quote.paySecond || '';
             document.getElementById('payFinal').value = quote.payFinal || '';
+            if (document.getElementById('anyRequirements')) {
+                document.getElementById('anyRequirements').value = quote.anyRequirements || '';
+            }
 
 
             quoteLines = [...quote.quoteLines];
@@ -4694,6 +5065,7 @@
             renderQuote();
             updateDocLabels();
             isRestoringQuote = false;
+            isQuoteDirty = false;
         }
 
         function deleteSavedQuote(quoteId) {
@@ -4928,6 +5300,56 @@
 
         // Run default specs initialization
         initializeDefaultSpecsIfNeeded();
+
+        // --- Back Navigation and Prompt Logic ---
+        let pendingNavigationUrl = null;
+
+        function handleBackNavigation(url) {
+            if (isQuoteDirty && quoteLines && quoteLines.length > 0) {
+                pendingNavigationUrl = url;
+                document.getElementById('navConfirmModal').style.display = 'flex';
+            } else {
+                window.removeEventListener('beforeunload', handleBeforeUnload);
+                location.href = url;
+            }
+        }
+
+        function closeNavConfirmModal() {
+            document.getElementById('navConfirmModal').style.display = 'none';
+            pendingNavigationUrl = null;
+        }
+
+        function confirmNavDiscard() {
+            closeNavConfirmModal();
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            if (pendingNavigationUrl) {
+                location.href = pendingNavigationUrl;
+            }
+        }
+
+        function confirmNavSave() {
+            const success = saveCurrentQuote();
+            if (success) {
+                closeNavConfirmModal();
+                window.removeEventListener('beforeunload', handleBeforeUnload);
+                if (pendingNavigationUrl) {
+                    location.href = pendingNavigationUrl;
+                }
+            }
+        }
+
+        function handleBeforeUnload(e) {
+            if (isQuoteDirty && quoteLines && quoteLines.length > 0) {
+                e.preventDefault();
+                e.returnValue = '';
+                return '';
+            }
+        }
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        // Listen for input changes to set dirty status
+        window.addEventListener('input', () => { isQuoteDirty = true; });
+        window.addEventListener('change', () => { isQuoteDirty = true; });
     </script>
 
     <!-- Share Modal -->
